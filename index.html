@@ -212,6 +212,23 @@ nav {
   text-decoration: none; color: var(--text); transition: all 0.25s;
 }
 .store-badge:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.06); }
+.social-proof {
+  display: flex; align-items: center; gap: 14px; margin-top: 28px;
+}
+.proof-avatars {
+  display: flex;
+}
+.proof-avatars img {
+  width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--bg);
+  margin-left: -8px; object-fit: cover;
+}
+.proof-avatars img:first-child { margin-left: 0; }
+.proof-text {
+  font-size: 14px; color: var(--text-secondary);
+}
+.proof-text strong {
+  color: var(--text); font-weight: 600;
+}
 
 /* HERO DASHBOARD MOCKUP */
 .hero-dashboard {
@@ -692,6 +709,15 @@ footer {
               <div><span style="font-size:10px;opacity:0.7;">Download on the</span><br><strong style="font-size:14px;">App Store</strong></div>
             </a>
           </div>
+          <div class="social-proof reveal reveal-delay-4">
+            <div class="proof-avatars">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&fit=crop&crop=face" alt="">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" alt="">
+              <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=40&h=40&fit=crop&crop=face" alt="">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="">
+            </div>
+            <span class="proof-text"><strong>600+</strong> businesses onboarded</span>
+          </div>
         </div>
       </div>
 
@@ -947,7 +973,7 @@ footer {
           <div class="dp-stat">
             <div class="dp-stat-icon">👥</div>
             <div class="dp-stat-label">Active Customers</div>
-            <div class="dp-stat-value">1,247</div>
+            <div class="dp-stat-value">642</div>
           </div>
         </div>
         <div class="dp-lower">
