@@ -82,12 +82,13 @@ nav {
   transition: background 0.3s;
 }
 .nav-inner {
-  max-width: 1200px; margin: 0 auto; padding: 8px 24px;
-  display: flex; align-items: center; justify-content: space-between; min-height: 80px;
+  max-width: 1200px; margin: 0 auto; padding: 12px 24px;
+  display: flex; align-items: center; justify-content: space-between; min-height: 100px;
 }
 .nav-logo {
   font-family: var(--font-display); font-weight: 700; font-size: 20px;
   color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px;
+  overflow: visible;
 }
 .nav-logo-icon {
   width: 32px; height: 32px; border-radius: 8px;
@@ -112,7 +113,7 @@ nav {
 /* HERO */
 .hero {
   position: relative; min-height: 100vh; display: flex; align-items: center;
-  padding: 140px 0 80px; overflow: hidden;
+  padding: 160px 0 80px; overflow: hidden;
 }
 .hero-bg {
   position: absolute; inset: 0; z-index: 0;
@@ -652,7 +653,7 @@ footer {
 <nav>
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <img src="assets/logo-full.png" alt="Solis OS" style="height:70px;width:auto;filter:drop-shadow(0 0 10px rgba(212,168,83,0.35));">
+      <img src="assets/logo-full.png" alt="Solis OS" style="height:80px;width:auto;filter:drop-shadow(0 0 10px rgba(212,168,83,0.35));object-fit:contain;">
     </a>
     <div class="nav-links">
       <a href="#features">Features</a>
@@ -662,7 +663,7 @@ footer {
       <a href="https://app.solis-os.com/signup" class="nav-cta">Start Free Trial</a>
     </div>
     <button class="nav-mobile-toggle" onclick="this.nextElementSibling.classList.toggle('mobile-open')" aria-label="Menu">☰</button>
-    <div class="nav-mobile-menu" style="display:none;position:fixed;top:80px;left:0;right:0;background:var(--bg-raised);border-bottom:1px solid var(--border);padding:20px 24px;flex-direction:column;gap:16px;z-index:99;">
+    <div class="nav-mobile-menu" style="display:none;position:fixed;top:100px;left:0;right:0;background:var(--bg-raised);border-bottom:1px solid var(--border);padding:20px 24px;flex-direction:column;gap:16px;z-index:99;">
       <a href="#features" style="color:var(--text-secondary);text-decoration:none;font-size:15px;">Features</a>
       <a href="#industries" style="color:var(--text-secondary);text-decoration:none;font-size:15px;">Solutions</a>
       <a href="#dashboard" style="color:var(--text-secondary);text-decoration:none;font-size:15px;">Dashboard</a>
@@ -1132,7 +1133,7 @@ footer {
     <div class="footer-top">
       <div class="footer-brand">
         <a href="#" class="nav-logo" style="margin-bottom:4px">
-          <img src="assets/logo-full.png" alt="Solis OS" style="height:64px;width:auto;filter:drop-shadow(0 0 10px rgba(212,168,83,0.35));">
+          <img src="assets/logo-full.png" alt="Solis OS" style="height:80px;width:auto;filter:drop-shadow(0 0 10px rgba(212,168,83,0.35));object-fit:contain;">
         </a>
         <p>The AI-powered operating system for modern service businesses. Built for the way you actually work.</p>
       </div>
