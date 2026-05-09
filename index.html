@@ -1151,21 +1151,20 @@ footer {
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
         <a href="#industries">Solutions</a>
-        <a href="#">Integrations</a>
-        <a href="#">Changelog</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="https://app.solis-os.com/login">Log In</a>
       </div>
       <div class="footer-col">
         <h4>Company</h4>
-        <a href="#">About</a>
-        <a href="#">Blog</a>
-        <a href="#">Careers</a>
-        <a href="#">Contact</a>
+        <a href="#about-section" onclick="document.getElementById('about-section')?.scrollIntoView({behavior:'smooth'});return false;">About</a>
+        <a href="https://app.solis-os.com/signup">Get Started</a>
+        <a href="mailto:support@solis-os.com">Contact</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Cookie Policy</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('privacy-modal').style.display='flex'">Privacy Policy</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('terms-modal').style.display='flex'">Terms of Service</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('cookie-modal').style.display='flex'">Cookie Policy</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1291,6 +1290,80 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 </script>
+
+<!-- Legal Modals -->
+<style>
+.legal-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; padding:16px; }
+.legal-modal-content { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); max-width:640px; width:100%; max-height:85vh; overflow-y:auto; padding:32px; position:relative; }
+.legal-modal-content h2 { font-family:var(--font-display); font-size:22px; margin-bottom:20px; color:var(--text); }
+.legal-modal-content h3 { font-family:var(--font-display); font-size:15px; color:var(--text); margin:20px 0 8px; }
+.legal-modal-content p { font-size:13px; color:var(--text-secondary); line-height:1.7; margin-bottom:8px; }
+.legal-modal-close { position:sticky; top:0; float:right; background:var(--bg-raised); border:1px solid var(--border); color:var(--text); width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; z-index:1; }
+.legal-modal-close:hover { background:var(--border); }
+@media(max-width:480px) { .legal-modal-content { padding:20px; } .legal-modal-content h2 { font-size:18px; } }
+</style>
+
+<div id="privacy-modal" class="legal-modal" onclick="this.style.display='none'">
+  <div class="legal-modal-content" onclick="event.stopPropagation()">
+    <button class="legal-modal-close" onclick="this.closest('.legal-modal').style.display='none'">&times;</button>
+    <h2>Privacy Policy</h2>
+    <p style="color:var(--text-muted);font-size:12px;">Last updated: May 2026</p>
+    <h3>1. Information We Collect</h3>
+    <p>We collect information you provide directly: name, email address, business name, and business details when you create an account. We also collect usage data such as pages visited, features used, and device information to improve our service.</p>
+    <h3>2. How We Use Your Information</h3>
+    <p>Your information is used to: operate and maintain your account, provide customer support, send important service updates, improve and personalize your experience, and process transactions.</p>
+    <h3>3. Data Storage & Security</h3>
+    <p>Your data is stored on secure, encrypted servers. We use industry-standard security measures including SSL encryption, secure authentication, and regular security audits. Your business data (bookings, customers, services) belongs to you.</p>
+    <h3>4. Data Sharing</h3>
+    <p>We do not sell, rent, or share your personal information with third parties for marketing purposes. We may share data with trusted service providers who help us operate our platform (hosting, analytics) under strict confidentiality agreements.</p>
+    <h3>5. Your Rights</h3>
+    <p>You have the right to: access your personal data, request correction of inaccurate data, request deletion of your account and data, export your business data at any time, and opt out of non-essential communications.</p>
+    <h3>6. Contact</h3>
+    <p>For privacy-related inquiries, contact us at support@solis-os.com.</p>
+  </div>
+</div>
+
+<div id="terms-modal" class="legal-modal" onclick="this.style.display='none'">
+  <div class="legal-modal-content" onclick="event.stopPropagation()">
+    <button class="legal-modal-close" onclick="this.closest('.legal-modal').style.display='none'">&times;</button>
+    <h2>Terms of Service</h2>
+    <p style="color:var(--text-muted);font-size:12px;">Last updated: May 2026</p>
+    <h3>1. Acceptance of Terms</h3>
+    <p>By creating an account or using Solis OS, you agree to be bound by these Terms of Service. If you do not agree, do not use the service.</p>
+    <h3>2. Description of Service</h3>
+    <p>Solis OS provides AI-powered business management tools including booking and scheduling, customer relationship management, staff management, analytics and reporting, payment processing, and automated communications.</p>
+    <h3>3. Account Responsibilities</h3>
+    <p>You are responsible for maintaining the confidentiality of your account credentials, all activities that occur under your account, providing accurate and complete information, and complying with all applicable laws in your jurisdiction.</p>
+    <h3>4. Acceptable Use</h3>
+    <p>You agree not to: use the service for any unlawful purpose, attempt to gain unauthorized access to other accounts, interfere with the proper functioning of the service, or upload malicious content.</p>
+    <h3>5. Intellectual Property</h3>
+    <p>Solis OS and its original content, features, and functionality are owned by Solis OS and protected by international copyright and trademark laws. Your business data remains your property at all times.</p>
+    <h3>6. Limitation of Liability</h3>
+    <p>Solis OS shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of or inability to use the service. Our total liability shall not exceed the amount paid by you in the 12 months preceding the claim.</p>
+    <h3>7. Termination</h3>
+    <p>We may suspend or terminate your account if you violate these terms. You may cancel your account at any time. Upon termination, your data will be retained for 30 days before permanent deletion.</p>
+    <h3>8. Changes to Terms</h3>
+    <p>We reserve the right to modify these terms at any time. We will notify users of significant changes via email. Continued use after changes constitutes acceptance.</p>
+  </div>
+</div>
+
+<div id="cookie-modal" class="legal-modal" onclick="this.style.display='none'">
+  <div class="legal-modal-content" onclick="event.stopPropagation()">
+    <button class="legal-modal-close" onclick="this.closest('.legal-modal').style.display='none'">&times;</button>
+    <h2>Cookie Policy</h2>
+    <p style="color:var(--text-muted);font-size:12px;">Last updated: May 2026</p>
+    <h3>1. What Are Cookies</h3>
+    <p>Cookies are small text files stored on your device when you visit our website. They help us provide a better experience by remembering your preferences and login status.</p>
+    <h3>2. Cookies We Use</h3>
+    <p><strong>Essential cookies:</strong> Required for the website to function. These include authentication tokens and session identifiers. Cannot be disabled.</p>
+    <p><strong>Analytics cookies:</strong> Help us understand how visitors interact with our website. Data is anonymized and used to improve our service.</p>
+    <p><strong>Preference cookies:</strong> Remember your settings such as language, timezone, and display preferences.</p>
+    <h3>3. Managing Cookies</h3>
+    <p>You can control cookies through your browser settings. Disabling essential cookies may affect the functionality of the service. Most browsers allow you to block or delete cookies.</p>
+    <h3>4. Third-Party Cookies</h3>
+    <p>We do not use third-party advertising cookies. Analytics services may set their own cookies subject to their privacy policies.</p>
+  </div>
+</div>
 
 </body>
 </html>
