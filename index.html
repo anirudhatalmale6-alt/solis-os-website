@@ -1785,7 +1785,8 @@ function handleContactSubmit(e) {
 .chat-send-btn:hover{transform:scale(1.1)}
 .chat-send-btn svg{width:16px;height:16px;fill:#0a0a0a}
 .chat-lang{display:flex;gap:6px;padding:8px 16px;background:rgba(10,10,10,.8);border-top:1px solid rgba(201,160,64,.1)}
-.chat-lang button{flex:1;padding:4px;background:rgba(255,255,255,.05);border:1px solid rgba(201,160,64,.15);border-radius:6px;color:#999;font-size:10px;cursor:pointer;transition:all .2s}
+.chat-lang{flex-wrap:wrap}
+.chat-lang button{flex:0 0 auto;padding:4px 6px;background:rgba(255,255,255,.05);border:1px solid rgba(201,160,64,.15);border-radius:6px;color:#999;font-size:9px;cursor:pointer;transition:all .2s}
 .chat-lang button.active,.chat-lang button:hover{background:rgba(201,160,64,.15);color:#c9a040;border-color:rgba(201,160,64,.4)}
 @media(max-width:480px){#solis-chat-window{right:10px;bottom:90px;width:calc(100vw - 20px);height:calc(100vh - 120px)}}
 </style>
@@ -1805,6 +1806,13 @@ function handleContactSubmit(e) {
 <button onclick="setChatLang('ar')">عربي</button>
 <button onclick="setChatLang('fr')">FR</button>
 <button onclick="setChatLang('es')">ES</button>
+<button onclick="setChatLang('de')">DE</button>
+<button onclick="setChatLang('it')">IT</button>
+<button onclick="setChatLang('pt')">PT</button>
+<button onclick="setChatLang('el')">Ελ</button>
+<button onclick="setChatLang('zh')">中文</button>
+<button onclick="setChatLang('ja')">日本</button>
+<button onclick="setChatLang('ko')">한국</button>
 </div>
 <div class="chat-input-area">
 <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
@@ -1815,7 +1823,7 @@ function handleContactSubmit(e) {
 <script>
 var chatSid=null,chatOpen=false,chatAPI='https://7797ab20bbbb035d-167-235-196-123.serveousercontent.com/chat';
 function toggleChat(){chatOpen=!chatOpen;document.getElementById('solis-chat-btn').classList.toggle('open',chatOpen);document.getElementById('solis-chat-window').classList.toggle('open',chatOpen);if(chatOpen&&!document.getElementById('chat-messages').children.length){addBotMsg('Hi! Welcome to Solis OS. How can I help you today?\n\nType your question or choose a topic:\n1. What Solis OS does\n2. Pricing plans\n3. Industries we support\n4. How to get started\n5. Book a demo')}}
-function setChatLang(l){document.querySelectorAll('.chat-lang button').forEach(function(b){b.classList.remove('active')});event.target.classList.add('active');var greets={en:'Hi!',ar:'مرحبا',fr:'Bonjour!',es:'Hola!'};chatSid=null;document.getElementById('chat-messages').innerHTML='';sendChatMsg(greets[l])}
+function setChatLang(l){document.querySelectorAll('.chat-lang button').forEach(function(b){b.classList.remove('active')});event.target.classList.add('active');var greets={en:'Hi!',ar:'مرحبا',fr:'Bonjour!',es:'Hola!',de:'Hallo!',it:'Ciao!',pt:'Ola!',el:'Γεια!',zh:'你好!',ja:'こんにちは!',ko:'안녕하세요!'};chatSid=null;document.getElementById('chat-messages').innerHTML='';sendChatMsg(greets[l])}
 function addBotMsg(t){var m=document.createElement('div');m.className='chat-msg bot';m.textContent=t;document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
 function addUserMsg(t){var m=document.createElement('div');m.className='chat-msg user';m.textContent=t;document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
 function showTyping(){var m=document.createElement('div');m.className='chat-msg typing';m.id='typing-indicator';m.innerHTML='<span>.</span><span>.</span><span>.</span>';document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
