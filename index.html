@@ -1833,15 +1833,49 @@ function handleContactSubmit(e) {
 </div>
 
 <script>
-var chatSid=null,chatOpen=false,chatAPI='https://64fd1222503ab8ba-167-235-196-123.serveousercontent.com/chat';
+var chatOpen=false,chatGreeted=false;
+var chatResponses={
+  features:'Solis OS is an all-in-one AI platform that runs your business:\n\nBookings & Scheduling - Online booking page your customers can use 24/7 with automatic confirmations and reminders.\n\nCustomer Management - Full CRM to track clients, history, preferences and notes.\n\nStaff Management - Manage your team, assign roles, track availability.\n\nAI Insights - Smart analytics that predict busy periods and suggest improvements.\n\nAutomated Communications - WhatsApp and email notifications sent automatically.\n\nBusiness Analytics - Real-time dashboard showing revenue, bookings and trends.\n\nReady to try it? Visit https://app.solis-os.com/signup',
+  pricing:'Here are our plans:\n\nSTARTER - $10/month\nPerfect for solo operators and small businesses.\n\nPROFESSIONAL - $25/quarter ($8.33/month)\nBest value for growing businesses.\n\nENTERPRISE - $45/half-year ($7.50/month)\nMaximum savings with priority support.\n\nAll plans include unlimited bookings, customer & staff management, AI insights, online booking page, and WhatsApp notifications.\n\nEvery plan starts with a free trial, no credit card required.\n\nStart now: https://app.solis-os.com/signup',
+  industries:'Solis OS works for any service-based business:\n\nHair Salons & Barbershops\nBeauty & Spa\nMedical & Dental Clinics\nAuto Garages & Workshops\nFitness & Gyms\n\nAnd many more - any business that takes appointments can use Solis OS. The platform adapts to your industry during setup.\n\nWhat type of business do you run?',
+  getStarted:'Getting started is easy!\n\n1. Visit https://app.solis-os.com/signup (30 seconds)\n2. Set up your business profile\n3. Add your services and pricing\n4. Add your team members\n5. Share your booking page with customers\n\nThe whole setup takes about 5 minutes. No credit card required.\n\nStart now: https://app.solis-os.com/signup',
+  demo:'You can explore Solis OS right now:\n\n1. Visit our website: https://solis-os.com\n2. Sign up for a free trial: https://app.solis-os.com/signup\n3. Want a personal walkthrough? Message us on WhatsApp and we\'ll arrange it.\n\nWhat would you prefer?',
+  trial:'Yes! We offer a free trial with full access to all features.\n\nNo credit card required. No commitments.\n\nStart your free trial: https://app.solis-os.com/signup',
+  booking:'Solis OS makes booking management effortless!\n\nOnline Booking Page - Customers book 24/7 from their phone.\nSmart Calendar - All appointments in one place.\nAutomatic Reminders - Reduces no-shows by up to 80%.\nEasy Rescheduling - Customers can reschedule themselves.\n\nSet up your booking page free: https://app.solis-os.com/signup',
+  ai:'AI is at the heart of Solis OS:\n\nSmart Scheduling - Optimizes appointment slots to maximize bookings.\nCustomer Insights - Predicts no-shows and suggests best outreach times.\nRevenue Optimization - Identifies your most profitable services.\nAutomated Follow-ups - Reduces no-shows by up to 80%.\n\nLike having a business consultant 24/7.\n\nTry it free: https://app.solis-os.com/signup',
+  support:'I\'m here to help!\n\nFor quick answers, ask me anything about Solis OS right here.\n\nFor direct support, message us on WhatsApp and our team will help you.',
+  human:'Of course! Message us directly on WhatsApp and a team member will get back to you shortly.\n\nWhatsApp: https://wa.me/447700168964',
+  security:'Security is a top priority at Solis OS.\n\nYour data is protected with:\n- End-to-end encryption\n- Secure cloud hosting with automatic backups\n- Role-based access control\n- GDPR-compliant data handling',
+  app:'Solis OS works on all devices!\n\nMobile - Works like a native app from your phone browser.\nDesktop - Full dashboard at https://app.solis-os.com\nTablet - Perfect for reception desks.\n\nNative apps for Google Play and App Store coming soon!',
+  thanks:'You\'re welcome! Happy to help.\n\nIf you have more questions, just ask anytime.\n\nReady to start? https://app.solis-os.com/signup',
+  bye:'Great chatting with you! If you ever need anything, message us anytime.\n\nHave a wonderful day!',
+  yes:'Great! Here\'s what I suggest:\n\n1. Start your free trial at https://app.solis-os.com/signup - takes 2 minutes, no card needed\n2. Set up your business profile, services, and team\n3. Share your booking page with customers right away\n\nWhat would you prefer?'
+};
+var chatPatterns={
+  pricing:['price','pricing','cost','how much','plans','subscription','payment','pay','fee','monthly','سعر','اسعار','كم','باقة','prix','tarif','combien','precio','costo','cuanto','preis','kosten'],
+  features:['feature','what does','what can','capabilities','what is solis','tell me about','explain','about solis','مميزات','fonctionnalite','funcionalidad','funktion','1'],
+  industries:['salon','hair','barber','beauty','spa','clinic','medical','garage','mechanic','gym','fitness','industry','who is it for','صالون','عيادة','3'],
+  getStarted:['start','sign up','signup','register','create account','get started','begin','try','join','بدء','تسجيل','commencer','empezar','4'],
+  demo:['demo','show me','see it','preview','walkthrough','tour','عرض','5'],
+  booking:['booking','appointment','schedule','calendar','reserve','حجز','reservation','reserva'],
+  trial:['free','trial','test','no cost','مجاني','gratuit','gratis','kostenlos'],
+  ai:['ai','artificial intelligence','smart','automation','automate','ذكاء','ia'],
+  support:['support','help','issue','problem','trouble','bug','error','دعم','مساعدة','aide'],
+  human:['speak','talk','human','person','agent','real person','someone','call me','whatsapp','تحدث','parler','hablar'],
+  security:['secure','security','privacy','safe','gdpr','أمان'],
+  app:['app','download','mobile','android','iphone','ios','install','تطبيق'],
+  thanks:['thank','thanks','appreciate','great','perfect','awesome','شكرا','merci','gracias','danke'],
+  bye:['bye','goodbye','see you','later','take care','مع السلامة','au revoir','adios'],
+  yes:['yes','yeah','yep','sure','ok','okay','sounds good','interested','tell me more','نعم','oui','si','ja']
+};
 function toggleChat(){chatOpen=!chatOpen;document.getElementById('solis-chat-btn').classList.toggle('open',chatOpen);document.getElementById('solis-chat-window').classList.toggle('open',chatOpen);if(chatOpen&&!document.getElementById('chat-messages').children.length){addBotMsg('Hi! Welcome to Solis OS. How can I help you today?\n\nType your question or choose a topic:\n1. What Solis OS does\n2. Pricing plans\n3. Industries we support\n4. How to get started\n5. Book a demo')}}
-function setChatLang(l){document.querySelectorAll('.chat-lang button').forEach(function(b){b.classList.remove('active')});event.target.classList.add('active');var greets={en:'Hi!',ar:'مرحبا',fr:'Bonjour!',es:'Hola!',de:'Hallo!',it:'Ciao!',pt:'Ola!',el:'Γεια!',zh:'你好!',ja:'こんにちは!',ko:'안녕하세요!'};chatSid=null;document.getElementById('chat-messages').innerHTML='';sendChatMsg(greets[l])}
+function setChatLang(l){document.querySelectorAll('.chat-lang button').forEach(function(b){b.classList.remove('active')});event.target.classList.add('active');var greets={en:'Hi!',ar:'مرحبا',fr:'Bonjour!',es:'Hola!',de:'Hallo!',it:'Ciao!',pt:'Ola!',el:'Γεια!',zh:'你好!',ja:'こんにちは!',ko:'안녕하세요!'};chatGreeted=false;document.getElementById('chat-messages').innerHTML='';sendChatMsg(greets[l])}
 function addBotMsg(t){var m=document.createElement('div');m.className='chat-msg bot';m.textContent=t;document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
 function addUserMsg(t){var m=document.createElement('div');m.className='chat-msg user';m.textContent=t;document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
-function showTyping(){var m=document.createElement('div');m.className='chat-msg typing';m.id='typing-indicator';m.innerHTML='<span>.</span><span>.</span><span>.</span>';document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
-function hideTyping(){var t=document.getElementById('typing-indicator');if(t)t.remove()}
+function matchTopic(input){var lo=input.toLowerCase().trim();for(var key in chatPatterns){if(chatPatterns[key].some(function(k){return lo.includes(k)}))return key}return null}
+function getReply(input){var lo=input.toLowerCase().trim();var greetings=['hi','hello','hey','good morning','good afternoon','hola','bonjour','hallo','ciao','مرحبا','مرحبًا','اهلا','你好','こんにちは','안녕하세요'];if(!chatGreeted){chatGreeted=true;if(greetings.some(function(g){return lo===g||lo.startsWith(g+' ')||lo.startsWith(g+'!')})){return'Hi! Welcome to Solis OS.\n\nI\'m here to help you learn about our AI-powered business management platform. We help salons, clinics, garages, and other service businesses automate their operations.\n\nWhat would you like to know?\n\n1. What Solis OS does\n2. Pricing plans\n3. Industries we support\n4. How to get started\n5. Book a demo\n\nJust type a number or ask me anything!'}var topic=matchTopic(lo);if(topic&&chatResponses[topic])return'Welcome to Solis OS!\n\n'+chatResponses[topic];return'Hi! Welcome to Solis OS, the AI-powered platform that helps service businesses manage bookings, customers, staff, and more.\n\nHow can I help you today? You can ask about our features, pricing, supported industries, or anything else!'}if(['1','2','3','4','5'].includes(lo)){var keys=['features','pricing','industries','getStarted','demo'];return chatResponses[keys[parseInt(lo)-1]]}var topic=matchTopic(lo);if(topic&&chatResponses[topic])return chatResponses[topic];return'Thanks for your message! I can help you with:\n\n- Our features and what Solis OS does\n- Pricing and plans\n- Industries we support (salons, clinics, garages, etc.)\n- How to get started or sign up\n- Booking a demo\n\nOr message us on WhatsApp for direct help: https://wa.me/447700168964'}
 function sendChat(){var i=document.getElementById('chat-input');var t=i.value.trim();if(!t)return;i.value='';sendChatMsg(t)}
-function sendChatMsg(t){addUserMsg(t);showTyping();fetch(chatAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t,sessionId:chatSid,name:'Visitor'})}).then(function(r){return r.json()}).then(function(d){hideTyping();chatSid=d.sessionId;addBotMsg(d.reply)}).catch(function(){hideTyping();addBotMsg('Sorry, I\'m having trouble connecting. Please try again or contact us via WhatsApp.')})}
+function sendChatMsg(t){addUserMsg(t);setTimeout(function(){addBotMsg(getReply(t))},400)}
 </script>
 
 </body>
