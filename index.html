@@ -1336,7 +1336,7 @@ footer {
           <li>Dedicated account manager</li>
           <li>API access</li>
         </ul>
-        <a href="mailto:support@solis-os.com" class="price-btn price-btn-outline" style="text-decoration:none;">Contact Sales</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('contact-modal').style.display='flex';document.getElementById('contact-form-container').style.display='block';document.getElementById('contact-success').style.display='none';" class="price-btn price-btn-outline" style="text-decoration:none;">Contact Sales</a>
       </div>
     </div>
   </div>
@@ -1396,7 +1396,7 @@ footer {
     <p class="section-subtitle reveal reveal-delay-2" style="text-align:center;margin:18px auto 0;">Every day without Solis OS is money left on the table. Start your free trial today — no credit card required.</p>
     <div class="cta-buttons reveal reveal-delay-3">
       <a href="https://app.solis-os.com/signup" class="btn-primary" style="padding:18px 40px;font-size:16px;">Start Free Trial <span>&rarr;</span></a>
-      <a href="mailto:support@solis-os.com" class="btn-secondary" style="padding:18px 40px;font-size:16px;">Talk to Sales</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('contact-modal').style.display='flex';document.getElementById('contact-form-container').style.display='block';document.getElementById('contact-success').style.display='none';" class="btn-secondary" style="padding:18px 40px;font-size:16px;">Talk to Sales</a>
     </div>
     <div class="cta-urgency reveal reveal-delay-4">
       <strong>Free for 14 days</strong> &mdash; Setup takes under 5 minutes
@@ -1426,7 +1426,7 @@ footer {
         <h4>Company</h4>
         <a href="javascript:void(0)" onclick="document.getElementById('about-modal').style.display='flex'">About</a>
         <a href="https://app.solis-os.com/signup">Get Started</a>
-        <a href="mailto:support@solis-os.com">Contact</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('contact-modal').style.display='flex';document.getElementById('contact-form-container').style.display='block';document.getElementById('contact-success').style.display='none';">Contact</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
@@ -1588,7 +1588,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
 });
 </script>
 
-<!-- Legal Modals -->
+<!-- Legal Modals + Contact Form -->
 <style>
 .legal-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; padding:16px; }
 .legal-modal-content { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); max-width:640px; width:100%; max-height:85vh; overflow-y:auto; overflow-x:hidden; padding:32px; position:relative; word-wrap:break-word; }
@@ -1598,6 +1598,27 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
 .legal-modal-close { position:sticky; top:0; float:right; background:var(--bg-raised); border:1px solid var(--border); color:var(--text); width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; z-index:1; }
 .legal-modal-close:hover { background:var(--border); }
 @media(max-width:480px) { .legal-modal-content { padding:20px; } .legal-modal-content h2 { font-size:18px; } }
+.contact-form { display:flex; flex-direction:column; gap:16px; margin-top:20px; }
+.contact-form label { font-family:var(--font-display); font-size:13px; font-weight:600; color:var(--text); display:flex; flex-direction:column; gap:6px; }
+.contact-form input, .contact-form textarea, .contact-form select {
+  background:var(--bg-raised); border:1px solid var(--border); border-radius:10px;
+  padding:12px 16px; color:var(--text); font-family:var(--font-body); font-size:14px;
+  outline:none; transition:border-color 0.25s;
+}
+.contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus { border-color:var(--accent); }
+.contact-form textarea { min-height:100px; resize:vertical; }
+.contact-form select option { background:var(--bg-card); color:var(--text); }
+.contact-submit {
+  font-family:var(--font-display); font-size:15px; font-weight:700;
+  background:linear-gradient(135deg, var(--accent), #6366f1); color:#fff; border:none;
+  padding:14px 28px; border-radius:12px; cursor:pointer; transition:all 0.3s;
+  box-shadow:0 4px 20px rgba(59,130,246,0.25);
+}
+.contact-submit:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(59,130,246,0.4); }
+.contact-success { text-align:center; padding:40px 20px; }
+.contact-success-icon { font-size:48px; margin-bottom:16px; display:block; }
+.contact-success h3 { font-family:var(--font-display); font-size:22px; font-weight:700; color:var(--text); margin-bottom:12px; }
+.contact-success p { font-size:15px; color:var(--text-secondary); line-height:1.7; }
 </style>
 
 <div id="privacy-modal" class="legal-modal" onclick="this.style.display='none'">
@@ -1678,6 +1699,59 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     <p>Have questions? Reach out at <a href="mailto:support@solis-os.com" style="color:var(--accent-bright);">support@solis-os.com</a></p>
   </div>
 </div>
+
+<div id="contact-modal" class="legal-modal" onclick="this.style.display='none'">
+  <div class="legal-modal-content" onclick="event.stopPropagation()" style="max-width:480px;">
+    <button class="legal-modal-close" onclick="this.closest('.legal-modal').style.display='none'">&times;</button>
+    <h2>Talk to Our Team</h2>
+    <p style="color:var(--text-secondary);margin-bottom:4px;">Tell us about your business and we'll show you how Solis OS can help you grow.</p>
+    <div id="contact-form-container">
+      <form class="contact-form" id="contactForm" onsubmit="return handleContactSubmit(event)">
+        <label>Your Name
+          <input type="text" name="name" placeholder="John Smith" required>
+        </label>
+        <label>Email Address
+          <input type="email" name="email" placeholder="john@example.com" required>
+        </label>
+        <label>Business Type
+          <select name="business">
+            <option value="">Select your industry</option>
+            <option value="salon">Salon / Spa</option>
+            <option value="garage">Garage / Auto Repair</option>
+            <option value="clinic">Clinic / Medical Practice</option>
+            <option value="other">Other Service Business</option>
+          </select>
+        </label>
+        <label>Message
+          <textarea name="message" placeholder="Tell us about your business and what you need help with..."></textarea>
+        </label>
+        <button type="submit" class="contact-submit">Send Message &rarr;</button>
+      </form>
+    </div>
+    <div id="contact-success" class="contact-success" style="display:none;">
+      <span class="contact-success-icon">&#10003;</span>
+      <h3>Message Received!</h3>
+      <p>Thank you for your interest in Solis OS. Our team will get back to you within 24 hours. In the meantime, feel free to start your free trial!</p>
+      <a href="https://app.solis-os.com/signup" class="contact-submit" style="display:inline-block;text-decoration:none;margin-top:20px;">Start Free Trial &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function handleContactSubmit(e) {
+  e.preventDefault();
+  var form = document.getElementById('contactForm');
+  var data = new FormData(form);
+  var entries = [];
+  data.forEach(function(v, k) { if(v) entries.push(k + ': ' + v); });
+  var stored = JSON.parse(localStorage.getItem('solis_contacts') || '[]');
+  stored.push({ time: new Date().toISOString(), data: Object.fromEntries(data) });
+  localStorage.setItem('solis_contacts', JSON.stringify(stored));
+  document.getElementById('contact-form-container').style.display = 'none';
+  document.getElementById('contact-success').style.display = 'block';
+  return false;
+}
+</script>
 
 </body>
 </html>
