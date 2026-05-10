@@ -276,6 +276,14 @@ nav {
   backdrop-filter: blur(10px);
 }
 .btn-secondary:hover { border-color: rgba(255,255,255,0.25); color: var(--text); background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+.btn-talk-sales {
+  font-family: var(--font-display); font-size: 15px; font-weight: 600;
+  background: linear-gradient(135deg, rgba(201,160,64,0.15), rgba(201,160,64,0.08)); color: var(--gold-light); border: 1px solid rgba(201,160,64,0.3);
+  padding: 16px 32px; border-radius: 12px; cursor: pointer; transition: all 0.3s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(10px);
+}
+.btn-talk-sales:hover { border-color: rgba(201,160,64,0.6); color: #fff; background: linear-gradient(135deg, rgba(201,160,64,0.25), rgba(201,160,64,0.15)); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(201,160,64,0.2); }
 
 .social-proof {
   display: flex; align-items: center; gap: 14px; margin-top: 36px;
@@ -894,6 +902,10 @@ footer {
           <a href="#dashboard" class="btn-secondary">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 5.5L10.5 8L6.5 10.5V5.5Z" fill="currentColor"/></svg>
             See It In Action
+          </a>
+          <a href="javascript:void(0)" onclick="toggleChat()" class="btn-talk-sales">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" fill="currentColor"/></svg>
+            Talk to Sales
           </a>
         </div>
         <div class="social-proof reveal reveal-delay-4">
