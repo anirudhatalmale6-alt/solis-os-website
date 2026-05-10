@@ -1424,7 +1424,7 @@ footer {
       </div>
       <div class="footer-col">
         <h4>Company</h4>
-        <a href="#about-section" onclick="document.getElementById('about-section')?.scrollIntoView({behavior:'smooth'});return false;">About</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('about-modal').style.display='flex'">About</a>
         <a href="https://app.solis-os.com/signup">Get Started</a>
         <a href="mailto:support@solis-os.com">Contact</a>
       </div>
@@ -1659,6 +1659,23 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     <p>You can control cookies through your browser settings. Disabling essential cookies may affect the functionality of the service. Most browsers allow you to block or delete cookies.</p>
     <h3>4. Third-Party Cookies</h3>
     <p>We do not use third-party advertising cookies. Analytics services may set their own cookies subject to their privacy policies.</p>
+  </div>
+</div>
+
+<div id="about-modal" class="legal-modal" onclick="this.style.display='none'">
+  <div class="legal-modal-content" onclick="event.stopPropagation()">
+    <button class="legal-modal-close" onclick="this.closest('.legal-modal').style.display='none'">&times;</button>
+    <h2>About Solis OS</h2>
+    <h3>Our Mission</h3>
+    <p>Solis OS was built with one goal: to give every service business the same AI-powered tools that only large corporations could afford. We believe salons, garages, clinics, and local businesses deserve intelligent software that works as hard as they do.</p>
+    <h3>What We Do</h3>
+    <p>We provide an all-in-one business operating system that combines smart bookings, customer CRM, payment processing, analytics, and AI-powered WhatsApp automation into a single platform. No more juggling between apps, spreadsheets, and phone calls.</p>
+    <h3>Our AI Advantage</h3>
+    <p>Our AI assistant handles customer inquiries 24/7, books appointments automatically, sends personalized follow-ups, and provides actionable business insights. It learns your business patterns and helps you make smarter decisions every day.</p>
+    <h3>Built for Growth</h3>
+    <p>Whether you're a solo operator or managing multiple locations, Solis OS scales with you. Over 600 businesses across multiple industries trust our platform to run their daily operations and grow their revenue.</p>
+    <h3>Contact Us</h3>
+    <p>Have questions? Reach out at <a href="mailto:support@solis-os.com" style="color:var(--accent-bright);">support@solis-os.com</a></p>
   </div>
 </div>
 
