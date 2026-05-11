@@ -569,6 +569,9 @@ nav {
   transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
 }
 .ai-step.visible { opacity: 1; transform: translateX(0); }
+.ai-step.demo-step-click { cursor: pointer; opacity: 0.5; transform: none; transition: opacity 0.35s; }
+.ai-step.demo-step-click:hover { opacity: 0.85; }
+.demo-screen { transition: opacity 0.35s; flex-direction: column; gap: 14px; }
 .ai-step-num {
   width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
@@ -1153,53 +1156,117 @@ footer {
   </div>
 </section>
 
-<!-- AI DEMO -->
+<!-- HOW IT WORKS DEMO -->
 <section class="ai-demo" id="ai-demo">
   <div class="container">
-    <div class="reveal"><span class="section-label">AI Automation</span></div>
-    <h2 class="section-title reveal reveal-delay-1">Your AI receptionist<br>never sleeps.</h2>
-    <p class="section-subtitle reveal reveal-delay-2">Watch how Solis OS handles a customer inquiry on WhatsApp — automatically, intelligently, instantly.</p>
+    <div class="reveal"><span class="section-label">How It Works</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Build your platform<br>in 5 minutes.</h2>
+    <p class="section-subtitle reveal reveal-delay-2">See how business owners set up their booking system — from sign up to first customer booking.</p>
     <div class="ai-demo-content">
       <div class="ai-demo-phone reveal">
-        <div class="phone-screen">
-          <div class="phone-header">
-            <div class="phone-avatar">S</div>
+        <div class="phone-screen" style="padding:0;overflow:hidden;">
+          <div class="phone-header" style="background:linear-gradient(135deg,#0c0e15,#161929);padding:16px 20px;">
+            <div class="phone-avatar" style="background:linear-gradient(135deg,#3b82f6,#6366f1);font-size:14px;">S</div>
             <div class="phone-contact">
-              <div class="phone-contact-name">Luxe Salon</div>
-              <div class="phone-contact-status">Online &mdash; AI Assistant</div>
+              <div class="phone-contact-name" style="font-size:15px;">Solis OS Setup</div>
+              <div class="phone-contact-status" style="color:#22c55e;">Step <span id="demoStepNum">1</span> of 4</div>
             </div>
           </div>
-          <div class="phone-messages" id="chatMessages">
-            <div class="msg msg-customer" id="msg1">Hi, do you have any availability for a haircut tomorrow?</div>
-            <div class="msg msg-ai" id="msg2">
-              <div class="msg-typing"><span></span><span></span><span></span></div>
+          <div id="demoScreens" style="padding:20px;min-height:340px;display:flex;flex-direction:column;gap:14px;">
+            <div class="demo-screen active" id="demoScreen1">
+              <div style="font-weight:600;font-size:15px;margin-bottom:12px;color:#f0f0f3;">Choose your industry</div>
+              <div class="demo-option selected" style="padding:12px 16px;border-radius:10px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">&#9988;</span><span style="font-size:14px;color:#f0f0f3;">Salon Beauty & Hair</span>
+              </div>
+              <div class="demo-option" style="padding:12px 16px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">&#9986;</span><span style="font-size:14px;color:#8a8f9e;">Barber Shop</span>
+              </div>
+              <div class="demo-option" style="padding:12px 16px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">&#128295;</span><span style="font-size:14px;color:#8a8f9e;">Garage Mechanic</span>
+              </div>
+              <div class="demo-option" style="padding:12px 16px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">&#127968;</span><span style="font-size:14px;color:#8a8f9e;">Real Estate Agent</span>
+              </div>
             </div>
-            <div class="msg msg-ai" id="msg3" style="display:none">Hi! Yes, we have slots available tomorrow:<br><br>&#8226; 10:00 AM &mdash; with Sarah<br>&#8226; 2:30 PM &mdash; with James<br>&#8226; 4:00 PM &mdash; with Sarah<br><br>Would you like to book one?<div class="msg-time">AI Assistant</div></div>
-            <div class="msg msg-customer" id="msg4" style="display:none">2:30 with James please!</div>
-            <div class="msg msg-ai" id="msg5" style="display:none">Done! You're booked with James tomorrow at 2:30 PM.<br><br>You'll receive a reminder 1 hour before. See you then!<div class="msg-time">AI Assistant</div></div>
+            <div class="demo-screen" id="demoScreen2" style="display:none;">
+              <div style="font-weight:600;font-size:15px;margin-bottom:12px;color:#f0f0f3;">Your services are ready</div>
+              <div style="font-size:12px;color:#8a8f9e;margin-bottom:14px;">Pre-loaded for your industry. Customize anytime.</div>
+              <div style="padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:6px;display:flex;justify-content:space-between;">
+                <span style="font-size:13px;color:#f0f0f3;">Haircut & Blow Dry</span><span style="font-size:13px;color:#3b82f6;">$45 &middot; 60 min</span>
+              </div>
+              <div style="padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:6px;display:flex;justify-content:space-between;">
+                <span style="font-size:13px;color:#f0f0f3;">Hair Coloring</span><span style="font-size:13px;color:#3b82f6;">$85 &middot; 120 min</span>
+              </div>
+              <div style="padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:6px;display:flex;justify-content:space-between;">
+                <span style="font-size:13px;color:#f0f0f3;">Highlights</span><span style="font-size:13px;color:#3b82f6;">$95 &middot; 90 min</span>
+              </div>
+              <div style="padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);margin-bottom:6px;display:flex;justify-content:space-between;">
+                <span style="font-size:13px;color:#f0f0f3;">Manicure & Pedicure</span><span style="font-size:13px;color:#3b82f6;">$50 &middot; 60 min</span>
+              </div>
+            </div>
+            <div class="demo-screen" id="demoScreen3" style="display:none;">
+              <div style="font-weight:600;font-size:15px;margin-bottom:12px;color:#f0f0f3;">Share your booking link</div>
+              <div style="font-size:12px;color:#8a8f9e;margin-bottom:14px;">Customers scan the QR code or tap the link to book instantly.</div>
+              <div style="text-align:center;padding:16px;">
+                <div style="width:120px;height:120px;margin:0 auto 14px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;">
+                  <svg width="100" height="100" viewBox="0 0 100 100"><rect x="5" y="5" width="25" height="25" fill="#111" rx="3"/><rect x="10" y="10" width="15" height="15" fill="white" rx="2"/><rect x="13" y="13" width="9" height="9" fill="#111" rx="1"/><rect x="70" y="5" width="25" height="25" fill="#111" rx="3"/><rect x="75" y="10" width="15" height="15" fill="white" rx="2"/><rect x="78" y="13" width="9" height="9" fill="#111" rx="1"/><rect x="5" y="70" width="25" height="25" fill="#111" rx="3"/><rect x="10" y="75" width="15" height="15" fill="white" rx="2"/><rect x="13" y="78" width="9" height="9" fill="#111" rx="1"/><rect x="35" y="5" width="8" height="8" fill="#111" rx="1"/><rect x="35" y="18" width="8" height="8" fill="#111" rx="1"/><rect x="48" y="5" width="8" height="8" fill="#111" rx="1"/><rect x="35" y="35" width="8" height="8" fill="#111" rx="1"/><rect x="5" y="35" width="8" height="8" fill="#111" rx="1"/><rect x="5" y="48" width="8" height="8" fill="#111" rx="1"/><rect x="18" y="48" width="8" height="8" fill="#111" rx="1"/><rect x="48" y="35" width="8" height="8" fill="#111" rx="1"/><rect x="35" y="48" width="8" height="8" fill="#111" rx="1"/><rect x="48" y="48" width="8" height="8" fill="#111" rx="1"/><rect x="70" y="35" width="8" height="8" fill="#111" rx="1"/><rect x="83" y="35" width="8" height="8" fill="#111" rx="1"/><rect x="70" y="48" width="8" height="8" fill="#111" rx="1"/><rect x="83" y="48" width="8" height="8" fill="#111" rx="1"/><rect x="70" y="70" width="8" height="8" fill="#111" rx="1"/><rect x="83" y="70" width="8" height="8" fill="#111" rx="1"/><rect x="70" y="83" width="8" height="8" fill="#111" rx="1"/><rect x="83" y="83" width="8" height="8" fill="#111" rx="1"/><rect x="35" y="70" width="8" height="8" fill="#111" rx="1"/><rect x="48" y="70" width="8" height="8" fill="#111" rx="1"/><rect x="48" y="83" width="8" height="8" fill="#111" rx="1"/></svg>
+                </div>
+                <div style="font-size:13px;color:#3b82f6;word-break:break-all;">app.solis-os.com/book/luxe-salon</div>
+                <div style="margin-top:12px;font-size:12px;color:#8a8f9e;">Print this QR code for your shop front door</div>
+              </div>
+            </div>
+            <div class="demo-screen" id="demoScreen4" style="display:none;">
+              <div style="font-weight:600;font-size:15px;margin-bottom:12px;color:#f0f0f3;">Bookings start coming in</div>
+              <div style="font-size:12px;color:#8a8f9e;margin-bottom:14px;">Your dashboard updates in real-time.</div>
+              <div style="padding:12px 14px;border-radius:10px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.15);margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;font-weight:500;color:#f0f0f3;">Sarah M.</span><span style="font-size:12px;color:#22c55e;">Confirmed</span>
+                </div>
+                <div style="font-size:12px;color:#8a8f9e;">Haircut & Blow Dry &middot; Tomorrow 10:00 AM</div>
+              </div>
+              <div style="padding:12px 14px;border-radius:10px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;font-weight:500;color:#f0f0f3;">James R.</span><span style="font-size:12px;color:#3b82f6;">New Booking</span>
+                </div>
+                <div style="font-size:12px;color:#8a8f9e;">Hair Coloring &middot; Friday 2:30 PM</div>
+              </div>
+              <div style="padding:12px 14px;border-radius:10px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.15);">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;font-weight:500;color:#f0f0f3;">Emma L.</span><span style="font-size:12px;color:#22c55e;">Confirmed</span>
+                </div>
+                <div style="font-size:12px;color:#8a8f9e;">Manicure & Pedicure &middot; Saturday 11:00 AM</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div class="ai-demo-steps">
-        <div class="ai-step" id="step1">
+        <div class="ai-step demo-step-click" id="step1" onclick="showDemoStep(1)">
           <div class="ai-step-num active">1</div>
           <div>
-            <h4>Customer messages on WhatsApp</h4>
-            <p>No app download needed. Customers use the WhatsApp they already have. The AI understands natural language in any format.</p>
+            <h4>Register your business</h4>
+            <p>Pick your industry and Solis OS loads services, pricing, and settings tailored to your business type. Ready in 30 seconds.</p>
           </div>
         </div>
-        <div class="ai-step" id="step2">
+        <div class="ai-step demo-step-click" id="step2" onclick="showDemoStep(2)">
           <div class="ai-step-num">2</div>
           <div>
-            <h4>AI checks real-time availability</h4>
-            <p>Solis OS cross-references staff schedules, existing bookings, service duration, and business rules — in milliseconds.</p>
+            <h4>Services auto-configured</h4>
+            <p>Your services come pre-loaded with realistic prices and durations. Add, remove, or customize anything. Add your team members too.</p>
           </div>
         </div>
-        <div class="ai-step" id="step3">
+        <div class="ai-step demo-step-click" id="step3" onclick="showDemoStep(3)">
           <div class="ai-step-num">3</div>
           <div>
-            <h4>Appointment booked automatically</h4>
-            <p>Calendar updated, confirmation sent, reminder scheduled. The dashboard reflects the change instantly. Zero human intervention.</p>
+            <h4>Share your booking link</h4>
+            <p>Get your unique booking page and QR code. Print the QR for your shop front, share the link on social media, or send it to customers.</p>
+          </div>
+        </div>
+        <div class="ai-step demo-step-click" id="step4" onclick="showDemoStep(4)">
+          <div class="ai-step-num">4</div>
+          <div>
+            <h4>Bookings start flowing in</h4>
+            <p>Customers book online 24/7. Your calendar fills up automatically. AI manages availability, sends reminders, and prevents double-bookings.</p>
           </div>
         </div>
       </div>
@@ -1526,52 +1593,49 @@ var counterObs = new IntersectionObserver(function(entries) {
 }, { threshold: 0.5 });
 document.querySelectorAll('.stat-number[data-target]').forEach(function(el) { counterObs.observe(el); });
 
-// WhatsApp chat animation
-var chatAnimated = false;
-var chatObs = new IntersectionObserver(function(entries) {
+// Demo step switcher
+var currentDemoStep = 1;
+var demoAutoTimer = null;
+
+function showDemoStep(n) {
+  currentDemoStep = n;
+  for (var i = 1; i <= 4; i++) {
+    var screen = document.getElementById('demoScreen' + i);
+    var step = document.getElementById('step' + i);
+    var num = step.querySelector('.ai-step-num');
+    if (i === n) {
+      screen.style.display = 'flex';
+      screen.style.opacity = '1';
+      num.classList.add('active');
+      step.style.opacity = '1';
+    } else {
+      screen.style.display = 'none';
+      screen.style.opacity = '0';
+      num.classList.remove('active');
+      step.style.opacity = '0.5';
+    }
+  }
+  document.getElementById('demoStepNum').textContent = n;
+  resetDemoTimer();
+}
+
+function resetDemoTimer() {
+  if (demoAutoTimer) clearInterval(demoAutoTimer);
+  demoAutoTimer = setInterval(function() {
+    currentDemoStep = currentDemoStep >= 4 ? 1 : currentDemoStep + 1;
+    showDemoStep(currentDemoStep);
+  }, 3500);
+}
+
+var demoObs = new IntersectionObserver(function(entries) {
   entries.forEach(function(e) {
-    if (e.isIntersecting && !chatAnimated) {
-      chatAnimated = true;
-      var m1 = document.getElementById('msg1');
-      var m2 = document.getElementById('msg2');
-      var m3 = document.getElementById('msg3');
-      var m4 = document.getElementById('msg4');
-      var m5 = document.getElementById('msg5');
-      var s1 = document.getElementById('step1');
-      var s2 = document.getElementById('step2');
-      var s3 = document.getElementById('step3');
-
-      m1.classList.add('visible');
-      s1.classList.add('visible');
-      s1.querySelector('.ai-step-num').classList.add('active');
-
-      setTimeout(function() {
-        m2.classList.add('visible');
-        s2.classList.add('visible');
-        s2.querySelector('.ai-step-num').classList.add('active');
-      }, 1200);
-
-      setTimeout(function() {
-        m2.style.display = 'none';
-        m3.style.display = 'block';
-        setTimeout(function() { m3.classList.add('visible'); }, 50);
-      }, 2800);
-
-      setTimeout(function() {
-        m4.style.display = 'block';
-        setTimeout(function() { m4.classList.add('visible'); }, 50);
-      }, 4000);
-
-      setTimeout(function() {
-        m5.style.display = 'block';
-        setTimeout(function() { m5.classList.add('visible'); }, 50);
-        s3.classList.add('visible');
-        s3.querySelector('.ai-step-num').classList.add('active');
-      }, 5200);
+    if (e.isIntersecting) {
+      showDemoStep(1);
+      demoObs.unobserve(e.target);
     }
   });
-}, { threshold: 0.3 });
-chatObs.observe(document.getElementById('chatMessages'));
+}, { threshold: 0.2 });
+demoObs.observe(document.getElementById('demoScreens'));
 
 // Mobile nav
 document.querySelector('.nav-mobile-toggle').addEventListener('click', function() {
