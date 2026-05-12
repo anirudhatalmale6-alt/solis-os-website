@@ -237,6 +237,43 @@ section{position:relative;z-index:1}
 .footer-links a{font-size:13px;color:var(--text3);transition:color 0.3s}
 .footer-links a:hover{color:var(--text)}
 
+/* ── WHATSAPP DEMO ── */
+.wa-demo{padding:80px 0 100px;position:relative}
+.wa-demo::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,transparent,rgba(37,211,102,0.02) 30%,rgba(37,211,102,0.02) 70%,transparent);pointer-events:none}
+.wa-demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.wa-demo-content{max-width:480px}
+.wa-demo-content h2{font-family:var(--font-display);font-size:clamp(28px,3.5vw,42px);font-weight:800;line-height:1.15;margin-bottom:16px}
+.wa-demo-content h2 .wa-gradient{background:linear-gradient(135deg,#25D366,#128C7E);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.wa-demo-content p{font-size:16px;color:var(--text2);line-height:1.7;margin-bottom:24px}
+.wa-demo-features{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.wa-demo-feat{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text2)}
+.wa-demo-feat .wa-check{width:22px;height:22px;border-radius:50%;background:rgba(37,211,102,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#25D366;font-size:12px}
+.wa-phone{width:320px;margin:0 auto;background:#0b141a;border-radius:28px;border:2px solid rgba(255,255,255,0.08);overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,0.5)}
+.wa-phone-header{background:#1f2c34;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.wa-phone-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000}
+.wa-phone-name{font-size:14px;font-weight:600;color:#fff}
+.wa-phone-status{font-size:11px;color:#8696a0}
+.wa-chat{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:340px;background:#0b141a url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat}
+.wa-msg{max-width:82%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.5;position:relative;opacity:0;animation:waFadeIn 0.4s ease forwards}
+.wa-msg-in{background:#1f2c34;color:#e9edef;align-self:flex-start;border-top-left-radius:2px}
+.wa-msg-out{background:#005c4b;color:#e9edef;align-self:flex-end;border-top-right-radius:2px}
+.wa-msg-time{font-size:10px;color:#8696a0;text-align:right;margin-top:4px}
+.wa-msg-ai{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#25D366;font-weight:500;margin-bottom:2px}
+@keyframes waFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.wa-msg:nth-child(1){animation-delay:0.3s}
+.wa-msg:nth-child(2){animation-delay:1.2s}
+.wa-msg:nth-child(3){animation-delay:2.1s}
+.wa-msg:nth-child(4){animation-delay:3s}
+.wa-msg:nth-child(5){animation-delay:3.9s}
+.wa-msg:nth-child(6){animation-delay:4.8s}
+.wa-msg:nth-child(7){animation-delay:5.7s}
+.wa-typing{align-self:flex-start;padding:12px 16px;background:#1f2c34;border-radius:10px;display:flex;gap:4px;opacity:0;animation:waFadeIn 0.3s ease 1.8s forwards,waFadeOut 0.3s ease 2s forwards}
+@keyframes waFadeOut{to{opacity:0;height:0;padding:0;margin:0;overflow:hidden}}
+.wa-typing span{width:6px;height:6px;border-radius:50%;background:#8696a0;animation:typingBounce 1.4s infinite}
+.wa-typing span:nth-child(2){animation-delay:0.2s}
+.wa-typing span:nth-child(3){animation-delay:0.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
 /* ── SCROLL ANIMATIONS ── */
 .reveal{opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
@@ -254,8 +291,13 @@ section{position:relative;z-index:1}
   .hero-visual{max-width:560px;margin:0 auto}
   .features-grid,.ind-grid,.test-grid{grid-template-columns:repeat(2,1fr)}
   .how-step::after{display:none}
+  .wa-demo-grid{grid-template-columns:1fr 1fr;gap:40px}
 }
 @media(max-width:768px){
+  .wa-demo-grid{grid-template-columns:1fr;text-align:center}
+  .wa-demo-content{margin:0 auto}
+  .wa-demo-features{align-items:center}
+  .wa-phone{width:280px}
   .nav-links{display:none}
   .mobile-toggle{display:block}
   .mobile-menu.open{display:flex}
@@ -516,6 +558,73 @@ section{position:relative;z-index:1}
         <div class="feature-name">Marketing Campaigns</div>
         <div class="feature-desc">Create and schedule WhatsApp, SMS, and email campaigns. Target specific customer segments with pre-built templates.</div>
         <div class="feature-tags"><span class="feature-tag">Broadcast</span><span class="feature-tag">Templates</span><span class="feature-tag">Segments</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WhatsApp AI Demo -->
+<section class="wa-demo" id="whatsapp-demo">
+  <div class="container">
+    <div class="wa-demo-grid">
+      <div class="wa-demo-content reveal">
+        <div class="section-label" style="text-align:left;margin-bottom:16px">&#x1F916; AI WhatsApp</div>
+        <h2>Your 24/7 AI Receptionist on <span class="wa-gradient">WhatsApp</span></h2>
+        <p>Every Solis OS subscriber gets their own AI-powered WhatsApp assistant. It handles customer messages, confirms bookings, sends reminders, and recovers no-shows — while you sleep.</p>
+        <div class="wa-demo-features">
+          <div class="wa-demo-feat"><div class="wa-check">&#x2713;</div> Confirms bookings instantly via WhatsApp</div>
+          <div class="wa-demo-feat"><div class="wa-check">&#x2713;</div> Sends automatic appointment reminders</div>
+          <div class="wa-demo-feat"><div class="wa-check">&#x2713;</div> Answers customer questions 24/7</div>
+          <div class="wa-demo-feat"><div class="wa-check">&#x2713;</div> Recovers cancelled and no-show clients</div>
+          <div class="wa-demo-feat"><div class="wa-check">&#x2713;</div> Works in any language automatically</div>
+          <div class="wa-demo-feat"><div class="wa-check">&#x2713;</div> Connects to YOUR WhatsApp Business number</div>
+        </div>
+        <a href="https://app.solis-os.com" class="btn-gold" style="display:inline-flex">Try It Free <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="reveal reveal-delay-2" style="display:flex;justify-content:center">
+        <div class="wa-phone">
+          <div class="wa-phone-header">
+            <div class="wa-phone-avatar">S</div>
+            <div>
+              <div class="wa-phone-name">Solis AI Assistant</div>
+              <div class="wa-phone-status">online</div>
+            </div>
+          </div>
+          <div class="wa-chat">
+            <div class="wa-msg wa-msg-in">
+              Hi, I'd like to book a haircut for tomorrow afternoon please
+              <div class="wa-msg-time">2:34 PM</div>
+            </div>
+            <div class="wa-typing"><span></span><span></span><span></span></div>
+            <div class="wa-msg wa-msg-out">
+              <div class="wa-msg-ai">&#x2728; AI Assistant</div>
+              Hi there! I'd love to help you book. We have these slots available tomorrow afternoon:
+              <br><br>&#x1F551; 1:00 PM - with Sarah<br>&#x1F554; 2:30 PM - with Mike<br>&#x1F555; 4:00 PM - with Sarah
+              <br><br>Which works best for you?
+              <div class="wa-msg-time">2:34 PM</div>
+            </div>
+            <div class="wa-msg wa-msg-in">
+              2:30 with Mike sounds perfect
+              <div class="wa-msg-time">2:35 PM</div>
+            </div>
+            <div class="wa-msg wa-msg-out">
+              <div class="wa-msg-ai">&#x2728; AI Assistant</div>
+              Booked! Here are your details:
+              <br><br>&#x2705; <b>Haircut</b> with Mike<br>&#x1F4C5; Tomorrow at 2:30 PM<br>&#x1F4CD; 123 Main Street
+              <br><br>You'll get a reminder 2 hours before. Need to reschedule? Just message me anytime!
+              <div class="wa-msg-time">2:35 PM</div>
+            </div>
+            <div class="wa-msg wa-msg-in">
+              That was so easy, thanks!
+              <div class="wa-msg-time">2:35 PM</div>
+            </div>
+            <div class="wa-msg wa-msg-out">
+              <div class="wa-msg-ai">&#x2728; AI Assistant</div>
+              You're welcome! See you tomorrow &#x1F44B;
+              <div class="wa-msg-time">2:36 PM</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
