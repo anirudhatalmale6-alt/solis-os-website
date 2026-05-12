@@ -263,10 +263,35 @@ section{position:relative;z-index:1}
   .features-grid,.how-grid,.ind-grid,.pricing-grid,.test-grid{grid-template-columns:1fr}
   .trust-inner{flex-direction:column;gap:20px;padding:20px}
   .trust-divider{width:60px;height:1px}
+  .trust-industries{flex-wrap:wrap;justify-content:center}
   .hero{padding:100px 0 60px;min-height:auto}
+  .hero-title{font-size:32px}
+  .hero-sub{font-size:15px}
+  .hero-actions{flex-direction:column;align-items:center;gap:12px}
+  .btn-gold,.btn-ghost{width:100%;justify-content:center;text-align:center}
+  .mockup{padding:14px}
   .mockup-stats{grid-template-columns:1fr}
-  .hero-title{font-size:36px}
+  .mockup-stat{padding:10px}
+  .mockup-stat-value{font-size:18px}
+  .section-title{font-size:28px}
+  .section-desc{font-size:15px}
+  .feature-card{padding:24px 20px}
+  .how-step::before{font-size:48px}
+  .ind-card{padding:28px 20px}
+  .price-card{padding:28px 20px}
   .price-card.featured{margin-top:16px}
+  .price-amount{font-size:40px}
+  .test-card{padding:20px}
+  .cta-title{font-size:28px}
+  .footer-inner{flex-direction:column;text-align:center;gap:12px}
+  .footer-links{justify-content:center}
+  .container{padding:0 16px}
+}
+@media(max-width:480px){
+  .hero-title{font-size:28px}
+  .section-title{font-size:24px}
+  .nav-inner{padding:0 16px}
+  .nav-logo span{font-size:17px}
 }
 </style>
 </head>
@@ -553,17 +578,20 @@ section{position:relative;z-index:1}
     <div class="section-header reveal">
       <div class="section-label">&#x1F4B0; Pricing</div>
       <h2 class="section-title">Simple, Transparent Pricing</h2>
-      <p class="section-desc">Start free. Upgrade when you're ready. No hidden fees, no contracts, cancel anytime.</p>
+      <p class="section-desc">Choose the plan that fits your business. No hidden fees, no contracts, cancel anytime.</p>
     </div>
     <div class="pricing-grid">
       <div class="price-card reveal reveal-delay-1">
         <div class="price-tier">Starter</div>
-        <div class="price-amount"><span class="currency">$</span>0</div>
-        <div class="price-period">Free forever</div>
+        <div class="price-amount"><span class="currency">$</span>13<span style="font-size:28px">.99</span></div>
+        <div class="price-period">per month</div>
         <ul class="price-features">
-          <li>Up to 50 bookings/month</li>
-          <li>Basic CRM</li>
+          <li>Up to 100 bookings/month</li>
           <li>Public booking page</li>
+          <li>Customer CRM (up to 200)</li>
+          <li>Basic invoicing</li>
+          <li>Appointment reminders</li>
+          <li>Digital waitlist</li>
           <li>Email support</li>
         </ul>
         <a href="https://app.solis-os.com" class="price-btn outline">Get Started</a>
@@ -574,10 +602,14 @@ section{position:relative;z-index:1}
         <div class="price-period">per month</div>
         <ul class="price-features">
           <li>Unlimited bookings</li>
-          <li>AI WhatsApp assistant</li>
-          <li>Invoicing &amp; payments</li>
-          <li>Loyalty &amp; gift cards</li>
+          <li>AI WhatsApp assistant (24/7)</li>
+          <li>Full CRM with loyalty scores</li>
+          <li>Invoicing &amp; payment tracking</li>
+          <li>Loyalty programs &amp; gift cards</li>
+          <li>Promotions &amp; discount codes</li>
           <li>Analytics &amp; AI insights</li>
+          <li>Custom forms &amp; surveys</li>
+          <li>Recurring appointments</li>
           <li>Priority support</li>
         </ul>
         <a href="https://app.solis-os.com" class="price-btn gold">Start Free Trial</a>
@@ -588,11 +620,13 @@ section{position:relative;z-index:1}
         <div class="price-period">per month</div>
         <ul class="price-features">
           <li>Everything in Professional</li>
-          <li>Multi-location support</li>
-          <li>Team management</li>
-          <li>Custom branding</li>
-          <li>API access</li>
+          <li>Multi-location management</li>
+          <li>Team &amp; staff scheduling</li>
+          <li>Custom branding &amp; white-label</li>
+          <li>Advanced revenue reports</li>
+          <li>API access &amp; integrations</li>
           <li>Dedicated account manager</li>
+          <li>Phone &amp; live chat support</li>
         </ul>
         <a href="https://app.solis-os.com" class="price-btn outline">Contact Sales</a>
       </div>
