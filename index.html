@@ -195,7 +195,6 @@ section{position:relative;z-index:1}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto}
 .price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px 28px;text-align:center;transition:all 0.4s;position:relative}
 .price-card.featured{border-color:var(--gold);background:linear-gradient(180deg,rgba(201,160,64,0.06),var(--bg2))}
-.price-card.featured::before{content:'MOST POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:4px 16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-size:11px;font-weight:700;border-radius:50px;font-family:var(--font-display);letter-spacing:0.5px}
 .price-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 .price-tier{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
 .price-amount{font-family:var(--font-display);font-size:48px;font-weight:800;margin-bottom:4px}
@@ -595,58 +594,38 @@ section{position:relative;z-index:1}
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label">&#x1F4B0; Pricing</div>
-      <h2 class="section-title">Simple, Transparent Pricing</h2>
-      <p class="section-desc">Choose the plan that fits your business. No hidden fees, no contracts, cancel anytime.</p>
+      <h2 class="section-title">One Plan. Everything Included.</h2>
+      <p class="section-desc">No tiers, no limits, no surprises. Get every feature for one simple price. Cancel anytime.</p>
     </div>
-    <div class="pricing-grid">
-      <div class="price-card reveal reveal-delay-1">
-        <div class="price-tier">Starter</div>
-        <div class="price-amount"><span class="currency">$</span>13<span style="font-size:28px">.99</span></div>
+    <div style="max-width:520px;margin:0 auto">
+      <div class="price-card featured reveal" style="border-color:var(--gold);background:linear-gradient(180deg,rgba(201,160,64,0.08),var(--bg2))">
+        <div style="display:inline-block;padding:4px 16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-size:11px;font-weight:700;border-radius:50px;font-family:var(--font-display);letter-spacing:0.5px;margin-bottom:16px">ALL ACCESS</div>
+        <div class="price-amount" style="font-size:64px"><span class="currency">$</span>29</div>
         <div class="price-period">per month</div>
-        <ul class="price-features">
-          <li>Up to 100 bookings/month</li>
-          <li>Public booking page</li>
-          <li>Customer CRM (up to 200)</li>
-          <li>Basic invoicing</li>
-          <li>Appointment reminders</li>
-          <li>Digital waitlist</li>
-          <li>Email support</li>
-        </ul>
-        <a href="https://app.solis-os.com" class="price-btn outline">Get Started</a>
-      </div>
-      <div class="price-card featured reveal reveal-delay-2">
-        <div class="price-tier">Professional</div>
-        <div class="price-amount"><span class="currency">$</span>29</div>
-        <div class="price-period">per month</div>
-        <ul class="price-features">
-          <li>Unlimited bookings</li>
-          <li>AI WhatsApp assistant (24/7)</li>
-          <li>Full CRM with loyalty scores</li>
-          <li>Invoicing &amp; payment tracking</li>
-          <li>Loyalty programs &amp; gift cards</li>
-          <li>Promotions &amp; discount codes</li>
-          <li>Analytics &amp; AI insights</li>
-          <li>Custom forms &amp; surveys</li>
-          <li>Recurring appointments</li>
-          <li>Priority support</li>
-        </ul>
-        <a href="https://app.solis-os.com" class="price-btn gold">Start Free Trial</a>
-      </div>
-      <div class="price-card reveal reveal-delay-3">
-        <div class="price-tier">Enterprise</div>
-        <div class="price-amount"><span class="currency">$</span>79</div>
-        <div class="price-period">per month</div>
-        <ul class="price-features">
-          <li>Everything in Professional</li>
-          <li>Multi-location management</li>
-          <li>Team &amp; staff scheduling</li>
-          <li>Custom branding &amp; white-label</li>
-          <li>Advanced revenue reports</li>
-          <li>API access &amp; integrations</li>
-          <li>Dedicated account manager</li>
-          <li>Phone &amp; live chat support</li>
-        </ul>
-        <a href="https://app.solis-os.com" class="price-btn outline">Contact Sales</a>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left;margin:24px 0">
+          <ul class="price-features" style="margin:0">
+            <li>Unlimited bookings</li>
+            <li>AI WhatsApp assistant</li>
+            <li>Full customer CRM</li>
+            <li>Invoicing &amp; payments</li>
+            <li>Expense tracking</li>
+            <li>Financial reports</li>
+            <li>Marketing campaigns</li>
+            <li>Analytics &amp; AI insights</li>
+          </ul>
+          <ul class="price-features" style="margin:0">
+            <li>Loyalty &amp; gift cards</li>
+            <li>Promo codes</li>
+            <li>Custom forms</li>
+            <li>Digital waitlist</li>
+            <li>Recurring appointments</li>
+            <li>Multi-location</li>
+            <li>Team management</li>
+            <li>Cross-device sync</li>
+          </ul>
+        </div>
+        <a href="https://app.solis-os.com" class="price-btn gold" style="font-size:17px;padding:16px">Start Free Trial</a>
+        <div style="margin-top:14px;font-size:13px;color:var(--text3)">No credit card required &middot; 14-day free trial &middot; Cancel anytime</div>
       </div>
     </div>
   </div>
