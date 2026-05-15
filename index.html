@@ -141,6 +141,11 @@ section{position:relative;z-index:1}
 .notif-text{font-size:12px;color:var(--text2)}
 .notif-text strong{color:var(--text);display:block;margin-bottom:1px}
 
+/* ── SECTION BACKGROUNDS ── */
+.sec-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden}
+.sec-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(0.15) saturate(1.1);transition:transform 8s ease}
+.sec-bg::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,var(--bg) 0%,rgba(6,8,16,0.6) 15%,rgba(6,8,16,0.6) 85%,var(--bg) 100%);z-index:1}
+
 /* ── TRUST BAR ── */
 .trust{padding:40px 0 60px;position:relative;z-index:3}
 .trust-inner{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;padding:24px 32px;background:var(--bg2);border:1px solid var(--border);border-radius:16px}
@@ -161,7 +166,7 @@ section{position:relative;z-index:1}
 .section-desc{font-size:17px;color:var(--text2);line-height:1.7}
 
 /* ── FEATURES ── */
-.features{padding:80px 0 100px}
+.features{padding:80px 0 100px;position:relative;overflow:hidden}
 .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0;transition:all 0.4s;position:relative;overflow:hidden}
 .feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity 0.4s;z-index:2}
@@ -188,7 +193,7 @@ section{position:relative;z-index:1}
 .feature-tag{font-size:11px;padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;color:var(--text3)}
 
 /* ── HOW IT WORKS ── */
-.how{padding:80px 0 100px}
+.how{padding:80px 0 100px;position:relative;overflow:hidden}
 .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;counter-reset:step}
 .how-step{text-align:center;counter-increment:step;position:relative}
 .how-step::before{content:counter(step);font-family:var(--font-display);font-size:64px;font-weight:900;background:linear-gradient(135deg,rgba(201,160,64,0.15),rgba(201,160,64,0.03));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;margin-bottom:16px;line-height:1}
@@ -197,7 +202,7 @@ section{position:relative;z-index:1}
 .how-step:not(:last-child)::after{content:'';position:absolute;top:32px;right:-16px;width:32px;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
 
 /* ── INDUSTRIES ── */
-.industries{padding:80px 0 100px}
+.industries{padding:80px 0 100px;position:relative;overflow:hidden}
 .ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .ind-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0;text-align:center;transition:all 0.4s;position:relative;overflow:hidden}
 .ind-card:hover{border-color:rgba(201,160,64,0.3);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
@@ -210,7 +215,7 @@ section{position:relative;z-index:1}
 .ind-desc{font-size:13px;color:var(--text2);line-height:1.6}
 
 /* ── PRICING ── */
-.pricing{padding:80px 0 100px}
+.pricing{padding:80px 0 100px;position:relative;overflow:hidden}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto}
 .price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px 28px;text-align:center;transition:all 0.4s;position:relative}
 .price-card.featured{border-color:var(--gold);background:linear-gradient(180deg,rgba(201,160,64,0.06),var(--bg2))}
@@ -229,7 +234,7 @@ section{position:relative;z-index:1}
 .price-btn.outline:hover{border-color:var(--gold);color:var(--gold)}
 
 /* ── TESTIMONIALS ── */
-.testimonials{padding:80px 0 100px}
+.testimonials{padding:80px 0 100px;position:relative;overflow:hidden}
 .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .test-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;position:relative}
 .test-stars{color:var(--gold2);font-size:14px;letter-spacing:2px;margin-bottom:12px}
@@ -257,7 +262,7 @@ section{position:relative;z-index:1}
 .footer-links a:hover{color:var(--text)}
 
 /* ── WHATSAPP DEMO ── */
-.wa-demo{padding:80px 0 100px;position:relative}
+.wa-demo{padding:80px 0 100px;position:relative;overflow:hidden}
 .wa-demo::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,transparent,rgba(37,211,102,0.02) 30%,rgba(37,211,102,0.02) 70%,transparent);pointer-events:none}
 .wa-demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
 .wa-demo-content{max-width:480px}
@@ -537,6 +542,7 @@ section{position:relative;z-index:1}
 
 <!-- WhatsApp AI Demo -->
 <section class="wa-demo" id="whatsapp-demo">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label" style="background:rgba(37,211,102,0.1);color:#25D366"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg> AI-Powered</div>
@@ -608,6 +614,7 @@ Could you share your name to confirm the booking?</div>
 
 <!-- Features -->
 <section class="features" id="features">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg> Platform</div>
@@ -717,6 +724,7 @@ Could you share your name to confirm the booking?</div>
 
 <!-- How It Works -->
 <section class="how" id="how">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label">&#x26A1; Setup</div>
@@ -742,6 +750,7 @@ Could you share your name to confirm the booking?</div>
 
 <!-- Industries -->
 <section class="industries" id="industries">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Industries</div>
@@ -809,6 +818,7 @@ Could you share your name to confirm the booking?</div>
 
 <!-- Pricing -->
 <section class="pricing" id="pricing">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Pricing</div>
@@ -851,6 +861,7 @@ Could you share your name to confirm the booking?</div>
 
 <!-- Testimonials -->
 <section class="testimonials">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label">&#x2B50; Reviews</div>
@@ -897,6 +908,7 @@ Could you share your name to confirm the booking?</div>
 
 <!-- Final CTA -->
 <section class="final-cta">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="reveal">
       <h2 class="cta-title">Ready to <span class="gradient">Automate</span> Your Business?</h2>
