@@ -143,7 +143,8 @@ section{position:relative;z-index:1}
 .trust-divider{width:1px;height:40px;background:var(--border)}
 .trust-industries{display:flex;align-items:center;gap:24px;overflow:hidden}
 .trust-industry{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:60px}
-.trust-industry-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.trust-industry-icon{width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(201,160,64,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.trust-industry-icon img{width:100%;height:100%;object-fit:cover;display:block}
 .trust-industry-name{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
 
 /* ── SECTION HEADERS ── */
@@ -155,10 +156,15 @@ section{position:relative;z-index:1}
 /* ── FEATURES ── */
 .features{padding:80px 0 100px}
 .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px 28px;transition:all 0.4s;position:relative;overflow:hidden}
-.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity 0.4s}
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0;transition:all 0.4s;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity 0.4s;z-index:2}
 .feature-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 .feature-card:hover::before{opacity:1}
+.feat-img-wrap{overflow:hidden;position:relative;height:140px}
+.feat-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s ease}
+.feature-card:hover .feat-img{transform:scale(1.08)}
+.feat-img-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,var(--bg2));pointer-events:none}
+.feat-content{padding:24px 28px 28px}
 .feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px}
 .feature-icon.booking{background:rgba(59,130,246,0.1);color:var(--blue2)}
 .feature-icon.whatsapp{background:rgba(37,211,102,0.1);color:#25d366}
@@ -322,7 +328,9 @@ section{position:relative;z-index:1}
   .mockup-stat-value{font-size:18px}
   .section-title{font-size:28px}
   .section-desc{font-size:15px}
-  .feature-card{padding:24px 20px}
+  .feature-card{padding:0}
+  .feat-img-wrap{height:120px}
+  .feat-content{padding:20px 20px 24px}
   .how-step::before{font-size:48px}
   .ind-card{padding:0}
   .ind-img-wrap{height:160px}
@@ -508,11 +516,11 @@ section{position:relative;z-index:1}
       </div>
       <div class="trust-divider"></div>
       <div class="trust-industries">
-        <div class="trust-industry"><span class="trust-industry-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg></span><span class="trust-industry-name">Salons</span></div>
-        <div class="trust-industry"><span class="trust-industry-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="trust-industry-name">Garages</span></div>
-        <div class="trust-industry"><span class="trust-industry-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg></span><span class="trust-industry-name">Clinics</span></div>
-        <div class="trust-industry"><span class="trust-industry-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class="trust-industry-name">Realtors</span></div>
-        <div class="trust-industry"><span class="trust-industry-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span><span class="trust-industry-name">Tutors</span></div>
+        <div class="trust-industry"><span class="trust-industry-icon"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=100&h=100&fit=crop&crop=faces" alt="Salons" loading="lazy"></span><span class="trust-industry-name">Salons</span></div>
+        <div class="trust-industry"><span class="trust-industry-icon"><img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=100&h=100&fit=crop&crop=center" alt="Garages" loading="lazy"></span><span class="trust-industry-name">Garages</span></div>
+        <div class="trust-industry"><span class="trust-industry-icon"><img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=100&h=100&fit=crop&crop=faces" alt="Clinics" loading="lazy"></span><span class="trust-industry-name">Clinics</span></div>
+        <div class="trust-industry"><span class="trust-industry-icon"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=100&h=100&fit=crop&crop=center" alt="Realtors" loading="lazy"></span><span class="trust-industry-name">Realtors</span></div>
+        <div class="trust-industry"><span class="trust-industry-icon"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&h=100&fit=crop&crop=faces" alt="Tutors" loading="lazy"></span><span class="trust-industry-name">Tutors</span></div>
       </div>
     </div>
   </div>
@@ -599,76 +607,100 @@ Could you share your name to confirm the booking?</div>
     </div>
     <div class="features-grid">
       <div class="feature-card reveal reveal-delay-1">
-        <div class="feature-icon booking"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&h=300&fit=crop&q=80&auto=format" alt="Calendar scheduling" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Smart Bookings</div>
         <div class="feature-desc">Drag-and-drop scheduling, staff calendars, recurring appointments, and automatic reminders via WhatsApp.</div>
         <div class="feature-tags"><span class="feature-tag">Recurring</span><span class="feature-tag">Reminders</span><span class="feature-tag">Staff</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-2">
-        <div class="feature-icon whatsapp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=600&h=300&fit=crop&q=80&auto=format" alt="WhatsApp messaging" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">AI WhatsApp Assistant</div>
         <div class="feature-desc">24/7 AI receptionist that confirms bookings, sends reminders, recovers no-shows, and handles customer queries automatically.</div>
         <div class="feature-tags"><span class="feature-tag">AI-Powered</span><span class="feature-tag">24/7</span><span class="feature-tag">Auto-reply</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-3">
-        <div class="feature-icon crm"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1552581234-26160f608093?w=600&h=300&fit=crop&q=80&auto=format" alt="Team collaboration" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Customer CRM</div>
         <div class="feature-desc">Complete visit history, spending patterns, loyalty scores, and customer notes. Know every customer like a regular.</div>
         <div class="feature-tags"><span class="feature-tag">History</span><span class="feature-tag">Segments</span><span class="feature-tag">Notes</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-1">
-        <div class="feature-icon invoice"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&h=300&fit=crop&q=80&auto=format" alt="Invoice and payments" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Invoicing &amp; Payments</div>
         <div class="feature-desc">Professional invoices sent via WhatsApp. Track payments, send reminders, and get paid faster with one-tap payment links.</div>
         <div class="feature-tags"><span class="feature-tag">WhatsApp</span><span class="feature-tag">PDF</span><span class="feature-tag">Tracking</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-2">
-        <div class="feature-icon analytics"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=300&fit=crop&q=80&auto=format" alt="Analytics dashboard" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">AI Analytics</div>
         <div class="feature-desc">Revenue trends, peak hours, cancellation rates, customer retention, and AI-generated business insights on your dashboard.</div>
         <div class="feature-tags"><span class="feature-tag">AI Insights</span><span class="feature-tag">Revenue</span><span class="feature-tag">Trends</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-3">
-        <div class="feature-icon loyalty"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4z"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=300&fit=crop&q=80&auto=format" alt="Gift cards and loyalty" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Loyalty &amp; Gift Cards</div>
         <div class="feature-desc">Points-based loyalty programs and digital gift cards. Reward repeat customers and drive word-of-mouth referrals.</div>
         <div class="feature-tags"><span class="feature-tag">Points</span><span class="feature-tag">Rewards</span><span class="feature-tag">Gift Cards</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-1">
-        <div class="feature-icon promo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=600&h=300&fit=crop&q=80&auto=format" alt="Marketing promotion" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Promotions</div>
         <div class="feature-desc">Create percentage or fixed-amount discount codes. Broadcast promotions to your customer base via WhatsApp in one click.</div>
         <div class="feature-tags"><span class="feature-tag">Discounts</span><span class="feature-tag">Broadcast</span><span class="feature-tag">Codes</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-2">
-        <div class="feature-icon forms"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&h=300&fit=crop&q=80&auto=format" alt="Forms and documents" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Smart Forms</div>
         <div class="feature-desc">Build custom intake forms, feedback surveys, and consent forms. Share via link or embed on your website.</div>
         <div class="feature-tags"><span class="feature-tag">Custom</span><span class="feature-tag">Shareable</span><span class="feature-tag">Surveys</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-3">
-        <div class="feature-icon waitlist"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&h=300&fit=crop&q=80&auto=format" alt="Waiting room queue" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Digital Waitlist</div>
         <div class="feature-desc">Let walk-ins join a digital queue. Real-time position updates and automatic notifications when it's their turn.</div>
         <div class="feature-tags"><span class="feature-tag">Queue</span><span class="feature-tag">Real-time</span><span class="feature-tag">Notify</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-1">
-        <div class="feature-icon" style="background:rgba(244,63,94,0.1);color:var(--rose)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=600&h=300&fit=crop&q=80&auto=format" alt="Expense tracking" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Expense Tracking</div>
         <div class="feature-desc">Log business expenses by category, track monthly spending, and see profit margins alongside your revenue data.</div>
         <div class="feature-tags"><span class="feature-tag">Categories</span><span class="feature-tag">Budgets</span><span class="feature-tag">Profit</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-2">
-        <div class="feature-icon" style="background:rgba(201,160,64,0.1);color:var(--gold2)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=300&fit=crop&q=80&auto=format" alt="Financial reports" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Financial Reports</div>
         <div class="feature-desc">Detailed revenue reports, top services ranking, peak hours analysis, staff performance, and exportable financial summaries.</div>
         <div class="feature-tags"><span class="feature-tag">Charts</span><span class="feature-tag">Export</span><span class="feature-tag">Insights</span></div>
+        </div>
       </div>
       <div class="feature-card reveal reveal-delay-3">
-        <div class="feature-icon" style="background:rgba(96,165,250,0.1);color:var(--blue2)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
+        <div class="feat-img-wrap"><img class="feat-img" src="https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=600&h=300&fit=crop&q=80&auto=format" alt="Marketing campaigns" loading="lazy"></div>
+        <div class="feat-content">
         <div class="feature-name">Marketing Campaigns</div>
         <div class="feature-desc">Create and schedule WhatsApp, SMS, and email campaigns. Target specific customer segments with pre-built templates.</div>
         <div class="feature-tags"><span class="feature-tag">Broadcast</span><span class="feature-tag">Templates</span><span class="feature-tag">Segments</span></div>
+        </div>
       </div>
     </div>
   </div>
