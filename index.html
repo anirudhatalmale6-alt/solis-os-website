@@ -143,8 +143,8 @@ section{position:relative;z-index:1}
 
 /* ── SECTION BACKGROUNDS ── */
 .sec-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden}
-.sec-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(0.15) saturate(1.1);transition:transform 8s ease}
-.sec-bg::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,var(--bg) 0%,rgba(6,8,16,0.6) 15%,rgba(6,8,16,0.6) 85%,var(--bg) 100%);z-index:1}
+.sec-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(0.28) saturate(1.2);transition:transform 8s ease}
+.sec-bg::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,var(--bg) 0%,rgba(6,8,16,0.45) 12%,rgba(6,8,16,0.45) 88%,var(--bg) 100%);z-index:1}
 
 /* ── TRUST BAR ── */
 .trust{padding:60px 0 70px;position:relative;z-index:3;overflow:hidden}
@@ -170,7 +170,7 @@ section{position:relative;z-index:1}
 /* ── FEATURES ── */
 .features{padding:80px 0 100px;position:relative;overflow:hidden}
 .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0;transition:all 0.4s;position:relative;overflow:hidden}
+.feature-card{background:rgba(12,14,24,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:0;transition:all 0.4s;position:relative;overflow:hidden}
 .feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity 0.4s;z-index:2}
 .feature-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 .feature-card:hover::before{opacity:1}
@@ -206,7 +206,7 @@ section{position:relative;z-index:1}
 /* ── INDUSTRIES ── */
 .industries{padding:80px 0 100px;position:relative;overflow:hidden}
 .ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.ind-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0;text-align:center;transition:all 0.4s;position:relative;overflow:hidden}
+.ind-card{background:rgba(12,14,24,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:0;text-align:center;transition:all 0.4s;position:relative;overflow:hidden}
 .ind-card:hover{border-color:rgba(201,160,64,0.3);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 .ind-img-wrap{overflow:hidden;position:relative;height:200px}
 .ind-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s ease}
@@ -219,7 +219,7 @@ section{position:relative;z-index:1}
 /* ── PRICING ── */
 .pricing{padding:80px 0 100px;position:relative;overflow:hidden}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto}
-.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px 28px;text-align:center;transition:all 0.4s;position:relative}
+.price-card{background:rgba(12,14,24,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:36px 28px;text-align:center;transition:all 0.4s;position:relative}
 .price-card.featured{border-color:var(--gold);background:linear-gradient(180deg,rgba(201,160,64,0.06),var(--bg2))}
 .price-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 .price-tier{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
@@ -238,7 +238,7 @@ section{position:relative;z-index:1}
 /* ── TESTIMONIALS ── */
 .testimonials{padding:80px 0 100px;position:relative;overflow:hidden}
 .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.test-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;position:relative}
+.test-card{background:rgba(12,14,24,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:28px;position:relative}
 .test-stars{color:var(--gold2);font-size:14px;letter-spacing:2px;margin-bottom:12px}
 .test-quote{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:20px;font-style:italic}
 .test-author{display:flex;align-items:center;gap:10px}
