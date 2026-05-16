@@ -300,6 +300,38 @@ section{position:relative;z-index:1}
 .wa-typing span:nth-child(3){animation-delay:0.4s}
 @keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 
+/* ── REGISTER BUSINESS BANNER ── */
+.register-biz{padding:100px 0;position:relative;overflow:hidden}
+.register-biz::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:900px;background:radial-gradient(ellipse,rgba(201,160,64,0.08) 0%,rgba(59,130,246,0.03) 40%,transparent 70%);pointer-events:none;animation:registerPulse 8s ease-in-out infinite alternate}
+@keyframes registerPulse{0%{opacity:0.7;transform:translate(-50%,-50%) scale(0.9)}100%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
+.register-biz::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,var(--bg) 0%,rgba(6,8,16,0.3) 15%,rgba(6,8,16,0.3) 85%,var(--bg) 100%);pointer-events:none;z-index:0}
+.register-card{position:relative;z-index:2;background:rgba(12,14,24,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(201,160,64,0.25);border-radius:24px;padding:60px 48px;text-align:center;box-shadow:0 40px 100px rgba(0,0,0,0.4),0 0 80px rgba(201,160,64,0.06),inset 0 1px 0 rgba(255,255,255,0.05);overflow:hidden;max-width:900px;margin:0 auto}
+.register-card::before{content:'';position:absolute;top:-1px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent)}
+.register-glow-l{position:absolute;top:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:rgba(201,160,64,0.05);pointer-events:none}
+.register-glow-r{position:absolute;bottom:-80px;right:-80px;width:250px;height:250px;border-radius:50%;background:rgba(59,130,246,0.04);pointer-events:none}
+.register-emoji{font-size:52px;margin-bottom:20px;display:block}
+.register-title{font-family:var(--font-display);font-size:clamp(32px,4.5vw,52px);font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-0.5px}
+.register-title .reg-gradient{background:linear-gradient(135deg,var(--gold),var(--gold2),#fff,var(--gold2));background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s ease infinite}
+.register-sub{font-size:18px;color:var(--text2);line-height:1.7;max-width:600px;margin:0 auto 32px;font-weight:400}
+.register-stats{display:flex;justify-content:center;gap:40px;margin-bottom:36px;flex-wrap:wrap}
+.register-stat{text-align:center}
+.register-stat-num{font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--gold2);display:block}
+.register-stat-label{font-size:13px;color:var(--text3);margin-top:2px}
+.register-benefits{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.register-benefit{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:50px;padding:8px 16px}
+.register-benefit .rb-icon{width:24px;height:24px;border-radius:50%;background:rgba(34,197,94,0.1);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:12px;flex-shrink:0}
+.register-actions{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.register-actions .btn-gold{font-size:18px;padding:16px 40px;border-radius:14px}
+.register-actions .btn-gold:hover{box-shadow:0 16px 50px var(--gold-glow);transform:translateY(-3px)}
+.register-note{font-size:13px;color:var(--text3);margin-top:20px}
+@media(max-width:768px){
+  .register-card{padding:40px 24px}
+  .register-stats{gap:24px}
+  .register-stat-num{font-size:24px}
+  .register-benefits{flex-direction:column;align-items:center;gap:10px}
+  .register-actions .btn-gold{width:100%;justify-content:center;font-size:16px;padding:14px 32px}
+}
+
 /* ── SCROLL ANIMATIONS ── */
 .reveal{opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
@@ -416,6 +448,7 @@ section{position:relative;z-index:1}
       <a href="#how">How It Works</a>
       <a href="#industries">Industries</a>
       <a href="#pricing">Pricing</a>
+      <a href="#register" style="color:var(--gold2);font-weight:600">Register</a>
       <a href="https://app.solis-os.com" class="nav-cta">
         Launch App
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -905,6 +938,37 @@ Could you share your name to confirm the booking?</div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- Register Your Business -->
+<section class="register-biz" id="register">
+  <div class="container">
+    <div class="register-card reveal">
+      <div class="register-glow-l"></div>
+      <div class="register-glow-r"></div>
+      <span class="register-emoji">🚀</span>
+      <h2 class="register-title">Register Your Business.<br>Get <span class="reg-gradient">More Customers</span>.</h2>
+      <p class="register-sub">List your business on Solis OS and instantly become discoverable to thousands of customers searching for services near them. Your next customer is already looking for you.</p>
+      <div class="register-stats">
+        <div class="register-stat"><span class="register-stat-num">600+</span><span class="register-stat-label">Active Businesses</span></div>
+        <div class="register-stat"><span class="register-stat-num">10K+</span><span class="register-stat-label">Customer Searches</span></div>
+        <div class="register-stat"><span class="register-stat-num">24/7</span><span class="register-stat-label">AI Booking Assistant</span></div>
+      </div>
+      <div class="register-benefits">
+        <div class="register-benefit"><span class="rb-icon">✓</span> Appear in customer searches</div>
+        <div class="register-benefit"><span class="rb-icon">✓</span> Get bookings while you sleep</div>
+        <div class="register-benefit"><span class="rb-icon">✓</span> AI manages your WhatsApp</div>
+        <div class="register-benefit"><span class="rb-icon">✓</span> Free 14-day trial</div>
+      </div>
+      <div class="register-actions">
+        <a href="https://app.solis-os.com/signup" class="btn-gold">
+          Register Your Business Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+      <p class="register-note">No credit card required. Set up in 2 minutes.</p>
     </div>
   </div>
 </section>
