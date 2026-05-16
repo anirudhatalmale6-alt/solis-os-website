@@ -194,6 +194,28 @@ section{position:relative;z-index:1}
 .section-title{font-family:var(--font-display);font-size:clamp(32px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:16px}
 .section-desc{font-size:17px;color:var(--text2);line-height:1.7}
 
+/* ── PRODUCT DEMO ── */
+.demo{padding:80px 0 100px;position:relative;overflow:hidden}
+.demo-timeline{max-width:900px;margin:0 auto;position:relative}
+.demo-timeline::before{content:'';position:absolute;top:0;bottom:0;left:32px;width:2px;background:linear-gradient(to bottom,transparent,var(--gold),var(--gold2),var(--gold),transparent)}
+.demo-step{display:flex;gap:28px;margin-bottom:48px;position:relative}
+.demo-step:last-child{margin-bottom:0}
+.demo-num{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;font-weight:800;color:#000;flex-shrink:0;position:relative;z-index:2;box-shadow:0 4px 20px var(--gold-glow)}
+.demo-content{flex:1;background:rgba(12,14,24,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:28px 32px;transition:all 0.4s}
+.demo-content:hover{border-color:rgba(201,160,64,0.2);box-shadow:0 10px 40px rgba(0,0,0,0.3)}
+.demo-step-title{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:8px}
+.demo-step-desc{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.demo-step-visual{display:flex;gap:12px;flex-wrap:wrap}
+.demo-tag{font-size:12px;padding:6px 14px;background:rgba(201,160,64,0.08);border:1px solid rgba(201,160,64,0.15);border-radius:50px;color:var(--gold2);font-weight:500}
+.demo-step-time{font-size:12px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px;margin-top:12px}
+.demo-step-time::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@media(max-width:768px){
+  .demo-timeline::before{left:24px}
+  .demo-step{gap:16px}
+  .demo-num{width:48px;height:48px;font-size:18px}
+  .demo-content{padding:20px}
+}
+
 /* ── FEATURES ── */
 .features{padding:80px 0 100px;position:relative;overflow:hidden}
 .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -473,7 +495,7 @@ section{position:relative;z-index:1}
     </a>
     <div class="nav-links">
       <a href="#features">Features</a>
-      <a href="#how">How It Works</a>
+      <a href="#demo">Demo</a>
       <a href="#industries">Industries</a>
       <a href="#pricing">Pricing</a>
       <a href="#register" style="color:var(--gold2);font-weight:600">Register</a>
@@ -847,6 +869,89 @@ Could you share your name to confirm the booking?</div>
       <div class="how-step reveal reveal-delay-3">
         <div class="how-step-title">Grow on Autopilot</div>
         <div class="how-step-desc">AI handles reminders, follow-ups, and no-show recovery. You focus on your craft while Solis OS handles the business side.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Product Demo Walkthrough -->
+<section class="demo" id="demo">
+  <div class="sec-bg"><img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">&#x1F3AC; See It In Action</div>
+      <h2 class="section-title">From Zero to Fully Automated in 5 Minutes</h2>
+      <p class="section-desc">Here's exactly what happens when you sign up. No guesswork. No hidden steps. This is the entire process.</p>
+    </div>
+    <div class="demo-timeline">
+      <div class="demo-step reveal reveal-delay-1">
+        <div class="demo-num">1</div>
+        <div class="demo-content">
+          <div class="demo-step-title">Register Your Business</div>
+          <div class="demo-step-desc">Enter your business name, pick your industry (salon, garage, clinic, etc.), add your location. That's it. No paperwork, no approval process. You're live in 60 seconds.</div>
+          <div class="demo-step-visual">
+            <span class="demo-tag">Business Name</span>
+            <span class="demo-tag">Industry</span>
+            <span class="demo-tag">Location</span>
+            <span class="demo-tag">Contact Info</span>
+          </div>
+          <div class="demo-step-time">Takes 60 seconds</div>
+        </div>
+      </div>
+      <div class="demo-step reveal reveal-delay-2">
+        <div class="demo-num">2</div>
+        <div class="demo-content">
+          <div class="demo-step-title">Add Your Services &amp; Prices</div>
+          <div class="demo-step-desc">List what you offer. Haircut $25, Oil Change $40, Consultation $60 &mdash; whatever your services are. Set durations so the AI knows how to schedule. Customers see these when they book.</div>
+          <div class="demo-step-visual">
+            <span class="demo-tag">Service Names</span>
+            <span class="demo-tag">Prices</span>
+            <span class="demo-tag">Duration</span>
+            <span class="demo-tag">Staff Assignment</span>
+          </div>
+          <div class="demo-step-time">Takes 2 minutes</div>
+        </div>
+      </div>
+      <div class="demo-step reveal reveal-delay-3">
+        <div class="demo-num">3</div>
+        <div class="demo-content">
+          <div class="demo-step-title">Connect Your WhatsApp</div>
+          <div class="demo-step-desc">Open the app, tap "Connect WhatsApp", scan the QR code with your business phone. Done. From this moment, our AI handles every incoming message &mdash; booking requests, price questions, directions, hours, everything.</div>
+          <div class="demo-step-visual">
+            <span class="demo-tag">Scan QR Code</span>
+            <span class="demo-tag">AI Takes Over</span>
+            <span class="demo-tag">24/7 Replies</span>
+            <span class="demo-tag">4 Languages</span>
+          </div>
+          <div class="demo-step-time">Takes 30 seconds</div>
+        </div>
+      </div>
+      <div class="demo-step reveal reveal-delay-4">
+        <div class="demo-num">4</div>
+        <div class="demo-content">
+          <div class="demo-step-title">Upload Your Logo &amp; Go Live</div>
+          <div class="demo-step-desc">Upload your business logo so customers recognize you. Your business is now visible to every Solis OS user searching for services in your area. You show up in the Explore section of the app instantly.</div>
+          <div class="demo-step-visual">
+            <span class="demo-tag">Upload Logo</span>
+            <span class="demo-tag">Visible to Customers</span>
+            <span class="demo-tag">Explore Section</span>
+          </div>
+          <div class="demo-step-time">You're live!</div>
+        </div>
+      </div>
+      <div class="demo-step reveal reveal-delay-5">
+        <div class="demo-num">5</div>
+        <div class="demo-content">
+          <div class="demo-step-title">Watch Bookings Come In While You Work</div>
+          <div class="demo-step-desc">A customer finds you on Solis, texts your WhatsApp at 11PM asking about availability. Your AI replies instantly, shows your services, books them in, sends a confirmation &mdash; and you see it all on your dashboard in the morning. No effort. No missed opportunities.</div>
+          <div class="demo-step-visual">
+            <span class="demo-tag">Auto-Reply</span>
+            <span class="demo-tag">Auto-Book</span>
+            <span class="demo-tag">Auto-Remind</span>
+            <span class="demo-tag">Zero Effort</span>
+          </div>
+          <div class="demo-step-time">Runs 24/7 on autopilot</div>
+        </div>
       </div>
     </div>
   </div>
