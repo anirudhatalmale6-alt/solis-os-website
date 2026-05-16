@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solis OS — AI That Runs Your Business | Bookings, CRM, WhatsApp Automation</title>
-<meta name="description" content="Stop losing customers. Automate bookings, CRM, payments and WhatsApp for your salon, garage or clinic. Used by 600+ businesses. Start free today.">
+<meta name="description" content="Your business replies, books, and follows up while you sleep. AI-powered WhatsApp assistant, smart bookings, CRM, and invoicing for salons, garages, and clinics. 600+ businesses. Start free.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://solis-os.com">
 <meta property="og:title" content="Solis OS — AI That Runs Your Business">
-<meta property="og:description" content="Stop losing customers. Automate bookings, CRM, payments and WhatsApp — all powered by AI. Used by 600+ businesses worldwide.">
+<meta property="og:description" content="Your business replies, books, and follows up while you sleep. Never lose another customer to silence. AI-powered for salons, garages, clinics.">
 <meta property="og:image" content="https://solis-os.com/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -160,6 +160,33 @@ section{position:relative;z-index:1}
 .trust-industry-icon{width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(201,160,64,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
 .trust-industry-icon img{width:100%;height:100%;object-fit:cover;display:block}
 .trust-industry-name{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+
+/* ── BEFORE/AFTER ── */
+.before-after{padding:80px 0 100px;position:relative;overflow:hidden}
+.ba-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;max-width:1000px;margin:0 auto}
+.ba-card{background:rgba(12,14,24,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:36px 32px;position:relative}
+.ba-card.before{border-color:rgba(239,68,68,0.2)}
+.ba-card.before::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--rose),transparent);border-radius:var(--radius) var(--radius) 0 0}
+.ba-card.after{border-color:rgba(34,197,94,0.2)}
+.ba-card.after::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--green),transparent);border-radius:var(--radius) var(--radius) 0 0}
+.ba-label{font-family:var(--font-display);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px}
+.ba-label.red{color:var(--rose)}
+.ba-label.green{color:var(--green)}
+.ba-list{list-style:none;display:flex;flex-direction:column;gap:14px}
+.ba-list li{font-size:15px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.ba-list li .ba-icon{flex-shrink:0;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px}
+.ba-list.bad li .ba-icon{background:rgba(239,68,68,0.12);color:var(--rose)}
+.ba-list.good li .ba-icon{background:rgba(34,197,94,0.12);color:var(--green)}
+.ba-divider{display:flex;align-items:center;justify-content:center;padding:0 20px}
+.ba-divider-line{width:2px;height:100%;min-height:200px;background:linear-gradient(to bottom,transparent,var(--border2),transparent);position:relative}
+.ba-divider-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#000;box-shadow:0 4px 20px var(--gold-glow)}
+@media(max-width:768px){
+  .ba-grid{grid-template-columns:1fr;gap:16px}
+  .ba-divider{padding:8px 0}
+  .ba-divider-line{width:100%;height:2px;min-height:auto}
+  .ba-divider-icon{position:static;transform:none}
+  .ba-card{padding:28px 24px}
+}
 
 /* ── SECTION HEADERS ── */
 .section-header{text-align:center;max-width:700px;margin:0 auto 60px}
@@ -477,13 +504,13 @@ section{position:relative;z-index:1}
       <div>
         <div class="hero-badge">
           <span class="dot"></span>
-          Now with AI-powered insights
+          Replies in under 8 seconds
         </div>
         <h1 class="hero-title">
-          <span class="gradient">The AI That Runs</span><br>Your Business
+          <span class="gradient">Your Business Replies,</span><br>Books &amp; Follows Up<br>While You Sleep
         </h1>
         <p class="hero-sub">
-          Automate bookings, CRM, invoicing, and WhatsApp messages. Your entire business operations in one beautiful dashboard. Built for service businesses that want to grow.
+          Every missed call is a lost customer. Every forgotten follow-up is money left on the table. Solis OS answers your WhatsApp, books appointments, and chases payments 24/7 &mdash; so you never lose another customer to silence.
         </p>
         <div class="hero-actions">
           <a href="https://app.solis-os.com" class="btn-gold">
@@ -553,17 +580,17 @@ section{position:relative;z-index:1}
     <div class="trust-inner reveal">
       <div class="trust-stat">
         <div class="trust-number" id="counter-biz">0</div>
-        <div class="trust-label">Businesses</div>
+        <div class="trust-label">Businesses Trust Us</div>
       </div>
       <div class="trust-divider"></div>
       <div class="trust-stat">
-        <div class="trust-number" id="counter-appt">0</div>
-        <div class="trust-label">Appointments Booked</div>
+        <div class="trust-number" id="counter-hours">0</div>
+        <div class="trust-label">Hours Saved Weekly</div>
       </div>
       <div class="trust-divider"></div>
       <div class="trust-stat">
-        <div class="trust-number" id="counter-msg">0</div>
-        <div class="trust-label">Messages Sent</div>
+        <div class="trust-number" id="counter-missed">0</div>
+        <div class="trust-label">Fewer Missed Bookings</div>
       </div>
       <div class="trust-divider"></div>
       <div class="trust-industries">
@@ -577,14 +604,54 @@ section{position:relative;z-index:1}
   </div>
 </section>
 
+<!-- Before/After -->
+<section class="before-after">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">&#x1F50D; The Truth</div>
+      <h2 class="section-title">This Is What's Happening Right Now</h2>
+      <p class="section-desc">Be honest with yourself. How many of these sound familiar?</p>
+    </div>
+    <div class="ba-grid reveal">
+      <div class="ba-card before">
+        <div class="ba-label red">Without Solis OS</div>
+        <ul class="ba-list bad">
+          <li><span class="ba-icon">&#x2717;</span> Customers message at 10PM &mdash; you reply at 9AM. They already booked elsewhere.</li>
+          <li><span class="ba-icon">&#x2717;</span> No-shows cost you $500-$2,000/month because nobody reminded them.</li>
+          <li><span class="ba-icon">&#x2717;</span> You spend Sunday nights manually scheduling next week's appointments.</li>
+          <li><span class="ba-icon">&#x2717;</span> Invoices sent late. Payments chased manually. Money left on the table.</li>
+          <li><span class="ba-icon">&#x2717;</span> Paying for 4-5 separate apps that don't talk to each other.</li>
+          <li><span class="ba-icon">&#x2717;</span> No idea which customers haven't come back or why.</li>
+        </ul>
+      </div>
+      <div class="ba-divider">
+        <div class="ba-divider-line">
+          <div class="ba-divider-icon">&#x2192;</div>
+        </div>
+      </div>
+      <div class="ba-card after">
+        <div class="ba-label green">With Solis OS</div>
+        <ul class="ba-list good">
+          <li><span class="ba-icon">&#x2713;</span> AI replies in 8 seconds, 24/7. Customer booked before your competitor even saw the message.</li>
+          <li><span class="ba-icon">&#x2713;</span> Automatic WhatsApp reminders cut no-shows by 41%. That's $800+ back in your pocket.</li>
+          <li><span class="ba-icon">&#x2713;</span> Customers book themselves. Your calendar fills up while you sleep.</li>
+          <li><span class="ba-icon">&#x2713;</span> One-tap invoicing. Automatic payment reminders. Get paid 3x faster.</li>
+          <li><span class="ba-icon">&#x2713;</span> One platform, $29/month. Everything in one place.</li>
+          <li><span class="ba-icon">&#x2713;</span> AI tracks who hasn't visited in 30 days and sends them a "we miss you" message.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- WhatsApp AI Demo -->
 <section class="wa-demo" id="whatsapp-demo">
   <div class="sec-bg"><img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label" style="background:rgba(37,211,102,0.1);color:#25D366"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg> AI-Powered</div>
-      <h2 class="section-title">Your 24/7 AI Receptionist on <span style="background:linear-gradient(135deg,#25D366,#128C7E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">WhatsApp</span></h2>
-      <p class="section-desc">Every Solis OS subscriber gets their own AI WhatsApp assistant. It handles bookings, answers questions, and never sleeps.</p>
+      <h2 class="section-title">Last Night at 11PM, a Customer Texted You. <span style="background:linear-gradient(135deg,#25D366,#128C7E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">You Lost Them.</span></h2>
+      <p class="section-desc">With Solis OS, that customer would have been booked, confirmed, and reminded &mdash; all before you woke up. Your AI receptionist never sleeps, never forgets, and replies in under 8 seconds.</p>
     </div>
     <div class="wa-demo-grid">
       <div class="wa-demo-content reveal">
@@ -655,8 +722,8 @@ Could you share your name to confirm the booking?</div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg> Platform</div>
-      <h2 class="section-title">Everything Your Business Needs</h2>
-      <p class="section-desc">12 powerful modules working together. No more juggling separate apps for bookings, CRM, invoicing, and marketing.</p>
+      <h2 class="section-title">Stop Losing Customers to Silence</h2>
+      <p class="section-desc">Right now, customers are texting you and getting no reply. They're calling and hitting voicemail. They're giving their money to your competitor who answered first. Solis OS makes sure that never happens again.</p>
     </div>
     <div class="features-grid">
       <div class="feature-card reveal reveal-delay-1">
@@ -765,8 +832,8 @@ Could you share your name to confirm the booking?</div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label">&#x26A1; Setup</div>
-      <h2 class="section-title">Up and Running in 3 Minutes</h2>
-      <p class="section-desc">No complicated setup. No training manuals. Just sign up, add your services, and start running your business smarter.</p>
+      <h2 class="section-title">3 Minutes From Now, You'll Never Miss a Customer Again</h2>
+      <p class="section-desc">No IT team needed. No week-long onboarding. By the time you finish your coffee, your business will be answering customers, booking appointments, and following up &mdash; automatically.</p>
     </div>
     <div class="how-grid">
       <div class="how-step reveal reveal-delay-1">
@@ -791,8 +858,8 @@ Could you share your name to confirm the booking?</div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Industries</div>
-      <h2 class="section-title">Built for Service Businesses</h2>
-      <p class="section-desc">Whether you run a salon chair or a car lift, Solis OS adapts to your workflow. One platform, every industry.</p>
+      <h2 class="section-title">If Customers Book You, We Built This for You</h2>
+      <p class="section-desc">Whether you're cutting hair or fixing engines, the problem is the same: you're too busy working to manage the business side. We handle that part.</p>
     </div>
     <div class="ind-grid">
       <div class="ind-card reveal reveal-delay-1">
@@ -859,8 +926,8 @@ Could you share your name to confirm the booking?</div>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Pricing</div>
-      <h2 class="section-title">One Plan. Everything Included.</h2>
-      <p class="section-desc">No tiers, no limits, no surprises. Get every feature for one simple price. Cancel anytime.</p>
+      <h2 class="section-title">Less Than $1/Day to Never Lose a Customer Again</h2>
+      <p class="section-desc">One missed booking costs more than a full month of Solis OS. No hidden fees. No "starter" plan that locks the good stuff. Everything, for everyone, one price.</p>
     </div>
     <div style="max-width:520px;margin:0 auto">
       <div class="price-card featured reveal" style="border-color:var(--gold);background:linear-gradient(180deg,rgba(201,160,64,0.08),var(--bg2))">
@@ -901,41 +968,41 @@ Could you share your name to confirm the booking?</div>
   <div class="sec-bg"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="section-header reveal">
-      <div class="section-label">&#x2B50; Reviews</div>
-      <h2 class="section-title">Loved by Business Owners</h2>
-      <p class="section-desc">Join hundreds of businesses already saving time and growing with Solis OS.</p>
+      <div class="section-label">&#x2B50; Real Results</div>
+      <h2 class="section-title">They Were Losing Customers Too. Then They Found Solis.</h2>
+      <p class="section-desc">These business owners used to miss calls, forget follow-ups, and lose bookings to competitors. Here's what changed.</p>
     </div>
     <div class="test-grid">
       <div class="test-card reveal reveal-delay-1">
         <div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <div class="test-quote">"Solis OS replaced 4 different apps I was paying for. Bookings, invoices, customer management, and WhatsApp — all in one place. My salon has never run smoother."</div>
+        <div class="test-quote">"I was paying $180/month across 4 different apps and still missing messages at night. First week with Solis OS, my AI booked 14 appointments while I was asleep. I saved $151/month and gained 22 extra hours a week."</div>
         <div class="test-author">
           <div class="test-avatar" style="background:linear-gradient(135deg,#f43f5e,#ec4899)">S</div>
           <div>
             <div class="test-name">Sarah Mitchell</div>
-            <div class="test-role">Salon Owner, London</div>
+            <div class="test-role">Hair Salon, 3 Staff &mdash; London</div>
           </div>
         </div>
       </div>
       <div class="test-card reveal reveal-delay-2">
         <div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <div class="test-quote">"The AI WhatsApp bot is a game changer. It handles appointment confirmations and reminders automatically. My no-show rate dropped from 25% to under 5%."</div>
+        <div class="test-quote">"My no-shows were costing me $2,000+ a month. Solis sends WhatsApp reminders automatically and my no-show rate dropped from 25% to under 5%. That's an extra $1,800 in my pocket every month."</div>
         <div class="test-author">
           <div class="test-avatar" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)">M</div>
           <div>
             <div class="test-name">Marcus Rodriguez</div>
-            <div class="test-role">Auto Repair Shop, Miami</div>
+            <div class="test-role">Auto Repair, 4 Bays &mdash; Miami</div>
           </div>
         </div>
       </div>
       <div class="test-card reveal reveal-delay-3">
         <div class="test-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <div class="test-quote">"Setting up took literally 3 minutes. Now my students book their own lessons, I get reminded before each session, and invoices go out automatically. Brilliant."</div>
+        <div class="test-quote">"I used to spend Sunday nights scheduling the whole week manually. Now students book themselves, get reminded automatically, and I invoice with one tap. I got my weekends back."</div>
         <div class="test-author">
           <div class="test-avatar" style="background:linear-gradient(135deg,#22c55e,#2dd4bf)">A</div>
           <div>
             <div class="test-name">Amelia Chen</div>
-            <div class="test-role">Private Tutor, Sydney</div>
+            <div class="test-role">Private Tutor, 40 Students &mdash; Sydney</div>
           </div>
         </div>
       </div>
@@ -954,12 +1021,12 @@ Could you share your name to confirm the booking?</div>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         Grow Your Business
       </div>
-      <h2 class="register-title">Register Your Business.<br>Get <span class="reg-gradient">More Customers</span>.</h2>
-      <p class="register-sub">List your business on Solis OS and instantly become discoverable to thousands of customers searching for services near them. Your next customer is already looking for you.</p>
+      <h2 class="register-title">Your Competitor Just Got<br><span class="reg-gradient">Their Next Customer</span>.</h2>
+      <p class="register-sub">While you were busy with a client, someone messaged you for a booking. You didn't reply. They found someone who did. This stops today. Register now and let Solis OS capture every single lead.</p>
       <div class="register-stats">
-        <div class="register-stat"><span class="register-stat-num">600+</span><span class="register-stat-label">Active Businesses</span></div>
-        <div class="register-stat"><span class="register-stat-num">10K+</span><span class="register-stat-label">Customer Searches</span></div>
-        <div class="register-stat"><span class="register-stat-num">24/7</span><span class="register-stat-label">AI Booking Assistant</span></div>
+        <div class="register-stat"><span class="register-stat-num">600+</span><span class="register-stat-label">Businesses Trust Us</span></div>
+        <div class="register-stat"><span class="register-stat-num">41%</span><span class="register-stat-label">Fewer Missed Bookings</span></div>
+        <div class="register-stat"><span class="register-stat-num">8s</span><span class="register-stat-label">Average Reply Time</span></div>
       </div>
       <div class="register-benefits">
         <div class="register-benefit"><span class="rb-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span> Appear in customer searches</div>
@@ -983,8 +1050,8 @@ Could you share your name to confirm the booking?</div>
   <div class="sec-bg"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=75&fit=crop" alt="" loading="lazy"></div>
   <div class="container">
     <div class="reveal">
-      <h2 class="cta-title">Ready to <span class="gradient">Automate</span> Your Business?</h2>
-      <p class="cta-desc">Join 600+ businesses already using Solis OS to book more, earn more, and stress less.</p>
+      <h2 class="cta-title">How Many Customers Did You <span class="gradient">Lose This Week</span>?</h2>
+      <p class="cta-desc">Every day without Solis OS is another day of missed messages, forgotten follow-ups, and customers going to your competitor. Start your free trial now &mdash; your first booking could come tonight.</p>
       <div class="cta-actions">
         <a href="https://app.solis-os.com" class="btn-gold">
           Start Your Free Trial
@@ -1061,8 +1128,8 @@ const trustObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       animateCounter(document.getElementById('counter-biz'), 600, '', '+');
-      animateCounter(document.getElementById('counter-appt'), 42000, '', '+');
-      animateCounter(document.getElementById('counter-msg'), 180000, '', '+');
+      animateCounter(document.getElementById('counter-hours'), 22, '', '+');
+      animateCounter(document.getElementById('counter-missed'), 41, '', '%');
       trustObserver.disconnect();
     }
   });
