@@ -1260,12 +1260,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 <div class="chat-header-info"><h4>Solis OS</h4><p>Online now</p></div>
 </div>
 <div class="chat-messages" id="chat-messages"></div>
-<div class="chat-lang">
-<button class="active" onclick="setChatLang('en')">EN</button>
-<button onclick="setChatLang('ar')">&#1593;&#1585;&#1576;&#1610;</button>
-<button onclick="setChatLang('fr')">FR</button>
-<button onclick="setChatLang('es')">ES</button>
-</div>
 <div class="chat-input-area">
 <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
 <button class="chat-send-btn" onclick="sendChat()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
@@ -1273,90 +1267,286 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 </div>
 
 <script>
-var chatOpen=false,chatGreeted=false,chatLang='en';
+(function(){
+var chatOpen=false,chatLang='en',chatContext=null,chatHistory=[];
+
 var T={
 en:{
-  welcome:'Hi! Welcome to Solis OS. How can I help you today?\n\nType your question or choose a topic:\n1. What Solis OS does\n2. Pricing plans\n3. Industries we support\n4. How to get started\n5. Book a demo',
-  welcomeGreet:'Hi! Welcome to Solis OS.\n\nI\'m here to help you learn about our AI-powered business management platform. We help salons, clinics, garages, and other service businesses automate their operations.\n\nWhat would you like to know?\n\n1. What Solis OS does\n2. Pricing plans\n3. Industries we support\n4. How to get started\n5. Book a demo\n\nJust type a number or ask me anything!',
-  welcomeGeneric:'Hi! Welcome to Solis OS, the AI-powered platform that helps service businesses manage bookings, customers, staff, and more.\n\nHow can I help you today? You can ask about our features, pricing, supported industries, or anything else!',
-  fallback:'Thanks for your message! I can help you with:\n\n- Our features and what Solis OS does\n- Pricing and plans\n- Industries we support (salons, clinics, garages, etc.)\n- How to get started or sign up\n- Booking a demo\n\nOr message us on WhatsApp for direct help: https://wa.me/447700168964',
-  features:'Solis OS is an all-in-one AI platform that runs your business:\n\nBookings & Scheduling - Online booking page your customers can use 24/7.\n\nCustomer Management - Full CRM to track clients and history.\n\nStaff Management - Manage your team and availability.\n\nAI WhatsApp Assistant - 24/7 AI receptionist that handles bookings and queries on WhatsApp.\n\nBusiness Analytics - Real-time dashboard showing revenue and trends.\n\nInvoicing & Expenses - Professional invoices and expense tracking.\n\nReady to try it? Visit https://app.solis-os.com/signup',
-  pricing:'Our plan:\n\nSOLIS OS - $29/month\n\nEverything included:\n- Unlimited bookings & customers\n- AI WhatsApp Assistant\n- Staff management\n- Invoicing & expenses\n- Analytics & reports\n- Marketing tools\n- Online booking page\n\n14-day free trial, no credit card required.\n\nStart now: https://app.solis-os.com/signup',
-  industries:'Solis OS works for any service-based business:\n\nHair Salons & Barbershops\nBeauty & Spa\nMedical & Dental Clinics\nAuto Garages & Workshops\nFitness & Gyms\nTutors & Lessons\nReal Estate\n\nAnd many more!\n\nWhat type of business do you run?',
-  getStarted:'Getting started is easy!\n\n1. Visit https://app.solis-os.com/signup (30 seconds)\n2. Set up your business profile\n3. Add your services and pricing\n4. Connect your WhatsApp for AI assistant\n5. Share your booking page with customers\n\nThe whole setup takes about 5 minutes. No credit card required.\n\nStart now: https://app.solis-os.com/signup',
-  demo:'You can explore Solis OS right now:\n\n1. Sign up for a free trial: https://app.solis-os.com/signup\n2. Want a personal walkthrough? Message us on WhatsApp: https://wa.me/447700168964\n\nWhat would you prefer?',
-  booking:'Solis OS makes booking management effortless!\n\nOnline Booking Page - Customers book 24/7.\nSmart Calendar - All appointments in one place.\nAutomatic Reminders via WhatsApp.\nEasy Rescheduling.\n\nStart free: https://app.solis-os.com/signup',
-  support:'I\'m here to help!\n\nFor quick answers, ask me anything right here.\n\nFor direct support, message us on WhatsApp: https://wa.me/447700168964',
-  human:'Of course! Message us directly on WhatsApp and a team member will get back to you shortly.\n\nWhatsApp: https://wa.me/447700168964',
-  thanks:'You\'re welcome! Happy to help.\n\nIf you have more questions, just ask anytime.\n\nReady to start? https://app.solis-os.com/signup',
-  bye:'Great chatting with you! Message us anytime.\n\nHave a wonderful day!',
-  yes:'Great! Here\'s what I suggest:\n\n1. Start your free trial at https://app.solis-os.com/signup\n2. Set up your business profile and services\n3. Connect WhatsApp for your AI assistant\n\nTakes about 5 minutes!',
-  placeholder:'Type a message...'
+  welcome:'Hey there! I\'m the Solis OS assistant.\n\nI can help you with:\n\n1. What Solis OS does\n2. Pricing\n3. Industries we support\n4. How to get started\n5. Book a demo\n\nJust type a number or ask me anything!',
+  fallback:'I\'m not sure I understood that. Here\'s what I can help with:\n\n1. Features & what Solis OS does\n2. Pricing & plans\n3. Industries we support\n4. How to get started\n5. Book a demo\n\nOr type "human" to chat with our team on WhatsApp.',
+  features:'Solis OS is an all-in-one AI platform for service businesses:\n\n- Online Booking Page (customers book 24/7)\n- AI WhatsApp Assistant (handles messages automatically)\n- Customer CRM (track clients & history)\n- Staff Management (team scheduling)\n- Analytics Dashboard (revenue & trends)\n- Invoicing & Expenses\n- Marketing Tools (campaigns, promos, loyalty)\n\nWant to see pricing, or ready to try it free?',
+  pricing:'Simple pricing:\n\nSolis OS - $29/month\n\nEverything included:\n- Unlimited bookings & customers\n- AI WhatsApp Assistant\n- Staff management\n- Invoicing & expenses\n- Analytics & reports\n- Marketing tools\n- Online booking page\n\n14-day free trial. No credit card needed.\n\nWant to start your free trial?',
+  industries:'Solis OS works for any service business:\n\n- Hair Salons & Barbershops\n- Beauty & Spa\n- Medical & Dental Clinics\n- Auto Garages & Workshops\n- Fitness & Personal Training\n- Tutors & Private Lessons\n- Real Estate Agents\n- And many more!\n\nWhat type of business do you have?',
+  getStarted:'Getting started takes about 5 minutes:\n\n1. Sign up (free, no card needed)\n2. Set up your business profile\n3. Add your services & pricing\n4. Connect WhatsApp for AI assistant\n5. Share booking page with customers\n\nReady to sign up?',
+  demo:'Two options:\n\n1. Start a free trial and explore yourself\n2. Get a personal walkthrough on WhatsApp\n\nWhich do you prefer?',
+  booking:'Solis OS makes bookings effortless:\n\n- Online booking page (customers book 24/7)\n- Smart calendar view\n- Automatic WhatsApp reminders\n- Easy rescheduling & cancellation\n- Staff assignment\n\nWant to try it free?',
+  whatsapp:'The AI WhatsApp Assistant is like having a 24/7 receptionist:\n\n- Greets customers automatically\n- Answers questions about your services & prices\n- Helps customers book appointments\n- Works in 8 languages\n- Available 24/7\n\nAll you do is connect your WhatsApp number. The AI handles the rest.\n\nWant to see how it works?',
+  support:'I can help with most questions right here!\n\nOr chat with our team directly on WhatsApp for personalized support.',
+  human:'No problem! Our team is available on WhatsApp.\n\nClick here to chat with us directly - we usually reply within a few minutes.',
+  thanks:'Happy to help! Let me know if you have any other questions.\n\nWhen you\'re ready, you can start your free trial anytime.',
+  bye:'Great chatting with you! Come back anytime.\n\nHave a wonderful day!',
+  yes:'Let\'s get you started!\n\nSign up takes 30 seconds - no credit card required. You\'ll have your booking page live in under 5 minutes.',
+  placeholder:'Type a message...',
+  tryAgain:'I didn\'t quite catch that. You can ask me about:\n\n1. Features\n2. Pricing ($29/mo)\n3. Industries\n4. Getting started\n5. Demo\n\nOr just type what you\'re looking for!'
 },
 ar:{
-  welcome:'مرحبا! أهلا بك في Solis OS.\n\nبماذا يمكنني مساعدتك؟\n\n1. ما هو Solis OS\n2. الأسعار\n3. القطاعات\n4. كيف تبدأ\n5. عرض توضيحي',
-  welcomeGreet:'مرحبا! أهلا بك في Solis OS.\n\nأنا هنا لمساعدتك.\n\n1. ما هو Solis OS\n2. الأسعار\n3. القطاعات\n4. كيف تبدأ\n5. عرض توضيحي',
-  welcomeGeneric:'مرحبا! Solis OS منصة ذكية لإدارة الأعمال.',
-  fallback:'شكرا! يمكنك السؤال عن المميزات أو الأسعار أو التواصل عبر واتساب: https://wa.me/447700168964',
-  features:'Solis OS يقدم:\n\nحجوزات 24/7\nإدارة العملاء\nمساعد واتساب ذكي\nتحليلات\n\nابدأ مجانا: https://app.solis-os.com/signup',
-  pricing:'الباقة: $29/شهر\n\nتشمل كل المميزات. تجربة مجانية 14 يوم.\n\nhttps://app.solis-os.com/signup',
-  industries:'صالونات وعيادات وورش وصالات رياضية وغيرها.',
-  getStarted:'سجل في: https://app.solis-os.com/signup\n5 دقائق فقط!',
-  demo:'جرب مجانا: https://app.solis-os.com/signup\nأو تواصل عبر واتساب: https://wa.me/447700168964',
-  human:'تواصل عبر واتساب: https://wa.me/447700168964',
-  thanks:'عفوا! راسلنا في أي وقت.',
+  welcome:'مرحبا! أنا مساعد Solis OS.\n\n1. ما هو Solis OS\n2. الأسعار\n3. القطاعات المدعومة\n4. كيف تبدأ\n5. عرض توضيحي\n\nاكتب رقم أو اسأل أي سؤال!',
+  fallback:'يمكنني مساعدتك في:\n\n1. المميزات\n2. الأسعار\n3. القطاعات\n4. كيف تبدأ\n5. عرض توضيحي\n\nأو اكتب "تواصل" للتحدث مع فريقنا.',
+  features:'Solis OS يقدم:\n\n- حجوزات أونلاين 24/7\n- مساعد واتساب ذكي\n- إدارة العملاء\n- إدارة الموظفين\n- تحليلات ولوحة تحكم\n- فواتير ومصاريف\n\nتريد تجربة مجانية؟',
+  pricing:'$29/شهر - كل شيء مشمول.\n\nتجربة مجانية 14 يوم بدون بطاقة.\n\nتريد تبدأ؟',
+  industries:'صالونات، عيادات، ورش، صالات رياضية، دروس خصوصية، عقارات وأكثر.\n\nما نوع عملك؟',
+  getStarted:'سجل خلال 30 ثانية - مجاني بدون بطاقة.\n\nهل تريد البدء الآن؟',
+  demo:'جرب مجانا أو تواصل عبر واتساب لعرض شخصي.\n\nأيهما تفضل؟',
+  human:'تواصل مع فريقنا عبر واتساب مباشرة.',
+  thanks:'عفوا! اسأل في أي وقت.',
+  yes:'ممتاز! سجل الآن - 30 ثانية فقط.',
   placeholder:'اكتب رسالة...'
 },
 fr:{
-  welcome:'Bonjour! Bienvenue chez Solis OS.\n\n1. Fonctionnalites\n2. Tarifs\n3. Secteurs\n4. Comment demarrer\n5. Demo',
-  welcomeGreet:'Bonjour! Bienvenue chez Solis OS.\n\nJe suis ici pour vous aider.\n\n1. Fonctionnalites\n2. Tarifs\n3. Secteurs\n4. Comment demarrer\n5. Demo',
-  welcomeGeneric:'Bonjour! Solis OS aide les entreprises de services a gerer reservations, clients et equipes avec l\'IA.',
-  fallback:'Merci! Demandez-moi:\n- Fonctionnalites\n- Tarifs\n- Secteurs\n\nOu WhatsApp: https://wa.me/447700168964',
-  features:'Solis OS:\n\nReservations 24/7\nGestion clients CRM\nAssistant IA WhatsApp\nAnalyses\nFacturation\n\nEssai gratuit: https://app.solis-os.com/signup',
-  pricing:'$29/mois - tout inclus.\n\nEssai gratuit 14 jours.\n\nhttps://app.solis-os.com/signup',
-  industries:'Salons, cliniques, garages, gyms et plus.',
-  getStarted:'1. Creez votre compte: https://app.solis-os.com/signup\n2. Configurez votre profil\n3. Connectez WhatsApp\n\n5 minutes!',
-  demo:'Essayez: https://app.solis-os.com/signup\nOu WhatsApp: https://wa.me/447700168964',
-  human:'WhatsApp: https://wa.me/447700168964',
-  thanks:'De rien! A bientot.',
+  welcome:'Bonjour! Je suis l\'assistant Solis OS.\n\n1. Fonctionnalites\n2. Tarifs\n3. Secteurs\n4. Comment demarrer\n5. Demo\n\nTapez un numero ou posez votre question!',
+  fallback:'Je peux vous aider avec:\n\n1. Fonctionnalites\n2. Tarifs\n3. Secteurs\n4. Demarrer\n5. Demo\n\nOu tapez "humain" pour parler a notre equipe.',
+  features:'Solis OS offre:\n\n- Reservations en ligne 24/7\n- Assistant IA WhatsApp\n- CRM clients\n- Gestion d\'equipe\n- Analyses et rapports\n- Facturation\n\nVoulez-vous essayer gratuitement?',
+  pricing:'$29/mois - tout inclus.\n\nEssai gratuit 14 jours, sans carte.\n\nOn commence?',
+  industries:'Salons, cliniques, garages, gyms, cours prives et plus.\n\nQuel est votre secteur?',
+  getStarted:'Inscription en 30 secondes - gratuit, sans carte.\n\nPret a commencer?',
+  demo:'Essai gratuit ou demo personnalisee sur WhatsApp.\n\nQue preferez-vous?',
+  human:'Contactez notre equipe sur WhatsApp directement.',
+  thanks:'De rien! N\'hesitez pas a revenir.',
+  yes:'Super! Inscrivez-vous en 30 secondes.',
   placeholder:'Tapez un message...'
 },
 es:{
-  welcome:'Hola! Bienvenido a Solis OS.\n\n1. Funcionalidades\n2. Precios\n3. Industrias\n4. Como empezar\n5. Demo',
-  welcomeGreet:'Hola! Bienvenido a Solis OS.\n\nEstoy aqui para ayudarte.\n\n1. Funcionalidades\n2. Precios\n3. Industrias\n4. Como empezar\n5. Demo',
-  welcomeGeneric:'Hola! Solis OS ayuda a negocios de servicios a gestionar reservas, clientes y equipos con IA.',
-  fallback:'Gracias! Pregunta sobre:\n- Funcionalidades\n- Precios\n- Industrias\n\nO WhatsApp: https://wa.me/447700168964',
-  features:'Solis OS:\n\nReservas 24/7\nCRM de clientes\nAsistente IA WhatsApp\nAnalisis\nFacturacion\n\nPrueba gratis: https://app.solis-os.com/signup',
-  pricing:'$29/mes - todo incluido.\n\nPrueba gratis 14 dias.\n\nhttps://app.solis-os.com/signup',
-  industries:'Salones, clinicas, talleres, gimnasios y mas.',
-  getStarted:'1. Crea tu cuenta: https://app.solis-os.com/signup\n2. Configura tu perfil\n3. Conecta WhatsApp\n\n5 minutos!',
-  demo:'Prueba: https://app.solis-os.com/signup\nO WhatsApp: https://wa.me/447700168964',
-  human:'WhatsApp: https://wa.me/447700168964',
-  thanks:'De nada! Hasta pronto.',
+  welcome:'Hola! Soy el asistente de Solis OS.\n\n1. Funcionalidades\n2. Precios\n3. Industrias\n4. Como empezar\n5. Demo\n\nEscribe un numero o pregunta lo que quieras!',
+  fallback:'Puedo ayudarte con:\n\n1. Funcionalidades\n2. Precios\n3. Industrias\n4. Empezar\n5. Demo\n\nO escribe "humano" para hablar con nuestro equipo.',
+  features:'Solis OS ofrece:\n\n- Reservas online 24/7\n- Asistente IA WhatsApp\n- CRM de clientes\n- Gestion de equipo\n- Analisis y reportes\n- Facturacion\n\nQuieres probarlo gratis?',
+  pricing:'$29/mes - todo incluido.\n\nPrueba gratis 14 dias, sin tarjeta.\n\nEmpezamos?',
+  industries:'Salones, clinicas, talleres, gimnasios, clases privadas y mas.\n\nQue tipo de negocio tienes?',
+  getStarted:'Registro en 30 segundos - gratis, sin tarjeta.\n\nListo para empezar?',
+  demo:'Prueba gratis o demo personalizada por WhatsApp.\n\nQue prefieres?',
+  human:'Contacta a nuestro equipo por WhatsApp directamente.',
+  thanks:'De nada! Pregunta cuando quieras.',
+  yes:'Genial! Registrate en 30 segundos.',
   placeholder:'Escribe un mensaje...'
 }
 };
+
 var chatPatterns={
-  pricing:['price','pricing','cost','how much','plans','subscription','pay','fee','monthly','سعر','اسعار','كم','prix','tarif','combien','precio','costo','2'],
-  features:['feature','what does','what can','capabilities','what is solis','tell me about','about solis','مميزات','fonctionnalit','funcionalidad','1'],
-  industries:['salon','hair','barber','beauty','spa','clinic','medical','garage','mechanic','gym','fitness','industry','who is it for','صالون','عيادة','coiffure','belleza','3'],
-  getStarted:['start','sign up','signup','register','create account','get started','begin','try','join','بدء','تسجيل','commencer','empezar','4'],
-  demo:['demo','show me','see it','preview','walkthrough','tour','عرض','5'],
-  booking:['booking','appointment','schedule','calendar','reserve','حجز','reservation','reserva'],
-  support:['support','help','issue','problem','trouble','دعم','مساعدة','aide','ayuda'],
-  human:['speak','talk','human','person','agent','real person','someone','call me','whatsapp','تحدث','parler','hablar'],
-  thanks:['thank','thanks','appreciate','great','perfect','awesome','شكرا','merci','gracias'],
-  bye:['bye','goodbye','see you','later','مع السلامة','au revoir','adios'],
-  yes:['yes','yeah','yep','sure','ok','okay','sounds good','interested','نعم','oui','si']
+  pricing:['price','pricing','cost','how much','plans','plan','subscription','pay','fee','monthly','money','cheap','expensive','dollar','29','سعر','اسعار','كم','prix','tarif','combien','precio','costo','cuanto'],
+  features:['feature','what does','what can','capabilities','what is solis','tell me about','about solis','what do you do','does it do','can it','platform','tool','software','app','مميزات','fonctionnalit','funcionalidad','que hace','que es'],
+  industries:['salon','hair','barber','beauty','spa','clinic','medical','dental','doctor','garage','mechanic','car','gym','fitness','trainer','tutor','lesson','teach','real estate','agent','who is it for','what business','my business','صالون','عيادة','coiffure','belleza','negocio'],
+  getStarted:['start','sign up','signup','register','create account','get started','begin','try','join','free trial','trial','account','بدء','تسجيل','commencer','inscri','empezar','registr'],
+  demo:['demo','show me','see it','preview','walkthrough','tour','test','عرض','essayer','probar'],
+  booking:['booking','appointment','schedule','calendar','reserve','book','reschedule','cancel','حجز','reservation','reserva','rendez','cita'],
+  whatsapp:['whatsapp assistant','ai assistant','bot','chatbot','automated','auto reply','24/7','receptionist','مساعد','assistant','asistente'],
+  support:['support','help','issue','problem','trouble','bug','error','not working','broken','دعم','مساعدة','aide','ayuda','problema'],
+  human:['speak','talk','human','person','agent','real person','someone','call me','contact','team','representative','تحدث','تواصل','parler','humain','hablar','humano'],
+  thanks:['thank','thanks','appreciate','great','perfect','awesome','amazing','cool','nice','شكرا','merci','gracias','genial'],
+  bye:['bye','goodbye','see you','later','good night','gotta go','مع السلامة','au revoir','adios','chao'],
+  yes:['yes','yeah','yep','sure','ok','okay','sounds good','interested','lets go','let\'s go','ready','do it','نعم','oui','si','vale','claro']
 };
-function toggleChat(){chatOpen=!chatOpen;document.getElementById('solis-chat-btn').classList.toggle('open',chatOpen);document.getElementById('solis-chat-window').classList.toggle('open',chatOpen);if(chatOpen&&!document.getElementById('chat-messages').children.length){addBotMsg(T[chatLang].welcome)}}
-function setChatLang(l){chatLang=l;document.querySelectorAll('.chat-lang button').forEach(function(b){b.classList.remove('active')});event.target.classList.add('active');document.getElementById('chat-input').placeholder=T[l].placeholder||'Type a message...';chatGreeted=false;document.getElementById('chat-messages').innerHTML='';addBotMsg(T[l].welcome)}
-function addBotMsg(t){var m=document.createElement('div');m.className='chat-msg bot';m.textContent=t;document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
-function addUserMsg(t){var m=document.createElement('div');m.className='chat-msg user';m.textContent=t;document.getElementById('chat-messages').appendChild(m);m.parentElement.scrollTop=m.parentElement.scrollHeight}
-function matchTopic(input){var lo=input.toLowerCase().trim();for(var key in chatPatterns){if(chatPatterns[key].some(function(k){return lo.includes(k)}))return key}return null}
-function getReply(input){var lo=input.toLowerCase().trim();var L=T[chatLang];var greetings=['hi','hello','hey','good morning','good afternoon','hola','bonjour','hallo','ciao','مرحبا','salut'];if(!chatGreeted){chatGreeted=true;if(greetings.some(function(g){return lo===g||lo.startsWith(g+' ')||lo.startsWith(g+'!')})){return L.welcomeGreet}var topic=matchTopic(lo);if(topic&&L[topic])return L[topic];return L.welcomeGeneric}if(['1','2','3','4','5'].includes(lo)){var keys=['features','pricing','industries','getStarted','demo'];return L[keys[parseInt(lo)-1]]}var topic=matchTopic(lo);if(topic&&L[topic])return L[topic];return L.fallback}
-function sendChat(){var i=document.getElementById('chat-input');var t=i.value.trim();if(!t)return;i.value='';addUserMsg(t);setTimeout(function(){addBotMsg(getReply(t))},400)}
+
+var quickReplies={
+  en:{
+    welcome:['Features','Pricing','Get Started','Talk to Human'],
+    features:['See Pricing','Start Free Trial','Talk to Human'],
+    pricing:['Start Free Trial','See Features','Talk to Human'],
+    industries:['See Features','See Pricing','Get Started'],
+    getStarted:['Sign Up Now','See Pricing','Talk to Human'],
+    demo:['Start Free Trial','WhatsApp Us'],
+    booking:['Start Free Trial','See All Features'],
+    whatsapp:['Start Free Trial','See Pricing'],
+    fallback:['Features','Pricing','Get Started','Talk to Human'],
+    yes:['Sign Up Now','WhatsApp Us'],
+    human:['WhatsApp Us']
+  }
+};
+
+var quickActions={
+  'Features':'1','Pricing':'2','Get Started':'4','Talk to Human':'human',
+  'See Pricing':'2','Start Free Trial':'4','See Features':'1','See All Features':'1',
+  'Sign Up Now':'4','WhatsApp Us':'human','Industries':'3','Demo':'5',
+};
+
+var SIGNUP_URL='https://app.solis-os.com/signup';
+var WHATSAPP_URL='https://wa.me/447700168964';
+
+function formatMsg(text){
+  var escaped=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  escaped=escaped.replace(/(https?:\/\/[^\s<]+)/g,function(url){
+    var label=url.replace(/https?:\/\//,'').replace(/\?.*/,'');
+    if(label.length>30)label=label.substring(0,28)+'...';
+    return '<a href="'+url+'" target="_blank" rel="noopener" style="color:#c9a040;text-decoration:underline;">'+label+'</a>';
+  });
+  return escaped;
+}
+
+function addBotMsg(text,topic){
+  var container=document.getElementById('chat-messages');
+  var typing=document.createElement('div');
+  typing.className='chat-msg bot typing-indicator';
+  typing.innerHTML='<span></span><span></span><span></span>';
+  container.appendChild(typing);
+  container.scrollTop=container.scrollHeight;
+
+  var delay=Math.min(600+text.length*2,1400);
+  setTimeout(function(){
+    container.removeChild(typing);
+    var m=document.createElement('div');
+    m.className='chat-msg bot';
+    m.innerHTML=formatMsg(text);
+    container.appendChild(m);
+
+    if(topic&&quickReplies.en[topic]){
+      var qr=document.createElement('div');
+      qr.className='chat-quick-replies';
+      var replies=quickReplies.en[topic];
+      replies.forEach(function(r){
+        var btn=document.createElement('button');
+        btn.textContent=r;
+        btn.onclick=function(){
+          if(r==='WhatsApp Us'||r==='WhatsApp'){
+            window.open(WHATSAPP_URL,'_blank');
+          } else if(r==='Sign Up Now'){
+            window.open(SIGNUP_URL,'_blank');
+          } else {
+            var action=quickActions[r]||r;
+            handleInput(action);
+            addUserMsg(r);
+          }
+        };
+        qr.appendChild(btn);
+      });
+      container.appendChild(qr);
+    }
+
+    container.scrollTop=container.scrollHeight;
+  },delay);
+}
+
+function addUserMsg(text){
+  var container=document.getElementById('chat-messages');
+  var oldQr=container.querySelectorAll('.chat-quick-replies');
+  oldQr.forEach(function(el){el.remove()});
+  var m=document.createElement('div');
+  m.className='chat-msg user';
+  m.textContent=text;
+  container.appendChild(m);
+  container.scrollTop=container.scrollHeight;
+}
+
+function matchTopic(input){
+  var lo=input.toLowerCase().trim();
+  for(var key in chatPatterns){
+    var patterns=chatPatterns[key];
+    for(var i=0;i<patterns.length;i++){
+      if(lo.includes(patterns[i]))return key;
+    }
+  }
+  return null;
+}
+
+function extractNumber(input){
+  var clean=input.trim().replace(/[.\-)\]}/]/g,'').trim();
+  var match=clean.match(/^(\d)$/);
+  if(match)return parseInt(match[1]);
+  match=input.trim().match(/^(\d)/);
+  if(match&&input.trim().length<=3)return parseInt(match[1]);
+  return null;
+}
+
+function handleInput(input){
+  var lo=input.toLowerCase().trim();
+  var L=T[chatLang];
+  var greetings=['hi','hello','hey','good morning','good afternoon','good evening','hola','bonjour','hallo','ciao','مرحبا','salut','yo','sup','hii','hiii','heya','howdy'];
+
+  if(greetings.some(function(g){return lo===g||lo.startsWith(g+' ')||lo.startsWith(g+'!')||lo.startsWith(g+',')})){
+    chatContext='greeted';
+    addBotMsg(L.welcome,'welcome');
+    return;
+  }
+
+  var num=extractNumber(lo);
+  if(num>=1&&num<=5){
+    var keys=['features','pricing','industries','getStarted','demo'];
+    var key=keys[num-1];
+    chatContext=key;
+    addBotMsg(L[key],key);
+    return;
+  }
+
+  var topic=matchTopic(lo);
+  if(topic){
+    chatContext=topic;
+    if(topic==='human'){
+      addBotMsg(L.human,'human');
+      return;
+    }
+    if(L[topic]){
+      addBotMsg(L[topic],topic);
+      return;
+    }
+  }
+
+  if(chatContext==='pricing'||chatContext==='features'||chatContext==='getStarted'||chatContext==='demo'){
+    var yesWords=['yes','yeah','yep','sure','ok','okay','let','ready','do it','go','si','oui','نعم','vale','claro'];
+    if(yesWords.some(function(w){return lo.includes(w)})){
+      chatContext='yes';
+      addBotMsg(L.yes,'yes');
+      return;
+    }
+  }
+
+  if(chatContext==='industries'){
+    chatContext='features';
+    addBotMsg(L.features,'features');
+    return;
+  }
+
+  if(!chatContext){
+    chatContext='welcome';
+    addBotMsg(L.welcome,'welcome');
+    return;
+  }
+
+  chatContext='fallback';
+  addBotMsg(L.fallback,'fallback');
+}
+
+function sendChat(){
+  var input=document.getElementById('chat-input');
+  var text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  addUserMsg(text);
+  handleInput(text);
+  chatHistory.push(text);
+}
+
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('solis-chat-btn').classList.toggle('open',chatOpen);
+  document.getElementById('solis-chat-window').classList.toggle('open',chatOpen);
+  if(chatOpen&&!document.getElementById('chat-messages').children.length){
+    addBotMsg(T[chatLang].welcome,'welcome');
+  }
+}
+
+window.toggleChat=toggleChat;
+window.sendChat=sendChat;
+})();
 </script>
+<style>
+.typing-indicator{display:flex;gap:4px;padding:12px 16px!important;width:60px}
+.typing-indicator span{width:7px;height:7px;border-radius:50%;background:rgba(201,160,64,.5);animation:typingBounce .6s infinite}
+.typing-indicator span:nth-child(2){animation-delay:.15s}
+.typing-indicator span:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+.chat-quick-replies{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0;align-self:flex-start}
+.chat-quick-replies button{padding:6px 12px;border-radius:16px;border:1px solid rgba(201,160,64,.4);background:rgba(201,160,64,.08);color:#c9a040;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.chat-quick-replies button:hover{background:rgba(201,160,64,.2);border-color:rgba(201,160,64,.6)}
+.chat-msg.bot a{color:#c9a040!important;text-decoration:underline!important}
+.chat-msg.bot a:hover{color:#e8c560!important}
+</style>
 
 </body>
 </html>
