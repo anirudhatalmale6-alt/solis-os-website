@@ -113,19 +113,29 @@ section{position:relative;z-index:1}
 .app-dl-title .gradient{background:linear-gradient(135deg,var(--gold),var(--gold2),#fff,var(--gold));background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s ease infinite}
 .app-dl-desc{font-size:17px;color:var(--text2);line-height:1.7;margin-bottom:40px}
 .store-badges{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
-.store-badge{display:inline-flex;align-items:center;gap:12px;padding:14px 28px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;transition:all 0.3s;cursor:pointer;text-decoration:none}
-.store-badge:hover{border-color:var(--gold);background:rgba(201,160,64,0.06);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.store-badge{display:inline-flex;align-items:center;gap:12px;padding:14px 28px;border-radius:14px;transition:all 0.3s;cursor:pointer;text-decoration:none}
+.store-badge.apple{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2)}
+.store-badge.apple:hover{border-color:#fff;background:rgba(255,255,255,0.14);transform:translateY(-3px);box-shadow:0 12px 40px rgba(255,255,255,0.08)}
+.store-badge.apple svg{fill:#fff}
+.store-badge.google{background:rgba(52,168,83,0.08);border:1px solid rgba(52,168,83,0.3)}
+.store-badge.google:hover{border-color:rgba(52,168,83,0.7);background:rgba(52,168,83,0.14);transform:translateY(-3px);box-shadow:0 12px 40px rgba(52,168,83,0.15)}
 .store-badge svg{width:32px;height:32px;flex-shrink:0}
 .store-badge-text{text-align:left}
 .store-badge-text small{display:block;font-size:11px;color:var(--text3);font-weight:400;line-height:1}
 .store-badge-text strong{display:block;font-size:18px;color:var(--text);font-family:var(--font-display);font-weight:700;line-height:1.3}
+.store-badge.google .store-badge-text strong{color:#34a853}
 .hero-store-badges{display:flex;gap:14px;margin-top:20px;animation:fadeUp 0.8s ease 0.4s both}
-.hero-store-badge{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;transition:all 0.3s;cursor:pointer;text-decoration:none}
-.hero-store-badge:hover{border-color:var(--gold);background:rgba(201,160,64,0.06);transform:translateY(-2px)}
+.hero-store-badge{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border-radius:10px;transition:all 0.3s;cursor:pointer;text-decoration:none}
+.hero-store-badge.apple{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15)}
+.hero-store-badge.apple:hover{border-color:#fff;background:rgba(255,255,255,0.1);transform:translateY(-2px)}
+.hero-store-badge.apple svg{fill:#fff}
+.hero-store-badge.google{background:rgba(52,168,83,0.06);border:1px solid rgba(52,168,83,0.25)}
+.hero-store-badge.google:hover{border-color:rgba(52,168,83,0.6);background:rgba(52,168,83,0.12);transform:translateY(-2px)}
 .hero-store-badge svg{width:22px;height:22px;flex-shrink:0}
 .hero-store-badge-text{text-align:left}
 .hero-store-badge-text small{display:block;font-size:9px;color:var(--text3);font-weight:400;line-height:1}
 .hero-store-badge-text strong{display:block;font-size:13px;color:var(--text);font-family:var(--font-display);font-weight:600;line-height:1.3}
+.hero-store-badge.google .hero-store-badge-text strong{color:#34a853}
 @media(max-width:768px){
   .store-badges{flex-direction:column;align-items:center}
   .store-badge{width:100%;max-width:280px;justify-content:center}
@@ -579,15 +589,15 @@ section{position:relative;z-index:1}
           </a>
         </div>
         <div class="hero-store-badges">
-          <a href="https://apps.apple.com/app/solis-os/id6745498032" target="_blank" class="hero-store-badge">
+          <a href="https://apps.apple.com/app/solis-os/id6745498032" target="_blank" class="hero-store-badge apple">
             <svg viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
             <div class="hero-store-badge-text">
               <small>Download on the</small>
               <strong>App Store</strong>
             </div>
           </a>
-          <a href="https://play.google.com/store/apps/details?id=com.solisos" target="_blank" class="hero-store-badge">
-            <svg viewBox="0 0 24 24" fill="white"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 1.332c.756.436.756 1.884 0 2.32l-2.302 1.332-2.535-2.493 2.535-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+          <a href="https://play.google.com/store/apps/details?id=com.solisos" target="_blank" class="hero-store-badge google">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92z" fill="#4285F4"/><path d="M14.499 12.707l2.302 2.302-10.937 6.333 8.635-8.635z" fill="#34A853"/><path d="M17.698 9.508l2.302 1.332c.756.436.756 1.884 0 2.32l-2.302 1.332-2.535-2.493 2.535-2.491z" fill="#FBBC04"/><path d="M5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z" fill="#EA4335"/></svg>
             <div class="hero-store-badge-text">
               <small>Get it on</small>
               <strong>Google Play</strong>
@@ -1225,15 +1235,15 @@ Could you share your name to confirm the booking?</div>
       <h2 class="app-dl-title">Get Solis OS on <span class="gradient">Your Phone</span></h2>
       <p class="app-dl-desc">Whether you're a business owner managing bookings or a customer discovering services nearby &mdash; Solis OS is available on both iOS and Android.</p>
       <div class="store-badges">
-        <a href="https://apps.apple.com/app/solis-os/id6745498032" target="_blank" class="store-badge">
+        <a href="https://apps.apple.com/app/solis-os/id6745498032" target="_blank" class="store-badge apple">
           <svg viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
           <div class="store-badge-text">
             <small>Download on the</small>
             <strong>App Store</strong>
           </div>
         </a>
-        <a href="https://play.google.com/store/apps/details?id=com.solisos" target="_blank" class="store-badge">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 1.332c.756.436.756 1.884 0 2.32l-2.302 1.332-2.535-2.493 2.535-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+        <a href="https://play.google.com/store/apps/details?id=com.solisos" target="_blank" class="store-badge google">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92z" fill="#4285F4"/><path d="M14.499 12.707l2.302 2.302-10.937 6.333 8.635-8.635z" fill="#34A853"/><path d="M17.698 9.508l2.302 1.332c.756.436.756 1.884 0 2.32l-2.302 1.332-2.535-2.493 2.535-2.491z" fill="#FBBC04"/><path d="M5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z" fill="#EA4335"/></svg>
           <div class="store-badge-text">
             <small>Get it on</small>
             <strong>Google Play</strong>
