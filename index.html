@@ -104,6 +104,34 @@ section{position:relative;z-index:1}
 .btn-talk-sales{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:transparent;color:var(--text2);font-weight:600;font-size:15px;border-radius:12px;border:1px solid rgba(37,211,102,0.3);transition:all 0.3s;font-family:var(--font-display);cursor:pointer;text-decoration:none}
 .btn-talk-sales:hover{border-color:rgba(37,211,102,0.6);color:#25D366;background:rgba(37,211,102,0.06);transform:translateY(-1px);box-shadow:0 4px 20px rgba(37,211,102,0.15)}
 
+/* ── APP DOWNLOAD SECTION ── */
+.app-download{padding:100px 0;position:relative;overflow:hidden}
+.app-download::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(201,160,64,0.08) 0%,transparent 70%);pointer-events:none}
+.app-dl-inner{text-align:center;max-width:700px;margin:0 auto}
+.app-dl-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(201,160,64,0.08);border:1px solid rgba(201,160,64,0.2);border-radius:50px;font-size:13px;color:var(--gold2);margin-bottom:24px;font-family:var(--font-display);font-weight:500}
+.app-dl-title{font-family:var(--font-display);font-size:clamp(32px,4vw,52px);font-weight:800;line-height:1.1;margin-bottom:16px}
+.app-dl-title .gradient{background:linear-gradient(135deg,var(--gold),var(--gold2),#fff,var(--gold));background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s ease infinite}
+.app-dl-desc{font-size:17px;color:var(--text2);line-height:1.7;margin-bottom:40px}
+.store-badges{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.store-badge{display:inline-flex;align-items:center;gap:12px;padding:14px 28px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;transition:all 0.3s;cursor:pointer;text-decoration:none}
+.store-badge:hover{border-color:var(--gold);background:rgba(201,160,64,0.06);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.store-badge svg{width:32px;height:32px;flex-shrink:0}
+.store-badge-text{text-align:left}
+.store-badge-text small{display:block;font-size:11px;color:var(--text3);font-weight:400;line-height:1}
+.store-badge-text strong{display:block;font-size:18px;color:var(--text);font-family:var(--font-display);font-weight:700;line-height:1.3}
+.hero-store-badges{display:flex;gap:14px;margin-top:20px;animation:fadeUp 0.8s ease 0.4s both}
+.hero-store-badge{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;transition:all 0.3s;cursor:pointer;text-decoration:none}
+.hero-store-badge:hover{border-color:var(--gold);background:rgba(201,160,64,0.06);transform:translateY(-2px)}
+.hero-store-badge svg{width:22px;height:22px;flex-shrink:0}
+.hero-store-badge-text{text-align:left}
+.hero-store-badge-text small{display:block;font-size:9px;color:var(--text3);font-weight:400;line-height:1}
+.hero-store-badge-text strong{display:block;font-size:13px;color:var(--text);font-family:var(--font-display);font-weight:600;line-height:1.3}
+@media(max-width:768px){
+  .store-badges{flex-direction:column;align-items:center}
+  .store-badge{width:100%;max-width:280px;justify-content:center}
+  .hero-store-badges{justify-content:center}
+}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── DASHBOARD MOCKUP ── */
@@ -498,6 +526,7 @@ section{position:relative;z-index:1}
       <a href="#demo">Demo</a>
       <a href="#industries">Industries</a>
       <a href="#pricing">Pricing</a>
+      <a href="#download">Download App</a>
       <a href="#register" style="color:var(--gold2);font-weight:600">Register</a>
       <a href="https://app.solis-os.com" class="nav-cta">
         Launch App
@@ -514,6 +543,7 @@ section{position:relative;z-index:1}
   <a href="#how" onclick="document.getElementById('mobile-menu').classList.remove('open')">How It Works</a>
   <a href="#industries" onclick="document.getElementById('mobile-menu').classList.remove('open')">Industries</a>
   <a href="#pricing" onclick="document.getElementById('mobile-menu').classList.remove('open')">Pricing</a>
+  <a href="#download" onclick="document.getElementById('mobile-menu').classList.remove('open')">Download App</a>
   <a href="https://app.solis-os.com" class="nav-cta">Launch App</a>
 </div>
 
@@ -546,6 +576,22 @@ section{position:relative;z-index:1}
           <a href="https://wa.me/447700168964?text=Hi%2C%20I%27m%20interested%20in%20Solis%20OS.%20Can%20you%20tell%20me%20more%3F" target="_blank" class="btn-talk-sales">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             Talk to Sales
+          </a>
+        </div>
+        <div class="hero-store-badges">
+          <a href="https://apps.apple.com/app/solis-os/id6745498032" target="_blank" class="hero-store-badge">
+            <svg viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            <div class="hero-store-badge-text">
+              <small>Download on the</small>
+              <strong>App Store</strong>
+            </div>
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.solisos" target="_blank" class="hero-store-badge">
+            <svg viewBox="0 0 24 24" fill="white"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 1.332c.756.436.756 1.884 0 2.32l-2.302 1.332-2.535-2.493 2.535-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+            <div class="hero-store-badge-text">
+              <small>Get it on</small>
+              <strong>Google Play</strong>
+            </div>
           </a>
         </div>
       </div>
@@ -1168,13 +1214,43 @@ Could you share your name to confirm the booking?</div>
   </div>
 </section>
 
+<!-- Download App -->
+<section class="app-download" id="download">
+  <div class="container">
+    <div class="app-dl-inner reveal">
+      <div class="app-dl-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Our App
+      </div>
+      <h2 class="app-dl-title">Get Solis OS on <span class="gradient">Your Phone</span></h2>
+      <p class="app-dl-desc">Whether you're a business owner managing bookings or a customer discovering services nearby &mdash; Solis OS is available on both iOS and Android.</p>
+      <div class="store-badges">
+        <a href="https://apps.apple.com/app/solis-os/id6745498032" target="_blank" class="store-badge">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <div class="store-badge-text">
+            <small>Download on the</small>
+            <strong>App Store</strong>
+          </div>
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.solisos" target="_blank" class="store-badge">
+          <svg viewBox="0 0 24 24" fill="white"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 1.332c.756.436.756 1.884 0 2.32l-2.302 1.332-2.535-2.493 2.535-2.491zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+          <div class="store-badge-text">
+            <small>Get it on</small>
+            <strong>Google Play</strong>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Footer -->
 <footer class="footer">
   <div class="container">
     <div class="footer-inner">
       <div class="footer-left">
         <img src="assets/logo.png" alt="Solis OS">
-        <span>&copy; 2025 Solis OS. All rights reserved.</span>
+        <span>&copy; 2026 Solis OS. All rights reserved.</span>
       </div>
       <div class="footer-links">
         <a href="#features">Features</a>
