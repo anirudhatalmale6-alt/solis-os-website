@@ -1334,6 +1334,12 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 <input type="text" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
 <button class="chat-send-btn" onclick="sendChat()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
 </div>
+<div class="chat-lang" id="chat-lang-bar">
+<button class="active" onclick="switchLang('en',this)">English</button>
+<button onclick="switchLang('ar',this)">العربية</button>
+<button onclick="switchLang('fr',this)">Français</button>
+<button onclick="switchLang('es',this)">Español</button>
+</div>
 </div>
 
 <script>
@@ -1601,8 +1607,21 @@ function toggleChat(){
   }
 }
 
+function switchLang(lang,btn){
+  chatLang=lang;
+  var btns=document.querySelectorAll('.chat-lang button');
+  btns.forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  document.getElementById('chat-input').placeholder=T[lang].placeholder||'Type a message...';
+  document.getElementById('chat-messages').innerHTML='';
+  chatContext=null;
+  chatHistory=[];
+  addBotMsg(T[lang].welcome,'welcome');
+}
+
 window.toggleChat=toggleChat;
 window.sendChat=sendChat;
+window.switchLang=switchLang;
 })();
 </script>
 <style>
