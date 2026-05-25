@@ -320,6 +320,21 @@ section{position:relative;z-index:1}
 .test-name{font-size:14px;font-weight:600;color:var(--text)}
 .test-role{font-size:12px;color:var(--text3)}
 
+/* ── POS PROMO ── */
+.pos-promo{padding:100px 0;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.95) 0%,rgba(247,248,252,0.92) 50%,rgba(255,255,255,0.95) 100%)}
+.pos-promo-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.pos-promo-title{font-family:var(--font-display);font-size:clamp(32px,4vw,48px);font-weight:800;line-height:1.1;margin-bottom:16px;color:var(--text)}
+.pos-promo-desc{font-size:16px;color:var(--text2);line-height:1.7;margin-bottom:24px;max-width:480px}
+.pos-promo-features{list-style:none;margin-bottom:32px;display:flex;flex-direction:column;gap:10px}
+.pos-promo-features li{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text);font-weight:500}
+.pos-promo-features li svg{flex-shrink:0}
+.pos-promo-btns{display:flex;gap:16px;flex-wrap:wrap}
+.pos-promo-img{position:relative}
+.pos-promo-img img{border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,0.12);border:1px solid var(--border)}
+.pos-promo-badge{position:absolute;top:-12px;right:-12px;background:var(--gold2);color:#fff;padding:12px 20px;border-radius:14px;font-family:var(--font-display);font-weight:800;font-size:22px;box-shadow:0 8px 24px var(--gold-glow);line-height:1.2;text-align:center}
+.pos-promo-badge span{display:block;font-size:11px;font-weight:500;opacity:0.9}
+@media(max-width:1024px){.pos-promo-inner{grid-template-columns:1fr;gap:40px;text-align:center}.pos-promo-features{align-items:center}.pos-promo-btns{justify-content:center}.pos-promo-desc{margin:0 auto 24px}.pos-promo-badge{top:-8px;right:8px}}
+
 /* ── CTA ── */
 .final-cta{padding:100px 0;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(247,248,252,0.92) 0%,rgba(255,255,255,0.88) 50%,rgba(247,248,252,0.92) 100%),url('assets/cta-bg.jpg') center/cover no-repeat}
 .final-cta::before{display:none}
@@ -1178,6 +1193,43 @@ Could you share your name to confirm the booking?</div>
             <div class="test-role">Private Tutor, 40 Students &mdash; Sydney</div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POS System -->
+<section class="pos-promo" id="pos">
+  <div class="container">
+    <div class="pos-promo-inner reveal">
+      <div class="pos-promo-content">
+        <div class="section-label">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          NEW PRODUCT
+        </div>
+        <h2 class="pos-promo-title">Solis OS <span class="gradient">POS</span></h2>
+        <p class="pos-promo-desc">The point-of-sale system you buy once and own forever. No monthly fees, no subscriptions. One payment, lifetime access. Built for shops, cafes, salons, and every business that sells.</p>
+        <ul class="pos-promo-features">
+          <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Barcode scanning &amp; fast checkout</li>
+          <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Inventory &amp; stock management</li>
+          <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Sales reports &amp; analytics</li>
+          <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Works offline &mdash; download &amp; own it</li>
+          <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> One-time payment &mdash; just $169</li>
+        </ul>
+        <div class="pos-promo-btns">
+          <a href="pos.html" class="btn-gold">
+            Learn More
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="https://anirudhatalmale6-alt.github.io/solis-pos-app/" target="_blank" class="btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Try Free for 10 Days
+          </a>
+        </div>
+      </div>
+      <div class="pos-promo-img">
+        <img src="pos-demo/pos-checkout.png" alt="Solis OS POS System" loading="lazy">
+        <div class="pos-promo-badge">$169 <span>One-time</span></div>
       </div>
     </div>
   </div>
