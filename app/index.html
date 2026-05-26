@@ -910,11 +910,11 @@ async function handleLogin(e){
   if(!email||!password){$('auth-error').textContent='Please enter email and password.';return}
   const sbResult=await sbSignIn(email,password);
   if(sbResult.data){
-    if(sbResult.data.access_token)sessionStorage.setItem('sb_access_token',sbResult.data.access_token);
+    if(sbResult.data.access_token)localStorage.setItem('sb_access_token',sbResult.data.access_token);
     let accounts=await dbAll('accounts');
     let account=accounts.find(a=>a.email===email);
+    const uMeta=sbResult.data.user?.user_metadata||{};
     if(!account){
-      const uMeta=sbResult.data.user?.user_metadata||{};
       const uName=uMeta.full_name||email.split('@')[0];
       account={name:uName,email,password,role:'admin',active:true,createdAt:new Date().toISOString()};
       await dbPut('accounts',account);
@@ -922,12 +922,17 @@ async function handleLogin(e){
       if(pendingSignup&&pendingSignup.email===email){
         await dbPut('settings',{key:'businessName',value:pendingSignup.business});
         pendingSignup=null;
-      } else if(uMeta.business_name){
+      }
+    }else if(account.password!==password){account.password=password;await dbPut('accounts',account)}
+    if(uMeta.business_name){
+      const curSettings=await loadSettings();
+      const isDefault=!curSettings.businessName||curSettings.businessName==='Downtown Coffee & Market';
+      if(isDefault||curSettings.businessName!==uMeta.business_name){
         await dbPut('settings',{key:'businessName',value:uMeta.business_name});
         if(uMeta.business_address)await dbPut('settings',{key:'businessAddress',value:uMeta.business_address});
         if(uMeta.business_phone)await dbPut('settings',{key:'businessPhone',value:uMeta.business_phone});
       }
-    }else if(account.password!==password){account.password=password;await dbPut('accounts',account)}
+    }
     currentUser={name:account.name,role:account.role,email:account.email};
     settings=await loadSettings();applyTheme();
     if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
@@ -1684,7 +1689,7 @@ async function saveSettings(){
   applyTheme();
   if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
   $('tax-label').textContent=`${settings.taxName||'Tax'} (${settings.taxRate||0}%)`;
-  try{if(currentUser?.email){const token=sessionStorage.getItem('sb_access_token');if(token)await fetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{...sbH,'Authorization':'Bearer '+token},body:JSON.stringify({data:{business_name:pairs.businessName,business_address:pairs.businessAddress,business_phone:pairs.businessPhone}})})}}catch(e){}
+  try{if(currentUser?.email){const token=localStorage.getItem('sb_access_token');if(token)await fetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{...sbH,'Authorization':'Bearer '+token},body:JSON.stringify({data:{business_name:pairs.businessName,business_address:pairs.businessAddress,business_phone:pairs.businessPhone}})})}}catch(e){}
   showToast('Settings saved');
 }
 function generateSyncCode(){
