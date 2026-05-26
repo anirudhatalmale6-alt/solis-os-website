@@ -261,11 +261,13 @@ let currentCode='';
 let refreshInterval=null;
 let dashData=null;
 
-// Check URL param
+// Check saved code or URL param and auto-connect
 (function init(){
   const params=new URLSearchParams(window.location.search);
-  const code=params.get('code');
-  if(code&&code.length===6){
+  const urlCode=params.get('code');
+  const savedCode=localStorage.getItem('solis_dash_code');
+  const code=urlCode||(savedCode||'');
+  if(code&&code.length>=4){
     document.getElementById('sync-input').value=code.toUpperCase();
     connectDashboard();
   }
@@ -305,11 +307,17 @@ async function connectDashboard(){
     const payload=await resp.json();
     currentCode=code;
     dashData=payload;
+    localStorage.setItem('solis_dash_code',code);
 
     document.getElementById('login-screen').style.display='none';
     document.getElementById('dash-screen').style.display='block';
     document.getElementById('dash-footer').style.display='block';
     document.getElementById('footer-code').textContent='Sync code: '+code;
+
+    // Keep code in URL for bookmarking
+    const url=new URL(window.location);
+    url.searchParams.set('code',code);
+    window.history.replaceState(null,'',url);
 
     renderDashboard(payload);
     refreshInterval=setInterval(()=>refreshData(),30000);
@@ -335,12 +343,12 @@ async function refreshData(){
 function logout(){
   currentCode='';
   dashData=null;
+  localStorage.removeItem('solis_dash_code');
   if(refreshInterval)clearInterval(refreshInterval);
   document.getElementById('login-screen').style.display='';
   document.getElementById('dash-screen').style.display='none';
   document.getElementById('sync-input').value='';
   document.getElementById('login-error').textContent='';
-  // Remove code from URL
   const url=new URL(window.location);
   url.searchParams.delete('code');
   window.history.replaceState(null,'',url);
