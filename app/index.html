@@ -1725,16 +1725,86 @@ async function syncToCloud(){
       currencySymbol:settings.currencySymbol||'$'
     };
 
+    const allPromos=await dbAll('promotions');
+    const allStaff=await dbAll('staff');
+
     await fetch('https://api.solis-os.com/api/pos/sync',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({syncCode:settings.syncCode,businessName:settings.businessName||'My Business',data})
+      body:JSON.stringify({syncCode:settings.syncCode,businessName:settings.businessName||'My Business',data,
+        products:products.map(p=>({id:p.id,name:p.name,price:p.price,cost:p.cost||0,stock:p.stock,lowStock:p.lowStock||0,category:p.category||'',barcode:p.barcode||'',color:p.color||''})),
+        promotions:allPromos.map(p=>({id:p.id,name:p.name,type:p.type,value:p.value,minPurchase:p.minPurchase||0,buyQty:p.buyQty||0,getQty:p.getQty||0,active:p.active!==false,productId:p.productId||null,categoryId:p.categoryId||null})),
+        staff:allStaff.map(s=>({id:s.id,name:s.name,pin:s.pin,role:s.role||'cashier'})),
+        customers:customers.map(c=>({id:c.id,name:c.name,phone:c.phone||'',email:c.email||'',points:c.points||0,totalSpent:c.totalSpent||0,visits:c.visits||0}))
+      })
     });
+
+    await pullRemoteCommands();
 
     await dbPut('settings',{key:'lastSyncTime',value:new Date().toISOString()});
     settings.lastSyncTime=new Date().toISOString();
     showToast('Cloud sync complete');
   }catch(e){console.error('Cloud sync error:',e);showToast('Sync failed - check connection')}
+}
+
+async function pullRemoteCommands(){
+  if(!settings.syncCode)return;
+  try{
+    const resp=await fetch(`https://api.solis-os.com/api/pos/remote/${settings.syncCode}`);
+    if(!resp.ok)return;
+    const{commands}=await resp.json();
+    if(!commands||commands.length===0)return;
+    for(const cmd of commands){
+      try{await applyRemoteCommand(cmd)}catch(e){console.error('Remote cmd error:',cmd,e)}
+    }
+    await fetch(`https://api.solis-os.com/api/pos/remote/${settings.syncCode}`,{method:'DELETE'});
+    allProducts=await dbAll('products');
+    renderProductGrid();
+  }catch(e){console.error('Pull remote error:',e)}
+}
+
+async function applyRemoteCommand(cmd){
+  const d=cmd.data;
+  switch(cmd.type){
+    case 'product_add':{
+      const p={name:d.name,price:Number(d.price)||0,cost:Number(d.cost)||0,stock:Number(d.stock)||0,lowStock:Number(d.lowStock)||0,category:d.category||'General',barcode:d.barcode||'',color:d.color||'#f59e0b',createdAt:new Date().toISOString()};
+      await dbPut('products',p);break;
+    }
+    case 'product_update':{
+      const existing=await dbGet('products',Number(d.id));
+      if(!existing)break;
+      if(d.name!==undefined)existing.name=d.name;
+      if(d.price!==undefined)existing.price=Number(d.price);
+      if(d.cost!==undefined)existing.cost=Number(d.cost);
+      if(d.stock!==undefined)existing.stock=Number(d.stock);
+      if(d.lowStock!==undefined)existing.lowStock=Number(d.lowStock);
+      if(d.category!==undefined)existing.category=d.category;
+      if(d.barcode!==undefined)existing.barcode=d.barcode;
+      await dbPut('products',existing);break;
+    }
+    case 'product_delete':{
+      await dbDel('products',Number(d.id));break;
+    }
+    case 'promo_add':{
+      const pr={name:d.name,type:d.type||'percentage',value:Number(d.value)||0,minPurchase:Number(d.minPurchase)||0,buyQty:Number(d.buyQty)||0,getQty:Number(d.getQty)||0,active:d.active!==false,productId:d.productId||null,categoryId:d.categoryId||null,createdAt:new Date().toISOString()};
+      await dbPut('promotions',pr);break;
+    }
+    case 'promo_update':{
+      const ep=await dbGet('promotions',Number(d.id));
+      if(!ep)break;
+      Object.assign(ep,d);if(d.value!==undefined)ep.value=Number(d.value);
+      await dbPut('promotions',ep);break;
+    }
+    case 'promo_delete':{
+      await dbDel('promotions',Number(d.id));break;
+    }
+    case 'stock_adjust':{
+      const sp=await dbGet('products',Number(d.id));
+      if(!sp)break;
+      sp.stock=Number(d.stock);
+      await dbPut('products',sp);break;
+    }
+  }
 }
 
 async function exportData(){
