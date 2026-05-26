@@ -777,7 +777,7 @@ function toggleAuthMode(){
 const SB_URL='https://joeklgpncbrhnujzdzsp.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvZWtsZ3BuY2JyaG51anpkenNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTA1ODksImV4cCI6MjA5MzkyNjU4OX0.p4hS6hpKaweZRDIZbeuWb6-c0NL7irtTJ_HXOZmdTmY';
 const sbH={'apikey':SB_KEY,'Content-Type':'application/json'};
-async function sbSignUp(email,password,fullName){try{const r=await fetch(SB_URL+'/auth/v1/signup',{method:'POST',headers:sbH,body:JSON.stringify({email,password,data:{full_name:fullName}})});const d=await r.json();if(!r.ok)return{error:d.msg||d.error_description||d.message||'Signup failed'};return{data:d}}catch(e){return{error:'offline'}}}
+async function sbSignUp(email,password,fullName,businessName){try{const r=await fetch(SB_URL+'/auth/v1/signup',{method:'POST',headers:sbH,body:JSON.stringify({email,password,data:{full_name:fullName,business_name:businessName||''}})});const d=await r.json();if(!r.ok)return{error:d.msg||d.error_description||d.message||'Signup failed'};return{data:d}}catch(e){return{error:'offline'}}}
 async function sbSignIn(email,password){try{const r=await fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:sbH,body:JSON.stringify({email,password})});const d=await r.json();if(!r.ok)return{error:d.msg||d.error_description||d.message||'Invalid credentials'};return{data:d}}catch(e){return{error:'offline'}}}
 async function sbResetPassword(email){try{const r=await fetch(SB_URL+'/auth/v1/recover',{method:'POST',headers:sbH,body:JSON.stringify({email})});if(!r.ok){const d=await r.json();return{error:d.msg||d.message||'Reset failed'}}return{success:true}}catch(e){return{error:'offline'}}}
 
@@ -877,7 +877,7 @@ async function handleSignup(e){
   if(password.length<6){$('auth-error').textContent='Password must be at least 6 characters.';return}
   const existing=await dbAll('accounts');
   if(existing.find(a=>a.email===email)){$('auth-error').textContent='An account with this email already exists.';return}
-  const sbResult=await sbSignUp(email,password,name);
+  const sbResult=await sbSignUp(email,password,name,business);
   if(sbResult.error&&sbResult.error!=='offline'){
     if(sbResult.error.toLowerCase().includes('already registered')){$('auth-error').textContent='This email is already registered. Try signing in instead.';return}
     $('auth-error').textContent=sbResult.error;return;
@@ -910,16 +910,22 @@ async function handleLogin(e){
   if(!email||!password){$('auth-error').textContent='Please enter email and password.';return}
   const sbResult=await sbSignIn(email,password);
   if(sbResult.data){
+    if(sbResult.data.access_token)sessionStorage.setItem('sb_access_token',sbResult.data.access_token);
     let accounts=await dbAll('accounts');
     let account=accounts.find(a=>a.email===email);
     if(!account){
-      const uName=sbResult.data.user?.user_metadata?.full_name||email.split('@')[0];
+      const uMeta=sbResult.data.user?.user_metadata||{};
+      const uName=uMeta.full_name||email.split('@')[0];
       account={name:uName,email,password,role:'admin',active:true,createdAt:new Date().toISOString()};
       await dbPut('accounts',account);
       await dbPut('staff',{name:uName,role:'admin',pin:'0000',active:true,createdAt:new Date().toISOString()});
       if(pendingSignup&&pendingSignup.email===email){
         await dbPut('settings',{key:'businessName',value:pendingSignup.business});
         pendingSignup=null;
+      } else if(uMeta.business_name){
+        await dbPut('settings',{key:'businessName',value:uMeta.business_name});
+        if(uMeta.business_address)await dbPut('settings',{key:'businessAddress',value:uMeta.business_address});
+        if(uMeta.business_phone)await dbPut('settings',{key:'businessPhone',value:uMeta.business_phone});
       }
     }else if(account.password!==password){account.password=password;await dbPut('accounts',account)}
     currentUser={name:account.name,role:account.role,email:account.email};
@@ -1678,6 +1684,7 @@ async function saveSettings(){
   applyTheme();
   if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
   $('tax-label').textContent=`${settings.taxName||'Tax'} (${settings.taxRate||0}%)`;
+  try{if(currentUser?.email){const token=sessionStorage.getItem('sb_access_token');if(token)await fetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{...sbH,'Authorization':'Bearer '+token},body:JSON.stringify({data:{business_name:pairs.businessName,business_address:pairs.businessAddress,business_phone:pairs.businessPhone}})})}}catch(e){}
   showToast('Settings saved');
 }
 function generateSyncCode(){
