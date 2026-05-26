@@ -523,7 +523,7 @@ tbody tr:last-child td{border-bottom:none}
                 Mobile
               </button>
             </div>
-            <button class="complete-btn" id="complete-btn" onclick="completeSale()" disabled>Complete Sale</button>
+            <button class="complete-btn" id="complete-btn" onclick="showPayment()" disabled>Checkout</button>
             <button class="cart-clear" onclick="clearCart()">Clear Order</button>
           </div>
         </div>
@@ -1099,6 +1099,47 @@ function selectPayment(el){
   el.classList.add('active');selectedPayment=el.dataset.method;
 }
 
+function showPayment(){
+  if(cart.length===0)return;
+  const subtotal=cart.reduce((s,c)=>s+c.total,0);
+  const promoDiscount=appliedPromos.reduce((s,p)=>s+p.saved,0);
+  const afterPromo=Math.max(0,subtotal-promoDiscount);
+  const taxRate=settings.taxRate||0;
+  const tax=+(afterPromo*taxRate/100).toFixed(2);
+  const manualDiscount=parseFloat($('discount-input').value)||0;
+  let loyaltyDiscount=0;
+  const loyaltyEnabled=settings.loyaltyEnabled!==false;
+  const redemptionRate=parseFloat(settings.loyaltyRedemptionRate)||5;
+  const redemptionThreshold=parseInt(settings.loyaltyRedemptionThreshold)||100;
+  if(redeemingPoints&&selectedCustomer&&loyaltyEnabled){
+    const timesRedeemable=Math.floor(selectedCustomer.points/redemptionThreshold);
+    loyaltyDiscount=+(timesRedeemable*redemptionRate).toFixed(2);
+    if(loyaltyDiscount>afterPromo)loyaltyDiscount=+afterPromo.toFixed(2);
+  }
+  const total=+Math.max(0,afterPromo+tax-manualDiscount-loyaltyDiscount).toFixed(2);
+  const method=selectedPayment.charAt(0).toUpperCase()+selectedPayment.slice(1);
+  let html=`<div class="modal-header"><h2>Payment</h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
+  <div class="modal-body" style="padding:24px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:14px;color:var(--text2);margin-bottom:6px">${cart.length} item${cart.length>1?'s':''}</div>
+      <div style="font-size:42px;font-weight:800;font-family:var(--font-display);color:var(--text)">${fmt(total)}</div>
+      <div style="margin-top:8px;display:inline-block;padding:6px 16px;border-radius:50px;background:var(--bg);font-size:13px;font-weight:600;color:var(--text2);border:1px solid var(--border)">${method}</div>
+    </div>`;
+  if(selectedPayment==='cash'){
+    html+=`<div style="margin:20px 0">
+      <label style="display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px">Amount Tendered</label>
+      <input id="pay-tendered" type="number" step="0.01" value="${total}" style="width:100%;padding:14px;border:1px solid var(--border);border-radius:10px;font-size:20px;font-weight:700;text-align:center;font-family:var(--font-display)" oninput="calcChange(${total})">
+      <div id="pay-change" style="margin-top:12px;text-align:center;font-size:16px;font-weight:600;color:var(--green)">Change: ${fmt(0)}</div>
+    </div>`;
+  }
+  html+=`</div><div class="modal-footer">
+    <button class="btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn-primary" onclick="closeModal();completeSale()" style="flex:1">Confirm Payment</button>
+  </div>`;
+  openModal(html,'modal-sm');
+  if(selectedPayment==='cash'&&$('pay-tendered'))$('pay-tendered').select();
+}
+function calcChange(total){const t=parseFloat($('pay-tendered').value)||0;const c=Math.max(0,t-total);$('pay-change').textContent='Change: '+fmt(c);$('pay-change').style.color=t>=total?'var(--green)':'var(--red)'}
 async function completeSale(){
   if(cart.length===0)return;
   const subtotal=cart.reduce((s,c)=>s+c.total,0);
