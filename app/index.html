@@ -371,6 +371,12 @@ tbody tr:last-child td{border-bottom:none}
       <button type="submit" class="auth-btn">Sign In</button>
       <a onclick="showForgotPassword()" style="display:block;text-align:center;margin-top:12px;font-size:13px;color:var(--gold);font-weight:600;cursor:pointer">Forgot Password?</a>
     </form>
+    <div class="auth-form hidden" id="confirm-screen" style="text-align:center;padding:16px 0">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:#10b981">&#9993;</div>
+      <p style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">Check your email</p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px">We sent a confirmation link to your email. Click it to activate your account, then come back and sign in.</p>
+      <button class="auth-btn" onclick="backToLoginFromConfirm()">Go to Sign In</button>
+    </div>
     <form class="auth-form hidden" id="forgot-form" onsubmit="handleForgotPassword(event)">
       <div class="form-group" id="forgot-email-group">
         <label>Email</label>
@@ -652,6 +658,7 @@ async function loadSettings(){const all=await dbAll('settings');const s={};all.f
 // STATE
 // ═══════════════════════════════════════════
 let currentUser=null;
+let pendingSignup=null;
 let currentScreen='checkout';
 let cart=[];
 let settings={};
@@ -863,19 +870,25 @@ async function handleSignup(e){
     if(sbResult.error.toLowerCase().includes('already registered')){$('auth-error').textContent='This email is already registered. Try signing in instead.';return}
     $('auth-error').textContent=sbResult.error;return;
   }
-  const account={name,email,password,role:'admin',active:true,createdAt:new Date().toISOString()};
-  await dbPut('accounts',account);
-  await dbPut('staff',{name,role:'admin',pin:'0000',active:true,createdAt:new Date().toISOString()});
-  await dbPut('settings',{key:'businessName',value:business});
-  settings=await loadSettings();
-  applyTheme();
-  $('sidebar-name').textContent=business;
-  currentUser={name,role:'admin',email};
-  $('auth-screen').classList.add('hidden');
-  $('app').classList.remove('hidden');
-  $('h-avatar').textContent=name[0];
-  $('h-username').textContent=name;
-  loadCheckout();
+  if(sbResult.error==='offline'){
+    $('auth-error').textContent='Internet connection required to create an account.';return;
+  }
+  // Store signup details for after confirmation
+  pendingSignup={business,name,email,password};
+  // Show confirmation screen
+  $('signup-form').classList.add('hidden');
+  $('auth-error').textContent='';
+  $('auth-switch').classList.add('hidden');
+  $('confirm-screen').classList.remove('hidden');
+  $('auth-sub').textContent='Almost there!';
+}
+function backToLoginFromConfirm(){
+  $('confirm-screen').classList.add('hidden');
+  $('login-form').classList.remove('hidden');
+  $('auth-sub').textContent='Welcome back! Sign in to continue';
+  $('auth-switch').classList.remove('hidden');
+  $('auth-switch').innerHTML='Don\'t have an account? <a onclick="toggleAuthMode()">Sign up</a>';
+  $('auth-error').textContent='';
 }
 
 async function handleLogin(e){
@@ -891,6 +904,11 @@ async function handleLogin(e){
       const uName=sbResult.data.user?.user_metadata?.full_name||email.split('@')[0];
       account={name:uName,email,password,role:'admin',active:true,createdAt:new Date().toISOString()};
       await dbPut('accounts',account);
+      await dbPut('staff',{name:uName,role:'admin',pin:'0000',active:true,createdAt:new Date().toISOString()});
+      if(pendingSignup&&pendingSignup.email===email){
+        await dbPut('settings',{key:'businessName',value:pendingSignup.business});
+        pendingSignup=null;
+      }
     }else if(account.password!==password){account.password=password;await dbPut('accounts',account)}
     currentUser={name:account.name,role:account.role,email:account.email};
     settings=await loadSettings();applyTheme();
@@ -899,7 +917,8 @@ async function handleLogin(e){
     $('h-avatar').textContent=account.name[0];$('h-username').textContent=account.name;
     loadCheckout();return;
   }
-  if(sbResult.error&&sbResult.error!=='offline'&&!sbResult.error.toLowerCase().includes('not confirmed')){
+  if(sbResult.error&&sbResult.error!=='offline'){
+    if(sbResult.error.toLowerCase().includes('not confirmed')){$('auth-error').textContent='Please confirm your email first. Check your inbox for a confirmation link.';return}
     $('auth-error').textContent='Invalid email or password.';return;
   }
   const accounts=await dbAll('accounts');
