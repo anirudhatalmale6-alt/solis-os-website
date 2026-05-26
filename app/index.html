@@ -1579,11 +1579,17 @@ async function renderSettingsScreen(){
             </div>
             <div style="flex:1;min-width:200px">
               <p style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Remote Dashboard</p>
-              <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Scan the QR code with your phone camera to instantly open your live sales dashboard. No typing needed.</p>
+              <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Scan the QR code with your phone camera to open your dashboard. You only need to scan once — it remembers you.</p>
               <a href="https://solis-os.com/dashboard.html?code=${s.syncCode}" target="_blank" style="font-size:13px;font-weight:600;color:var(--gold);word-break:break-all">solis-os.com/dashboard.html?code=${s.syncCode}</a>
               <button onclick="window.open('https://solis-os.com/dashboard.html?code=${s.syncCode}','_blank')" style="margin-top:10px;width:100%;padding:12px;border-radius:10px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-size:14px;font-weight:600;font-family:var(--font-display);border:none;cursor:pointer">Open Remote Dashboard</button>
               ${s.lastSyncTime?`<p style="font-size:11px;color:var(--text3);margin-top:8px">Last synced: ${fmtDateTime(s.lastSyncTime)}</p>`:''}
               <button class="btn-outline" onclick="syncToCloud()" style="margin-top:8px;font-size:13px;padding:8px 16px">Sync Now</button>
+              <div style="margin-top:14px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">
+                <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">Save to Home Screen (like an app)</p>
+                <p style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:6px"><span style="font-weight:600;color:var(--text)">iPhone:</span> After scanning, tap the <span style="font-weight:600">Share button</span> (square with arrow) at the bottom of Safari, then tap <span style="font-weight:600">"Add to Home Screen"</span>.</p>
+                <p style="font-size:12px;color:var(--text2);line-height:1.6"><span style="font-weight:600;color:var(--text)">Android:</span> After scanning, tap the <span style="font-weight:600">3-dot menu</span> in Chrome, then tap <span style="font-weight:600">"Add to Home Screen"</span>.</p>
+                <p style="font-size:11px;color:var(--text3);margin-top:8px">You'll get an app icon on your phone. Tap it anytime to open your dashboard instantly — no scanning needed again.</p>
+              </div>
             </div>
           </div>
         </div>`:''}
