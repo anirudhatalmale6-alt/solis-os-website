@@ -1571,13 +1571,21 @@ async function renderSettingsScreen(){
             <div class="toggle-row"><span>Auto-sync sales to cloud</span><label class="toggle"><input type="checkbox" id="set-cloudsync" ${s.cloudSync?'checked':''}><span class="slider"></span></label></div>
           </div>
         </div>
-        ${s.syncCode?`<div style="margin-top:16px;padding:16px;background:var(--bg);border-radius:12px;border:1px solid var(--border)">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Your remote dashboard link:</p>
-          <a href="https://solis-os.com/dashboard.html?code=${s.syncCode}" target="_blank" style="font-size:14px;font-weight:600;color:var(--gold);word-break:break-all">solis-os.com/dashboard.html?code=${s.syncCode}</a>
-          <button onclick="window.open('https://solis-os.com/dashboard.html?code=${s.syncCode}','_blank')" style="margin-top:8px;width:100%;padding:12px;border-radius:10px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-size:14px;font-weight:600;font-family:var(--font-display);border:none;cursor:pointer">Open Remote Dashboard</button>
-          <p style="font-size:11px;color:var(--text3);margin-top:8px">Open this link on any phone, tablet, or computer to see your sales live.</p>
-          ${s.lastSyncTime?`<p style="font-size:11px;color:var(--text3);margin-top:4px">Last synced: ${fmtDateTime(s.lastSyncTime)}</p>`:''}
-          <button class="btn-outline" onclick="syncToCloud()" style="margin-top:12px;font-size:13px;padding:8px 16px">Sync Now</button>
+        ${s.syncCode?`<div style="margin-top:16px;padding:20px;background:var(--bg);border-radius:12px;border:1px solid var(--border)">
+          <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+            <div style="flex-shrink:0;text-align:center">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent('https://solis-os.com/dashboard.html?code='+s.syncCode)}&bgcolor=F7F8FC" alt="QR Code" style="width:160px;height:160px;border-radius:10px;border:1px solid var(--border)">
+              <p style="font-size:11px;color:var(--text3);margin-top:6px">Scan with your phone</p>
+            </div>
+            <div style="flex:1;min-width:200px">
+              <p style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Remote Dashboard</p>
+              <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Scan the QR code with your phone camera to instantly open your live sales dashboard. No typing needed.</p>
+              <a href="https://solis-os.com/dashboard.html?code=${s.syncCode}" target="_blank" style="font-size:13px;font-weight:600;color:var(--gold);word-break:break-all">solis-os.com/dashboard.html?code=${s.syncCode}</a>
+              <button onclick="window.open('https://solis-os.com/dashboard.html?code=${s.syncCode}','_blank')" style="margin-top:10px;width:100%;padding:12px;border-radius:10px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-size:14px;font-weight:600;font-family:var(--font-display);border:none;cursor:pointer">Open Remote Dashboard</button>
+              ${s.lastSyncTime?`<p style="font-size:11px;color:var(--text3);margin-top:8px">Last synced: ${fmtDateTime(s.lastSyncTime)}</p>`:''}
+              <button class="btn-outline" onclick="syncToCloud()" style="margin-top:8px;font-size:13px;padding:8px 16px">Sync Now</button>
+            </div>
+          </div>
         </div>`:''}
       </div>
       <div class="settings-card full">
