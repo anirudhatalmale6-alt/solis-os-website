@@ -494,6 +494,10 @@ img{max-width:100%;display:block}
       </ul>
       <a href="https://solis-os.com/app/" target="_blank" class="price-btn" style="display:block;text-align:center;text-decoration:none">Start Your Free Trial</a>
       <p class="price-note">No credit card required for trial</p>
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);text-align:center">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Already tried it and ready to subscribe?</p>
+        <button onclick="openPurchaseModal()" style="width:100%;padding:14px;border-radius:12px;background:var(--bg);border:2px solid var(--gold2);color:var(--gold);font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;transition:all 0.3s">Subscribe Now — $159/year</button>
+      </div>
     </div>
   </div>
 </section>
@@ -592,6 +596,45 @@ function toggleFaq(el){
   document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
   if(!wasOpen) item.classList.add('open');
 }
+
+// Purchase modal
+function openPurchaseModal(){
+  document.getElementById('purchase-modal').style.display='flex';
+}
+function closePurchaseModal(){
+  document.getElementById('purchase-modal').style.display='none';
+  document.getElementById('pm-error').textContent='';
+}
+async function startPurchase(){
+  const email=document.getElementById('pm-email').value.trim();
+  const btn=document.getElementById('pm-btn');
+  const err=document.getElementById('pm-error');
+  if(!email||!email.includes('@')){err.textContent='Please enter a valid email address';return}
+  btn.disabled=true;btn.textContent='Redirecting to payment...';err.textContent='';
+  try{
+    const resp=await fetch('https://api.solis-os.com/api/pos/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const data=await resp.json();
+    if(!resp.ok||!data.checkout_url){err.textContent=data.error||'Something went wrong. Please try again.';btn.disabled=false;btn.textContent='Continue to Payment';return}
+    window.location.href=data.checkout_url;
+  }catch(e){err.textContent='Connection error. Please check your internet and try again.';btn.disabled=false;btn.textContent='Continue to Payment'}
+}
 </script>
+
+<!-- PURCHASE MODAL -->
+<div id="purchase-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)" onclick="if(event.target===this)closePurchaseModal()">
+  <div style="background:#fff;border-radius:24px;padding:40px;width:460px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.15);animation:modalFadeIn 0.3s ease;text-align:center">
+    <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 4px 16px var(--gold-glow)">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    </div>
+    <h2 style="font-family:var(--font-display);font-size:22px;font-weight:800;margin-bottom:6px">Subscribe to Solis OS POS</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:24px">$159/year — all features included, cancel anytime</p>
+    <input type="email" id="pm-email" placeholder="Enter your email address" style="width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:12px;font-size:15px;color:var(--text);outline:none;transition:border-color 0.2s;font-family:var(--font-body)" onfocus="this.style.borderColor='var(--gold2)'" onblur="this.style.borderColor='var(--border)'" onkeydown="if(event.key==='Enter')startPurchase()">
+    <p id="pm-error" style="color:#dc2626;font-size:13px;min-height:20px;margin:8px 0"></p>
+    <button id="pm-btn" onclick="startPurchase()" style="width:100%;padding:16px;border-radius:12px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-family:var(--font-display);font-weight:700;font-size:16px;border:none;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 16px var(--gold-glow)">Continue to Payment</button>
+    <p style="font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6">Secure payment powered by Square. You'll be redirected to complete your purchase.</p>
+    <button onclick="closePurchaseModal()" style="margin-top:12px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer">Cancel</button>
+  </div>
+</div>
+<style>@keyframes modalFadeIn{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}</style>
 </body>
 </html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purchase Complete — Solis OS POS</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F8FC;--bg2:#FFFFFF;--bg3:#F0F1F5;
+  --border:#E8E9EF;--text:#1A1D2E;--text2:#6B7280;--text3:#9CA3AF;
+  --gold:#d97706;--gold2:#f59e0b;--gold-glow:rgba(245,158,11,0.18);
+  --green:#16a34a;--green-bg:#dcfce7;
+  --font-display:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.7}
+a{text-decoration:none;color:inherit}
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 24px}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{height:32px}
+.nav-logo span{font-family:var(--font-display);font-weight:700;font-size:20px}
+.wrap{max-width:640px;margin:0 auto;padding:80px 24px;text-align:center}
+.success-icon{width:80px;height:80px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 32px;animation:scaleIn 0.5s ease}
+@keyframes scaleIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+.success-icon svg{width:40px;height:40px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+h1{font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:12px}
+.sub{font-size:17px;color:var(--text2);margin-bottom:40px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:36px;text-align:left;margin-bottom:32px;box-shadow:0 4px 16px rgba(0,0,0,0.04)}
+.card h2{font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:20px}
+.step{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.step:last-child{margin-bottom:0}
+.step-num{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:15px;flex-shrink:0}
+.step-text{flex:1;padding-top:6px}
+.step-text strong{display:block;font-size:15px;color:var(--text);margin-bottom:2px}
+.step-text span{font-size:14px;color:var(--text2)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-family:var(--font-display);font-weight:700;font-size:16px;border-radius:14px;transition:all 0.3s;box-shadow:0 4px 16px var(--gold-glow)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--gold-glow)}
+.btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.note{font-size:13px;color:var(--text3);margin-top:24px;line-height:1.7}
+@media(max-width:600px){
+  .wrap{padding:40px 16px}
+  h1{font-size:26px}
+  .card{padding:24px}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="assets/logo.png" alt="Solis OS">
+      <span>Solis OS</span>
+    </a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h1>You're all set!</h1>
+  <p class="sub">Your Solis OS POS subscription is active. Here's how to get started.</p>
+
+  <div class="card">
+    <h2>Getting Started</h2>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <strong>Open the POS App</strong>
+        <span>Click the button below to launch Solis OS POS in your browser. You can use it right away.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <strong>Sign In with Your Account</strong>
+        <span>Use the same email you registered with. If you used it during the trial, all your data is still there.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <strong>Connect Your Phone</strong>
+        <span>Go to Settings, find Cloud Sync, generate a code, and scan the QR code with your phone. Save it to your home screen to manage your shop from anywhere.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <strong>Download for Offline Use</strong>
+        <span>In Settings, click "Export & Download" to save the POS for offline use on any device. Works without internet.</span>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://solis-os.com/app/" class="btn">
+    <svg viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+    Launch Solis OS POS
+  </a>
+
+  <p class="note">
+    Your subscription includes all features, unlimited products, unlimited transactions, and all future updates.
+    A receipt has been sent to your email. If you have any questions, reach out through the chatbot on our website.
+  </p>
+</div>
+</body>
+</html>
