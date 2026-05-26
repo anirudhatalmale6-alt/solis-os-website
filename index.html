@@ -1436,10 +1436,10 @@ var chatOpen=false,chatLang='en',chatContext=null,chatHistory=[];
 
 var T={
 en:{
-  welcome:'Hey there! I\'m the Solis OS assistant.\n\nI can help you with:\n\n1. What Solis OS does\n2. Pricing\n3. Industries we support\n4. How to get started\n5. Book a demo\n\nJust type a number or ask me anything!',
-  fallback:'I\'m not sure I understood that. Here\'s what I can help with:\n\n1. Features & what Solis OS does\n2. Pricing & plans\n3. Industries we support\n4. How to get started\n5. Book a demo\n\nOr type "human" to chat with our team on WhatsApp.',
+  welcome:'Hey there! I\'m the Solis OS assistant.\n\nI can help you with:\n\n1. What Solis OS does\n2. Pricing\n3. Industries we support\n4. How to get started\n5. Book a demo\n6. POS System\n\nJust type a number or ask me anything!',
+  fallback:'I\'m not sure I understood that. Here\'s what I can help with:\n\n1. Features & what Solis OS does\n2. Pricing & plans\n3. Industries we support\n4. How to get started\n5. Book a demo\n6. POS System\n\nOr type "human" to chat with our team on WhatsApp.',
   features:'Solis OS is an all-in-one AI platform for service businesses:\n\n- Online Booking Page (customers book 24/7)\n- AI WhatsApp Assistant (handles messages automatically)\n- Customer CRM (track clients & history)\n- Staff Management (team scheduling)\n- Analytics Dashboard (revenue & trends)\n- Invoicing & Expenses\n- Marketing Tools (campaigns, promos, loyalty)\n\nWant to see pricing, or ready to try it free?',
-  pricing:'Simple pricing:\n\nSolis OS - $39 AUD/month\n\nEverything included:\n- Unlimited bookings & customers\n- AI WhatsApp Assistant\n- Staff management\n- Invoicing & expenses\n- Analytics & reports\n- Marketing tools\n- Online booking page\n\n14-day free trial. No credit card needed.\n\nWant to start your free trial?',
+  pricing:'Simple pricing:\n\nSolis OS - $39 AUD/month\nEverything included: bookings, WhatsApp AI, CRM, invoicing, analytics, marketing.\n14-day free trial, no credit card.\n\nSolis OS POS - $239 AUD/year\nFull point-of-sale system: inventory, barcode scanning, remote management from phone, reports, promotions, multi-staff.\n10-day free trial, no credit card.\n\nWant to learn more about the POS or start a free trial?',
   industries:'Solis OS works for any service business:\n\n- Hair Salons & Barbershops\n- Beauty & Spa\n- Medical & Dental Clinics\n- Auto Garages & Workshops\n- Fitness & Personal Training\n- Tutors & Private Lessons\n- Real Estate Agents\n- And many more!\n\nWhat type of business do you have?',
   getStarted:'Getting started takes about 5 minutes:\n\n1. Sign up (free, no card needed)\n2. Set up your business profile\n3. Add your services & pricing\n4. Connect WhatsApp for AI assistant\n5. Share booking page with customers\n\nReady to sign up?',
   demo:'Two options:\n\n1. Start a free trial and explore yourself\n2. Get a personal walkthrough on WhatsApp\n\nWhich do you prefer?',
@@ -1450,8 +1450,9 @@ en:{
   thanks:'Happy to help! Let me know if you have any other questions.\n\nWhen you\'re ready, you can start your free trial anytime.',
   bye:'Great chatting with you! Come back anytime.\n\nHave a wonderful day!',
   yes:'Let\'s get you started!\n\nSign up takes 30 seconds - no credit card required. You\'ll have your booking page live in under 5 minutes.',
+  pos:'Solis OS POS is a full point-of-sale system for any business that sells products.\n\nKey features:\n- Remote management from your phone (manage your shop from anywhere)\n- Barcode scanning (camera or USB/Bluetooth scanner)\n- Inventory & stock management with low stock alerts\n- Sales reports (daily, weekly, monthly)\n- Promotions & deals engine (BOGO, percentage off, fixed discounts)\n- Multi-staff with PIN access & permissions\n- Loyalty program with barcode cards\n- Customer management & purchase history\n- Receipt printing & email receipts\n- Custom branding & 8 theme presets\n- Works offline - no internet needed\n\nPricing: $239 AUD/year - everything included, no tiers.\n\nTry it free for 10 days, no credit card required.\n\nVisit: https://solis-os.com/pos.html',
   placeholder:'Type a message...',
-  tryAgain:'I didn\'t quite catch that. You can ask me about:\n\n1. Features\n2. Pricing ($39 AUD/mo)\n3. Industries\n4. Getting started\n5. Demo\n\nOr just type what you\'re looking for!'
+  tryAgain:'I didn\'t quite catch that. You can ask me about:\n\n1. Features\n2. Pricing ($39 AUD/mo)\n3. Industries\n4. Getting started\n5. Demo\n6. POS System\n\nOr just type what you\'re looking for!'
 },
 ar:{
   welcome:'مرحبا! أنا مساعد Solis OS.\n\n1. ما هو Solis OS\n2. الأسعار\n3. القطاعات المدعومة\n4. كيف تبدأ\n5. عرض توضيحي\n\nاكتب رقم أو اسأل أي سؤال!',
@@ -1506,14 +1507,16 @@ var chatPatterns={
   human:['speak','talk','human','person','agent','real person','someone','call me','contact','team','representative','تحدث','تواصل','parler','humain','hablar','humano'],
   thanks:['thank','thanks','appreciate','great','perfect','awesome','amazing','cool','nice','شكرا','merci','gracias','genial'],
   bye:['bye','goodbye','see you','later','good night','gotta go','مع السلامة','au revoir','adios','chao'],
-  yes:['yes','yeah','yep','sure','ok','okay','sounds good','interested','lets go','let\'s go','ready','do it','نعم','oui','si','vale','claro']
+  yes:['yes','yeah','yep','sure','ok','okay','sounds good','interested','lets go','let\'s go','ready','do it','نعم','oui','si','vale','claro'],
+  pos:['pos','point of sale','point-of-sale','cash register','cashier','checkout','sell products','shop','store','retail','inventory','barcode','stock','remote management','manage from phone','manage my shop','239','نقطة بيع','كاشير','caisse','caja','punto de venta']
 };
 
 var quickReplies={
   en:{
-    welcome:['Features','Pricing','Get Started','Talk to Human'],
-    features:['See Pricing','Start Free Trial','Talk to Human'],
-    pricing:['Start Free Trial','See Features','Talk to Human'],
+    welcome:['Features','Pricing','POS System','Get Started'],
+    features:['See Pricing','POS System','Start Free Trial'],
+    pricing:['Start Free Trial','POS System','Talk to Human'],
+    pos:['Try POS Free','See Pricing','Talk to Human'],
     industries:['See Features','See Pricing','Get Started'],
     getStarted:['Sign Up Now','See Pricing','Talk to Human'],
     demo:['Start Free Trial','WhatsApp Us'],
@@ -1529,6 +1532,7 @@ var quickActions={
   'Features':'1','Pricing':'2','Get Started':'4','Talk to Human':'human',
   'See Pricing':'2','Start Free Trial':'4','See Features':'1','See All Features':'1',
   'Sign Up Now':'4','WhatsApp Us':'human','Industries':'3','Demo':'5',
+  'POS System':'6','Try POS Free':'pos-trial',
 };
 
 var SIGNUP_URL='https://app.solis-os.com/signup';
@@ -1572,6 +1576,8 @@ function addBotMsg(text,topic){
             window.open(WHATSAPP_URL,'_blank');
           } else if(r==='Sign Up Now'){
             window.open(SIGNUP_URL,'_blank');
+          } else if(r==='Try POS Free'){
+            window.open('https://solis-os.com/app/','_blank');
           } else {
             var action=quickActions[r]||r;
             handleInput(action);
@@ -1630,8 +1636,8 @@ function handleInput(input){
   }
 
   var num=extractNumber(lo);
-  if(num>=1&&num<=5){
-    var keys=['features','pricing','industries','getStarted','demo'];
+  if(num>=1&&num<=6){
+    var keys=['features','pricing','industries','getStarted','demo','pos'];
     var key=keys[num-1];
     chatContext=key;
     addBotMsg(L[key],key);
