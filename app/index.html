@@ -14,7 +14,7 @@
   --border:#E8E9EF;--border2:#D1D5DB;
   --text:#1A1D2E;--text2:#6B7280;--text3:#9CA3AF;
   --gold:#d97706;--gold2:#f59e0b;--gold-glow:rgba(245,158,11,0.15);
-  --green:#16a34a;--green-bg:#dcfce7;--red:#dc2626;--red-bg:#fee2e2;--amber-bg:#fef3c7;
+  --green:#16a34a;--green-bg:#dcfce7;--red:#dc2626;--red-bg:#fee2e2;--amber-bg:#fef3c7;--blue:#3b82f6;--purple:#8b5cf6;
   --font-display:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif;
   --shadow:0 2px 8px rgba(0,0,0,0.06);--shadow-lg:0 8px 24px rgba(0,0,0,0.1);
   --radius:14px;--radius-sm:10px;
@@ -135,15 +135,17 @@ input,select,textarea{font-family:var(--font-body);outline:none}
 .discount-input span{font-size:13px;color:var(--text3)}
 .discount-input input{width:50px;border:none;background:none;font-size:13px;text-align:right;padding:2px 0;font-variant-numeric:tabular-nums}
 .cart-payment{padding:16px 20px;border-top:1px solid var(--border)}
-.pay-methods{display:flex;gap:8px;margin-bottom:12px}
-.pay-method{flex:1;padding:10px 6px;border-radius:10px;border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s}
-.pay-method svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.pay-method:hover{border-color:var(--gold2)}
-.pay-method.active{background:rgba(245,158,11,0.1);border-color:var(--gold2);color:var(--gold)}
-.complete-btn{width:100%;padding:14px;border-radius:12px;background:var(--gold2);color:#fff;font-size:15px;font-weight:700;font-family:var(--font-display);transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.complete-btn:hover{background:var(--gold);box-shadow:0 4px 16px var(--gold-glow)}
-.complete-btn:active{transform:scale(0.98)}
-.complete-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.pay-actions{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.pay-action{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;font-family:var(--font-display);transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.pay-action svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pay-action:active{transform:scale(0.98)}
+.pay-action:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+.pay-cash{background:var(--green);color:#fff}
+.pay-cash:hover:not(:disabled){background:#059669;box-shadow:0 4px 16px rgba(16,185,129,0.3)}
+.pay-card{background:var(--blue);color:#fff}
+.pay-card:hover:not(:disabled){background:#2563eb;box-shadow:0 4px 16px rgba(59,130,246,0.3)}
+.pay-mobile{background:var(--purple);color:#fff}
+.pay-mobile:hover:not(:disabled){background:#7c3aed;box-shadow:0 4px 16px rgba(139,92,246,0.3)}
 .cart-clear{width:100%;padding:8px;border-radius:8px;font-size:12px;color:var(--text3);margin-top:8px;transition:color 0.2s}
 .cart-clear:hover{color:var(--red)}
 
@@ -509,21 +511,20 @@ tbody tr:last-child td{border-bottom:none}
             <div class="cart-row cart-total"><span>Total</span><span id="cart-total">$0.00</span></div>
           </div>
           <div class="cart-payment">
-            <div class="pay-methods" id="pay-methods">
-              <button class="pay-method active" data-method="cash" onclick="selectPayment(this)">
+            <div class="pay-actions" id="pay-actions">
+              <button class="pay-action pay-cash" id="btn-pay-cash" onclick="payWith('cash')" disabled>
                 <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
-                Cash
+                Pay Cash
               </button>
-              <button class="pay-method" data-method="card" onclick="selectPayment(this)">
+              <button class="pay-action pay-card" id="btn-pay-card" onclick="payWith('card')" disabled>
                 <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                Card
+                Pay Card
               </button>
-              <button class="pay-method" data-method="mobile" onclick="selectPayment(this)">
+              <button class="pay-action pay-mobile" id="btn-pay-mobile" onclick="payWith('mobile')" disabled>
                 <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                Mobile
+                Pay Mobile
               </button>
             </div>
-            <button class="complete-btn" id="complete-btn" onclick="showPayment()" disabled>Checkout</button>
             <button class="cart-clear" onclick="clearCart()">Clear Order</button>
           </div>
         </div>
@@ -1091,12 +1092,15 @@ function updateCartTotals(){
   $('cart-subtotal').textContent=fmt(subtotal);
   $('cart-tax').textContent=fmt(tax);
   $('cart-total').textContent=fmt(total);
-  $('complete-btn').disabled=cart.length===0;
+  const noItems=cart.length===0;
+  $('btn-pay-cash').disabled=noItems;
+  $('btn-pay-card').disabled=noItems;
+  $('btn-pay-mobile').disabled=noItems;
 }
 
-function selectPayment(el){
-  document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');selectedPayment=el.dataset.method;
+function payWith(method){
+  selectedPayment=method;
+  showPayment();
 }
 
 function showPayment(){
