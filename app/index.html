@@ -448,6 +448,10 @@ tbody tr:last-child td{border-bottom:none}
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
         <span>Loyalty</span>
       </a>
+      <a href="#" class="nav-item" data-screen="remote" onclick="navigate('remote',event)">
+        <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>Remote</span>
+      </a>
       <a href="#" class="nav-item" data-screen="settings" onclick="navigate('settings',event)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         <span>Settings</span>
@@ -478,7 +482,7 @@ tbody tr:last-child td{border-bottom:none}
         <div class="checkout-products">
           <div id="phone-tip" class="phone-tip" style="display:none">
             <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-            <div class="phone-tip-text"><strong>Manage from your phone!</strong> Go to Settings &rarr; Cloud Sync to connect your phone and control your shop remotely — add products, track sales, create promos from anywhere.</div>
+            <div class="phone-tip-text"><strong>Manage from your phone!</strong> Go to Remote in the sidebar to scan a QR code and control your shop from your phone — add products, track sales, create promos from anywhere.</div>
             <button onclick="dismissPhoneTip()" class="phone-tip-close">&times;</button>
           </div>
           <div class="checkout-search">
@@ -538,6 +542,7 @@ tbody tr:last-child td{border-bottom:none}
     <div id="screen-promotions" class="screen"></div>
     <div id="screen-staff" class="screen"></div>
     <div id="screen-loyalty" class="screen"></div>
+    <div id="screen-remote" class="screen"></div>
     <div id="screen-settings" class="screen"></div>
   </main>
 </div>
@@ -750,7 +755,7 @@ function navigate(screen,e){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.screen===screen));
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $('screen-'+screen).classList.add('active');
-  const titles={checkout:'Checkout',products:'Products',sales:'Sales History',reports:'Reports',promotions:'Promotions',staff:'Staff',loyalty:'Loyalty Program',settings:'Settings'};
+  const titles={checkout:'Checkout',products:'Products',sales:'Sales History',reports:'Reports',promotions:'Promotions',staff:'Staff',loyalty:'Loyalty Program',remote:'Remote Access',settings:'Settings'};
   $('screen-title').textContent=titles[screen]||screen;
   if(screen==='products')renderProductsScreen();
   if(screen==='sales')renderSalesScreen();
@@ -758,6 +763,7 @@ function navigate(screen,e){
   if(screen==='promotions')renderPromotionsScreen();
   if(screen==='staff')renderStaffScreen();
   if(screen==='loyalty')renderLoyaltyScreen();
+  if(screen==='remote')renderRemoteScreen();
   if(screen==='settings')renderSettingsScreen();
 }
 
@@ -1612,6 +1618,40 @@ async function deleteStaff(id){
 // ═══════════════════════════════════════════
 // SETTINGS SCREEN
 // ═══════════════════════════════════════════
+async function renderRemoteScreen(){
+  const s=await loadSettings();
+  let html=`<div style="max-width:600px;margin:0 auto;padding:20px">
+    <div class="settings-card full" style="text-align:center">
+      <h3 style="margin-bottom:8px">Remote Dashboard</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Scan the QR code with your phone to manage your business remotely — view sales, add products, track inventory from anywhere.</p>`;
+  if(s.syncCode){
+    html+=`<div style="padding:24px;background:var(--bg);border-radius:14px;border:1px solid var(--border);display:inline-block;margin-bottom:16px">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent('https://solis-os.com/dashboard.html?code='+s.syncCode)}&bgcolor=F7F8FC" alt="QR Code" style="width:200px;height:200px;border-radius:10px">
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Your sync code:</p>
+      <p style="font-size:22px;font-weight:800;font-family:var(--font-display);letter-spacing:3px;color:var(--text);margin-bottom:16px">${s.syncCode}</p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button onclick="copySyncCode()" class="btn-outline" style="padding:10px 20px;font-size:13px">Copy Code</button>
+        <button onclick="window.open('https://solis-os.com/dashboard.html?code=${s.syncCode}','_blank')" class="btn-primary" style="padding:10px 20px;font-size:13px">Open Dashboard</button>
+      </div>
+      ${s.lastSyncTime?`<p style="font-size:11px;color:var(--text3);margin-top:14px">Last synced: ${fmtDateTime(s.lastSyncTime)}</p>`:''}
+      <button class="btn-outline" onclick="syncToCloud()" style="margin-top:10px;font-size:13px;padding:8px 16px">Sync Now</button>
+      <div style="margin-top:20px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);text-align:left">
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">Save to Home Screen</p>
+        <p style="font-size:12px;color:var(--text2);line-height:1.6"><strong>iPhone:</strong> Tap Share (square with arrow) then "Add to Home Screen"</p>
+        <p style="font-size:12px;color:var(--text2);line-height:1.6"><strong>Android:</strong> Tap 3-dot menu then "Add to Home Screen"</p>
+      </div>`;
+  } else {
+    html+=`<div style="padding:40px 20px">
+        <svg viewBox="0 0 24 24" style="width:48px;height:48px;stroke:var(--text3);fill:none;stroke-width:1.5;margin-bottom:16px"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <p style="font-size:14px;color:var(--text2);margin-bottom:20px">Generate a sync code to connect your phone and manage your shop remotely.</p>
+        <button onclick="generateAndSaveSyncCode()" class="btn-primary" style="padding:14px 32px;font-size:15px">Generate QR Code</button>
+      </div>`;
+  }
+  html+=`</div></div>`;
+  $('screen-remote').innerHTML=html;
+}
+
 async function renderSettingsScreen(){
   const s=await loadSettings();
   $('screen-settings').innerHTML=`
@@ -1779,6 +1819,14 @@ function generateSyncCode(){
   let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
   $('set-synccode').value=code;
   showToast('Sync code generated: '+code);
+}
+async function generateAndSaveSyncCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+  await dbPut('settings',{key:'syncCode',value:code});
+  settings=await loadSettings();
+  showToast('QR code generated!');
+  renderRemoteScreen();
 }
 function copySyncCode(){
   const code=$('set-synccode').value;
