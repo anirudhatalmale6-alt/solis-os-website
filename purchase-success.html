@@ -3,110 +3,310 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Purchase Complete — Solis OS POS</title>
+<title>Download Solis OS POS — Your Purchase is Complete</title>
+<meta name="description" content="Thank you for purchasing Solis OS POS. Download the desktop app for Windows or Mac, or use it directly in your browser.">
 <link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#F7F8FC;--bg2:#FFFFFF;--bg3:#F0F1F5;
-  --border:#E8E9EF;--text:#1A1D2E;--text2:#6B7280;--text3:#9CA3AF;
+  --border:#E8E9EF;--border2:#D1D5DB;
+  --text:#1A1D2E;--text2:#6B7280;--text3:#9CA3AF;
   --gold:#d97706;--gold2:#f59e0b;--gold-glow:rgba(245,158,11,0.18);
-  --green:#16a34a;--green-bg:#dcfce7;
+  --green:#16a34a;--green-light:#dcfce7;
   --font-display:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif;
+  --radius:16px;--radius-sm:12px;
 }
-body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.7}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:inherit}
-.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+img{max-width:100%;display:block}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 24px}
 .nav-logo{display:flex;align-items:center;gap:10px}
 .nav-logo img{height:32px}
-.nav-logo span{font-family:var(--font-display);font-weight:700;font-size:20px}
-.wrap{max-width:640px;margin:0 auto;padding:80px 24px;text-align:center}
-.success-icon{width:80px;height:80px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 32px;animation:scaleIn 0.5s ease}
-@keyframes scaleIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
-.success-icon svg{width:40px;height:40px;stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-h1{font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:12px}
-.sub{font-size:17px;color:var(--text2);margin-bottom:40px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:36px;text-align:left;margin-bottom:32px;box-shadow:0 4px 16px rgba(0,0,0,0.04)}
-.card h2{font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:20px}
-.step{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
-.step:last-child{margin-bottom:0}
-.step-num{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:15px;flex-shrink:0}
-.step-text{flex:1;padding-top:6px}
-.step-text strong{display:block;font-size:15px;color:var(--text);margin-bottom:2px}
-.step-text span{font-size:14px;color:var(--text2)}
-.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-family:var(--font-display);font-weight:700;font-size:16px;border-radius:14px;transition:all 0.3s;box-shadow:0 4px 16px var(--gold-glow)}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--gold-glow)}
-.btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.note{font-size:13px;color:var(--text3);margin-top:24px;line-height:1.7}
-@media(max-width:600px){
-  .wrap{padding:40px 16px}
-  h1{font-size:26px}
-  .card{padding:24px}
+.nav-logo span{font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--text)}
+.nav-back{font-size:14px;color:var(--text2);font-weight:500;display:flex;align-items:center;gap:6px;transition:color 0.3s}
+.nav-back:hover{color:var(--text)}
+.nav-back svg{width:16px;height:16px}
+
+/* ── SUCCESS HERO ── */
+.success-hero{padding:140px 0 60px;text-align:center;position:relative;overflow:hidden}
+.success-hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(22,163,74,0.05) 0%,transparent 60%);pointer-events:none}
+
+.check-ring{width:96px;height:96px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;position:relative;animation:ringPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both}
+.check-ring::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(22,163,74,0.12);animation:ringExpand 0.8s ease 0.3s both}
+@keyframes ringPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes ringExpand{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+.check-ring svg{width:44px;height:44px;color:var(--green);animation:checkDraw 0.4s ease 0.2s both}
+@keyframes checkDraw{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+
+.success-title{font-family:var(--font-display);font-size:clamp(32px,4vw,48px);font-weight:800;letter-spacing:-1px;margin-bottom:14px;color:var(--text);animation:fadeUp 0.5s ease 0.15s both}
+.success-desc{font-size:17px;color:var(--text2);line-height:1.8;max-width:520px;margin:0 auto 10px;animation:fadeUp 0.5s ease 0.25s both}
+.success-email{font-size:14px;color:var(--text3);animation:fadeUp 0.5s ease 0.35s both}
+.success-email strong{color:var(--text2);font-weight:600}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── DOWNLOAD SECTION ── */
+.download-section{padding:20px 0 100px}
+.download-header{text-align:center;margin-bottom:48px}
+.download-label{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:50px;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);margin-bottom:16px}
+.download-label svg{width:14px;height:14px}
+.download-title{font-family:var(--font-display);font-size:clamp(24px,3vw,36px);font-weight:800;letter-spacing:-0.5px;margin-bottom:10px}
+.download-subtitle{font-size:15px;color:var(--text2)}
+
+.dl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
+.dl-card{background:var(--bg2);border:2px solid var(--border);border-radius:var(--radius);padding:40px 28px 32px;text-align:center;position:relative;transition:all 0.35s ease;overflow:hidden}
+.dl-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold2);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
+.dl-card:hover{border-color:rgba(245,158,11,0.3);box-shadow:0 12px 40px rgba(15,23,42,0.08);transform:translateY(-6px)}
+.dl-card:hover::before{transform:scaleX(1)}
+.dl-card.featured{border-color:rgba(245,158,11,0.25)}
+.dl-card.featured::before{transform:scaleX(1);background:linear-gradient(90deg,var(--gold2),var(--gold))}
+
+.dl-icon{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;transition:all 0.35s}
+.dl-icon svg{width:32px;height:32px}
+.dl-card-win .dl-icon{background:rgba(59,130,246,0.08);color:#3b82f6}
+.dl-card-win:hover .dl-icon{background:rgba(59,130,246,0.14);transform:scale(1.05)}
+.dl-card-mac .dl-icon{background:rgba(15,23,42,0.06);color:var(--text)}
+.dl-card-mac:hover .dl-icon{background:rgba(15,23,42,0.1);transform:scale(1.05)}
+.dl-card-web .dl-icon{background:rgba(245,158,11,0.08);color:var(--gold)}
+.dl-card-web:hover .dl-icon{background:rgba(245,158,11,0.14);transform:scale(1.05)}
+
+.dl-name{font-family:var(--font-display);font-weight:700;font-size:18px;margin-bottom:6px;color:var(--text)}
+.dl-format{font-size:13px;color:var(--text3);margin-bottom:24px;font-weight:500}
+
+.dl-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 24px;border-radius:var(--radius-sm);font-family:var(--font-display);font-weight:700;font-size:14px;transition:all 0.3s;border:none;cursor:pointer}
+.dl-btn-primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;box-shadow:0 4px 16px var(--gold-glow)}
+.dl-btn-primary:hover{box-shadow:0 6px 24px rgba(245,158,11,0.3);transform:translateY(-2px)}
+.dl-btn svg{width:18px;height:18px}
+
+.dl-tag{position:absolute;top:16px;right:16px;padding:4px 12px;border-radius:50px;background:rgba(22,163,74,0.08);color:var(--green);font-family:var(--font-display);font-weight:700;font-size:11px;letter-spacing:0.5px;text-transform:uppercase}
+
+/* ── GETTING STARTED ── */
+.started{padding:80px 0 100px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.started-header{text-align:center;margin-bottom:48px}
+.started-title{font-family:var(--font-display);font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-0.5px;margin-bottom:10px}
+.started-desc{font-size:15px;color:var(--text2)}
+
+.steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative;max-width:900px;margin:0 auto}
+.steps-row::before{content:'';position:absolute;top:36px;left:calc(16.66% + 12px);right:calc(16.66% + 12px);height:2px;background:linear-gradient(90deg,var(--gold2),var(--gold));opacity:0.18}
+
+.step{text-align:center;position:relative}
+.step-num{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:20px;margin:0 auto 20px;box-shadow:0 4px 16px var(--gold-glow);position:relative;z-index:1}
+.step-name{font-family:var(--font-display);font-weight:700;font-size:17px;margin-bottom:8px;color:var(--text)}
+.step-text{font-size:14px;color:var(--text2);line-height:1.7;max-width:260px;margin:0 auto}
+
+/* ── HELP ── */
+.help{padding:80px 0;text-align:center}
+.help-card{max-width:560px;margin:0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px 36px}
+.help-icon{width:52px;height:52px;border-radius:14px;background:rgba(245,158,11,0.08);color:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.help-icon svg{width:26px;height:26px}
+.help-title{font-family:var(--font-display);font-weight:700;font-size:20px;margin-bottom:8px}
+.help-text{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:20px}
+.help-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--gold);transition:gap 0.3s}
+.help-link:hover{gap:10px}
+.help-link svg{width:16px;height:16px}
+
+/* ── FOOTER ── */
+.footer{padding:40px 0;border-top:1px solid var(--border)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-left{display:flex;align-items:center;gap:10px}
+.footer-left img{height:24px}
+.footer-left span{font-size:13px;color:var(--text3)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:13px;color:var(--text3);transition:color 0.3s}
+.footer-links a:hover{color:var(--text)}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.08s}
+.reveal-delay-2{transition-delay:0.16s}
+.reveal-delay-3{transition-delay:0.24s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .success-hero{padding:110px 0 40px}
+  .dl-grid{grid-template-columns:1fr;max-width:380px}
+  .steps-row{grid-template-columns:1fr;gap:32px}
+  .steps-row::before{display:none}
+  .help-card{padding:32px 24px}
+  .footer-inner{flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+}
+@media(max-width:480px){
+  .check-ring{width:80px;height:80px}
+  .check-ring svg{width:36px;height:36px}
 }
 </style>
 </head>
 <body>
+
+<!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">
       <img src="assets/logo.png" alt="Solis OS">
       <span>Solis OS</span>
     </a>
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <span>Back to Home</span>
+    </a>
   </div>
 </nav>
 
-<div class="wrap">
-  <div class="success-icon">
-    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+<!-- SUCCESS HERO -->
+<section class="success-hero">
+  <div class="container">
+    <div class="check-ring">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1 class="success-title">Payment Successful!</h1>
+    <p class="success-desc">Thank you for purchasing Solis OS POS. Your annual subscription is now active.</p>
+    <p class="success-email" id="email-line"></p>
   </div>
-  <h1>You're all set!</h1>
-  <p class="sub">Your Solis OS POS subscription is active. Here's how to get started.</p>
+</section>
 
-  <div class="card">
-    <h2>Getting Started</h2>
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-text">
-        <strong>Open the POS App</strong>
-        <span>Click the button below to launch Solis OS POS in your browser. You can use it right away.</span>
+<!-- DOWNLOAD -->
+<section class="download-section">
+  <div class="container">
+    <div class="download-header reveal">
+      <div class="download-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
       </div>
+      <h2 class="download-title">Download Your POS Software</h2>
+      <p class="download-subtitle">Choose the version that fits your setup</p>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-text">
-        <strong>Sign In with Your Account</strong>
-        <span>Use the same email you registered with. If you used it during the trial, all your data is still there.</span>
+
+    <div class="dl-grid">
+      <!-- Windows -->
+      <div class="dl-card dl-card-win reveal reveal-delay-1">
+        <div class="dl-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12.5L3 5.5L10.5 4.5V12.5H3ZM3 13.5H10.5V21.5L3 20.5V13.5ZM11.5 4.33L21 3V12.5H11.5V4.33ZM11.5 13.5H21V23L11.5 21.67V13.5Z"/></svg>
+        </div>
+        <h3 class="dl-name">Download for Windows</h3>
+        <p class="dl-format">.exe installer</p>
+        <a href="#download-win" class="dl-btn dl-btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
       </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-text">
-        <strong>Connect Your Phone</strong>
-        <span>Go to Settings, find Cloud Sync, generate a code, and scan the QR code with your phone. Save it to your home screen to manage your shop from anywhere.</span>
+
+      <!-- Mac -->
+      <div class="dl-card dl-card-mac reveal reveal-delay-2">
+        <div class="dl-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        </div>
+        <h3 class="dl-name">Download for Mac</h3>
+        <p class="dl-format">.dmg file</p>
+        <a href="#download-mac" class="dl-btn dl-btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
       </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-text">
-        <strong>Download for Offline Use</strong>
-        <span>In Settings, click "Export & Download" to save the POS for offline use on any device. Works without internet.</span>
+
+      <!-- Web -->
+      <div class="dl-card dl-card-web featured reveal reveal-delay-3">
+        <div class="dl-tag">No Install</div>
+        <div class="dl-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        </div>
+        <h3 class="dl-name">Use in Browser</h3>
+        <p class="dl-format">No download needed</p>
+        <a href="https://solis-os.com/app/" class="dl-btn dl-btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Open Web App
+        </a>
       </div>
     </div>
   </div>
+</section>
 
-  <a href="https://solis-os.com/app/" class="btn">
-    <svg viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-    Launch Solis OS POS
-  </a>
+<!-- GETTING STARTED -->
+<section class="started">
+  <div class="container">
+    <div class="started-header reveal">
+      <h2 class="started-title">Get Started in 3 Steps</h2>
+      <p class="started-desc">You'll be taking your first order in minutes</p>
+    </div>
+    <div class="steps-row">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <h3 class="step-name">Download & Install</h3>
+        <p class="step-text">Download the version for your computer and run the installer. It takes less than a minute.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <h3 class="step-name">Sign In</h3>
+        <p class="step-text">Open the app and sign in with the same email you used to purchase.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <h3 class="step-name">Start Selling</h3>
+        <p class="step-text">Add your products, customize your settings, and start taking orders right away.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <p class="note">
-    Your subscription includes all features, unlimited products, unlimited transactions, and all future updates.
-    A receipt has been sent to your email. If you have any questions, reach out through the chatbot on our website.
-  </p>
-</div>
+<!-- HELP -->
+<section class="help reveal">
+  <div class="container">
+    <div class="help-card">
+      <div class="help-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <h3 class="help-title">Questions? We're here to help.</h3>
+      <p class="help-text">Contact us through our website chat or WhatsApp for setup assistance. We'll get you up and running.</p>
+      <a href="https://solis-os.com" class="help-link">
+        Visit solis-os.com
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <img src="assets/logo.png" alt="Solis OS">
+        <span>&copy; 2026 Solis OS. All rights reserved.</span>
+      </div>
+      <div class="footer-links">
+        <a href="terms.html">Terms</a>
+        <a href="privacy-policy.html">Privacy</a>
+        <a href="refund.html">Refund Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const email = params.get('email');
+if (email) {
+  document.getElementById('email-line').innerHTML = 'A confirmation has been sent to <strong>' + email.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</strong>';
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
