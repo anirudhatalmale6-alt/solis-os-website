@@ -2498,6 +2498,7 @@ function closeModal(){
     await checkExistingAccount();
     setInterval(updateClock,1000);updateClock();
     showPhoneTip();
+    if(settings.syncCode){syncToCloud().catch(()=>{})};
 
     document.addEventListener('keydown',e=>{
       if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;

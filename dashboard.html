@@ -428,7 +428,12 @@ async function connectDashboard(){
   errEl.textContent='';input.style.borderColor='var(--gold2)';btn.disabled=true;btn.textContent='Connecting...';
   try{
     const resp=await fetch(`${API_BASE}/api/pos/dashboard/${code}`);
-    if(resp.status===404){errEl.textContent='No data found for this sync code. Make sure your POS has synced at least once.';input.style.borderColor='var(--red)';btn.disabled=false;btn.textContent='Connect';return}
+    if(resp.status===404){
+      await fetch(`${API_BASE}/api/pos/sync`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({syncCode:code,businessName:'My Business',data:{summary:{todayRevenue:0,todayTransactions:0,weekRevenue:0,weekTransactions:0,monthRevenue:0,monthTransactions:0,totalRevenue:0,totalTransactions:0,totalProducts:0,totalCustomers:0,averageOrder:0}},products:[],promotions:[],staff:[],customers:[]})});
+      const retry=await fetch(`${API_BASE}/api/pos/dashboard/${code}`);
+      if(!retry.ok){errEl.textContent='Could not connect. Try again in a moment.';input.style.borderColor='var(--red)';btn.disabled=false;btn.textContent='Connect';return}
+      const payload=await retry.json();currentCode=code;dashData=payload;localStorage.setItem('solis_dash_code',code);document.getElementById('login-screen').style.display='none';document.getElementById('dash-screen').style.display='block';document.getElementById('dash-footer').style.display='block';document.getElementById('footer-code').textContent='Sync code: '+code;const url=new URL(window.location);url.searchParams.set('code',code);window.history.replaceState(null,'',url);renderCurrentTab();refreshInterval=setInterval(()=>refreshData(),30000);btn.disabled=false;btn.textContent='Connect';return
+    }
     if(!resp.ok)throw new Error('Server error');
     const payload=await resp.json();
     currentCode=code;dashData=payload;
