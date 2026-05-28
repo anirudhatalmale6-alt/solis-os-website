@@ -1619,7 +1619,15 @@ async function deleteStaff(id){
 // SETTINGS SCREEN
 // ═══════════════════════════════════════════
 async function renderRemoteScreen(){
-  const s=await loadSettings();
+  let s=await loadSettings();
+  if(!s.syncCode){
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+    await dbPut('settings',{key:'syncCode',value:code});
+    s=await loadSettings();
+    settings=s;
+    syncToCloud();
+  }
   let html=`<div style="max-width:600px;margin:0 auto;padding:20px">
     <div class="settings-card full" style="text-align:center">
       <h3 style="margin-bottom:8px">Remote Dashboard</h3>
