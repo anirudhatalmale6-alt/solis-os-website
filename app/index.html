@@ -1751,7 +1751,24 @@ async function renderSettingsScreen(){
       </div>
       <div class="settings-card">
         <h3>Payment & Currency</h3>
-        <div class="form-group"><label>Currency Symbol</label><input id="set-currency" value="${s.currencySymbol||'$'}" style="max-width:80px"></div>
+        <div class="form-group"><label>Currency</label><select id="set-currency" style="max-width:260px;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+${[
+['$','USD - US Dollar'],['€','EUR - Euro'],['£','GBP - British Pound'],['A$','AUD - Australian Dollar'],['C$','CAD - Canadian Dollar'],
+['¥','JPY - Japanese Yen'],['¥','CNY - Chinese Yuan'],['₹','INR - Indian Rupee'],['R$','BRL - Brazilian Real'],['₩','KRW - South Korean Won'],
+['CHF','CHF - Swiss Franc'],['kr','SEK - Swedish Krona'],['kr','NOK - Norwegian Krone'],['kr','DKK - Danish Krone'],['zł','PLN - Polish Zloty'],
+['Kč','CZK - Czech Koruna'],['Ft','HUF - Hungarian Forint'],['₺','TRY - Turkish Lira'],['R','ZAR - South African Rand'],['₱','PHP - Philippine Peso'],
+['฿','THB - Thai Baht'],['RM','MYR - Malaysian Ringgit'],['Rp','IDR - Indonesian Rupiah'],['₫','VND - Vietnamese Dong'],['S$','SGD - Singapore Dollar'],
+['HK$','HKD - Hong Kong Dollar'],['NT$','TWD - Taiwan Dollar'],['NZ$','NZD - New Zealand Dollar'],['د.إ','AED - UAE Dirham'],['﷼','SAR - Saudi Riyal'],
+['د.ك','KWD - Kuwaiti Dinar'],['ر.ق','QAR - Qatari Riyal'],['ر.ع','OMR - Omani Rial'],['د.ب','BHD - Bahraini Dinar'],['ج.م','EGP - Egyptian Pound'],
+['د.م','MAD - Moroccan Dirham'],['₦','NGN - Nigerian Naira'],['KSh','KES - Kenyan Shilling'],['GH₵','GHS - Ghanaian Cedi'],['TSh','TZS - Tanzanian Shilling'],
+['MX$','MXN - Mexican Peso'],['₡','CRC - Costa Rican Colón'],['$','ARS - Argentine Peso'],['$','CLP - Chilean Peso'],['$','COP - Colombian Peso'],
+['S/.','PEN - Peruvian Sol'],['$U','UYU - Uruguayan Peso'],['Bs','VES - Venezuelan Bolívar'],['₸','KZT - Kazakhstani Tenge'],['₴','UAH - Ukrainian Hryvnia'],
+['₾','GEL - Georgian Lari'],['₼','AZN - Azerbaijani Manat'],['лв','BGN - Bulgarian Lev'],['lei','RON - Romanian Leu'],['din','RSD - Serbian Dinar'],
+['₨','PKR - Pakistani Rupee'],['₨','LKR - Sri Lankan Rupee'],['৳','BDT - Bangladeshi Taka'],['Br','ETB - Ethiopian Birr'],['USh','UGX - Ugandan Shilling'],
+['J$','JMD - Jamaican Dollar'],['TT$','TTD - Trinidad Dollar'],['B$','BSD - Bahamian Dollar'],['BZ$','BZD - Belize Dollar'],['L','HNL - Honduran Lempira'],
+['RD$','DOP - Dominican Peso'],['Q','GTQ - Guatemalan Quetzal'],['FJ$','FJD - Fijian Dollar'],['K','PGK - Papua New Guinean Kina'],['T$','TOP - Tongan Paʻanga']
+].map(c=>`<option value="${c[0]}"${(s.currencySymbol||'$')===c[0]?' selected':''}>${c[0]} — ${c[1]}</option>`).join('')}
+</select></div>
         <div class="toggle-row"><span>Accept Cash</span><label class="toggle"><input type="checkbox" id="set-pcash" ${s.paymentCash!==false?'checked':''}><span class="slider"></span></label></div>
         <div class="toggle-row"><span>Accept Card</span><label class="toggle"><input type="checkbox" id="set-pcard" ${s.paymentCard!==false?'checked':''}><span class="slider"></span></label></div>
         <div class="toggle-row"><span>Accept Mobile</span><label class="toggle"><input type="checkbox" id="set-pmobile" ${s.paymentMobile!==false?'checked':''}><span class="slider"></span></label></div>
