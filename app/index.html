@@ -656,6 +656,15 @@ function dbGet(store,key){return new Promise((r,j)=>{const q=db.transaction(stor
 function dbPut(store,data){return new Promise((r,j)=>{const q=db.transaction(store,'readwrite').objectStore(store).put(data);q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)})}
 function dbDel(store,id){return new Promise((r,j)=>{const q=db.transaction(store,'readwrite').objectStore(store).delete(id);q.onsuccess=()=>r();q.onerror=()=>j(q.error)})}
 function dbClear(store){return new Promise((r,j)=>{const q=db.transaction(store,'readwrite').objectStore(store).clear();q.onsuccess=()=>r();q.onerror=()=>j(q.error)})}
+function uuid(){return crypto.randomUUID?crypto.randomUUID():(([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16)))}
+async function migrateAddSyncIds(){
+  for(const store of ['products','sales','customers','staff','promotions']){
+    const all=await dbAll(store);
+    for(const rec of all){
+      if(!rec.syncId){rec.syncId=uuid();rec.updatedAt=rec.updatedAt||rec.createdAt||new Date().toISOString();await dbPut(store,rec)}
+    }
+  }
+}
 
 async function seedData(){
   const prods=await dbAll('products');
@@ -904,7 +913,9 @@ async function checkExistingAccount(){
           if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
           $('auth-screen').classList.add('hidden');$('app').classList.remove('hidden');
           $('h-avatar').textContent=account.name[0];$('h-username').textContent=account.name;
-          showTrialBanner();loadCheckout();return;
+          showTrialBanner();loadCheckout();
+          autoSetupSync(savedEmail).catch(()=>{});
+          return;
         }
         localStorage.removeItem('sb_access_token');localStorage.removeItem('sb_user_email');localStorage.removeItem('sb_refresh_token');
       }
@@ -997,7 +1008,7 @@ async function handleLogin(e){
       const uName=uMeta.full_name||email.split('@')[0];
       account={name:uName,email,password,role:'admin',active:true,createdAt:new Date().toISOString()};
       await dbPut('accounts',account);
-      await dbPut('staff',{name:uName,role:'admin',pin:'0000',active:true,createdAt:new Date().toISOString()});
+      await dbPut('staff',{name:uName,role:'admin',pin:'0000',active:true,createdAt:new Date().toISOString(),syncId:uuid(),updatedAt:new Date().toISOString()});
       if(pendingSignup&&pendingSignup.email===email){
         await dbPut('settings',{key:'businessName',value:pendingSignup.business});
         pendingSignup=null;
@@ -1017,7 +1028,9 @@ async function handleLogin(e){
     if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
     $('auth-screen').classList.add('hidden');$('app').classList.remove('hidden');
     $('h-avatar').textContent=account.name[0];$('h-username').textContent=account.name;
-    showTrialBanner();loadCheckout();return;
+    showTrialBanner();loadCheckout();
+    autoSetupSync(email).catch(()=>{});
+    return;
   }
   if(sbResult.error&&sbResult.error!=='offline'){
     if(sbResult.error.toLowerCase().includes('not confirmed')){$('auth-error').textContent='Please confirm your email first. Check your inbox for a confirmation link.';return}
@@ -1267,7 +1280,7 @@ async function completeSale(){
     customerId:selectedCustomer?selectedCustomer.id:null,
     customerName:selectedCustomer?selectedCustomer.name:null,
     total,paymentMethod:selectedPayment,staffId:currentUser.id,staffName:currentUser.name,
-    createdAt:new Date().toISOString()
+    createdAt:new Date().toISOString(),syncId:uuid()
   };
   await dbPut('sales',sale);
   await dbPut('settings',{key:'nextSaleNumber',value:saleNum+1});
@@ -1440,13 +1453,14 @@ async function saveProduct(id){
   const catSel=$('pf-category').value;
   const category=catSel==='__new'?$('pf-newcat').value.trim():catSel;
   if(!category){showToast('Category is required');return}
+  const now=new Date().toISOString();
   const data={
     name,sku:$('pf-sku').value.trim(),barcode:$('pf-barcode').value.trim(),category,
     price:parseFloat($('pf-price').value)||0,cost:parseFloat($('pf-cost').value)||0,
     stock:parseInt($('pf-stock').value)||0,lowStock:parseInt($('pf-lowstock').value)||10,
-    color:$('pf-color').value,createdAt:new Date().toISOString()
+    color:$('pf-color').value,createdAt:now,syncId:uuid(),updatedAt:now
   };
-  if(id)data.id=id;
+  if(id){data.id=id;const ex=allProducts.find(x=>x.id===id);if(ex){if(ex.syncId)data.syncId=ex.syncId;if(ex.createdAt)data.createdAt=ex.createdAt}}
   await dbPut('products',data);
   closeModal();showToast(id?'Product updated':'Product added');
   allProducts=await dbAll('products');renderProductsScreen();
@@ -1479,6 +1493,7 @@ async function saveStockAdjust(id){
   const qty=parseInt($('adj-qty').value)||0;
   const isAdd=$('adj-add').classList.contains('active');
   p.stock=isAdd?p.stock+qty:Math.max(0,p.stock-qty);
+  p.updatedAt=new Date().toISOString();
   await dbPut('products',p);
   closeModal();showToast('Stock updated');
   allProducts=await dbAll('products');renderProductsScreen();
@@ -1652,8 +1667,9 @@ async function saveStaff(id){
   if(!name){showToast('Name is required');return}
   const pin=$('sf-pin').value.trim();
   if(pin.length!==4||!/^\d{4}$/.test(pin)){showToast('PIN must be 4 digits');return}
-  const data={name,role:$('sf-role').value,pin,active:$('sf-active').checked,createdAt:new Date().toISOString()};
-  if(id)data.id=id;
+  const now=new Date().toISOString();
+  const data={name,role:$('sf-role').value,pin,active:$('sf-active').checked,createdAt:now,syncId:uuid(),updatedAt:now};
+  if(id){data.id=id;const allStaff=await dbAll('staff');const ex=allStaff.find(x=>x.id===id);if(ex){if(ex.syncId)data.syncId=ex.syncId;if(ex.createdAt)data.createdAt=ex.createdAt}}
   await dbPut('staff',data);
   closeModal();showToast(id?'Staff updated':'Staff added');renderStaffScreen();
 }
@@ -1900,6 +1916,9 @@ async function generateAndSaveSyncCode(){
   let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
   await dbPut('settings',{key:'syncCode',value:code});
   settings=await loadSettings();
+  if(currentUser?.email){
+    try{await fetch('https://api.solis-os.com/api/pos/register-sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:currentUser.email,syncCode:code})})}catch(e){}
+  }
   showToast('QR code generated!');
   renderRemoteScreen();
 }
@@ -1917,10 +1936,10 @@ function dismissPhoneTip(){
   localStorage.setItem('solis_phone_tip_dismissed','1');
 }
 
-async function syncToCloud(){
-  if(!settings.syncCode){showToast('Generate a sync code first');return}
+async function syncToCloud(silent){
+  if(!settings.syncCode){if(!silent)showToast('Generate a sync code first');return}
   try{
-    showToast('Syncing to cloud...');
+    if(!silent)showToast('Syncing to cloud...');
     const sales=await dbAll('sales');
     const products=await dbAll('products');
     const customers=await dbAll('customers');
@@ -1961,25 +1980,28 @@ async function syncToCloud(){
         totalCustomers:customers.length,
         averageOrder:sales.length?sales.reduce((a,s)=>a+s.total,0)/sales.length:0
       },
-      topProducts,
-      recentSales,
-      hourlyToday:hourly,
-      dailyRevenue,
-      lowStock,
+      topProducts,recentSales,hourlyToday:hourly,dailyRevenue,lowStock,
       currencySymbol:settings.currencySymbol||'$'
     };
 
     const allPromos=await dbAll('promotions');
     const allStaff=await dbAll('staff');
 
+    const syncSettings={};
+    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate'];
+    syncableKeys.forEach(k=>{if(settings[k]!==undefined)syncSettings[k]=settings[k]});
+
     await fetch('https://api.solis-os.com/api/pos/sync',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({syncCode:settings.syncCode,businessName:settings.businessName||'My Business',data,
-        products:products.map(p=>({id:p.id,name:p.name,price:p.price,cost:p.cost||0,stock:p.stock,lowStock:p.lowStock||0,category:p.category||'',barcode:p.barcode||'',color:p.color||''})),
-        promotions:allPromos.map(p=>({id:p.id,name:p.name,type:p.type,value:p.value,minPurchase:p.minPurchase||0,buyQty:p.buyQty||0,getQty:p.getQty||0,active:p.active!==false,productId:p.productId||null,categoryId:p.categoryId||null})),
-        staff:allStaff.map(s=>({id:s.id,name:s.name,pin:s.pin,role:s.role||'cashier'})),
-        customers:customers.map(c=>({id:c.id,name:c.name,phone:c.phone||'',email:c.email||'',points:c.points||0,totalSpent:c.totalSpent||0,visits:c.visits||0}))
+        email:currentUser?.email||'',
+        products:products.map(p=>({syncId:p.syncId||'',name:p.name,sku:p.sku||'',price:p.price,cost:p.cost||0,stock:p.stock,lowStock:p.lowStock||0,category:p.category||'',barcode:p.barcode||'',color:p.color||'',createdAt:p.createdAt||'',updatedAt:p.updatedAt||p.createdAt||''})),
+        promotions:allPromos.map(p=>({syncId:p.syncId||'',name:p.name,type:p.type,targetType:p.targetType||'',targetName:p.targetName||'',discountValue:p.discountValue||0,buyQty:p.buyQty||0,freeQty:p.freeQty||0,minQty:p.minQty||0,startDate:p.startDate||null,endDate:p.endDate||null,active:p.active!==false,createdAt:p.createdAt||'',updatedAt:p.updatedAt||p.createdAt||''})),
+        staff:allStaff.map(s=>({syncId:s.syncId||'',name:s.name,pin:s.pin,role:s.role||'cashier',active:s.active!==false,createdAt:s.createdAt||'',updatedAt:s.updatedAt||s.createdAt||''})),
+        customers:customers.map(c=>({syncId:c.syncId||'',name:c.name,phone:c.phone||'',email:c.email||'',points:c.points||0,totalSpent:c.totalSpent||0,visits:c.visits||0,lastVisit:c.lastVisit||null,barcode:c.barcode||'',createdAt:c.createdAt||'',updatedAt:c.updatedAt||c.createdAt||''})),
+        sales:sales.map(s=>({syncId:s.syncId||'',saleNumber:s.saleNumber,items:s.items,subtotal:s.subtotal,tax:s.tax,discount:s.discount||0,promoDiscount:s.promoDiscount||0,loyaltyDiscount:s.loyaltyDiscount||0,total:s.total,paymentMethod:s.paymentMethod,staffName:s.staffName||'',customerName:s.customerName||'',createdAt:s.createdAt})),
+        settings:syncSettings
       })
     });
 
@@ -1987,8 +2009,103 @@ async function syncToCloud(){
 
     await dbPut('settings',{key:'lastSyncTime',value:new Date().toISOString()});
     settings.lastSyncTime=new Date().toISOString();
-    showToast('Cloud sync complete');
-  }catch(e){console.error('Cloud sync error:',e);showToast('Sync failed - check connection')}
+    if(!silent)showToast('Cloud sync complete');
+  }catch(e){console.error('Cloud sync error:',e);if(!silent)showToast('Sync failed - check connection')}
+}
+
+async function syncFromCloud(){
+  if(!settings.syncCode||!navigator.onLine)return;
+  try{
+    const resp=await fetch(`https://api.solis-os.com/api/pos/pull/${settings.syncCode}`);
+    if(!resp.ok)return;
+    const cloud=await resp.json();
+    let changed=false;
+
+    async function mergeStore(storeName,cloudRecords){
+      if(!cloudRecords||cloudRecords.length===0)return;
+      const local=await dbAll(storeName);
+      const localMap={};local.forEach(r=>{if(r.syncId)localMap[r.syncId]=r});
+      for(const cr of cloudRecords){
+        if(!cr.syncId)continue;
+        const lr=localMap[cr.syncId];
+        if(!lr){
+          const rec={...cr};delete rec.id;
+          await dbPut(storeName,rec);changed=true;
+        }else if(storeName!=='sales'&&cr.updatedAt&&(!lr.updatedAt||cr.updatedAt>lr.updatedAt)){
+          await dbPut(storeName,{...cr,id:lr.id});changed=true;
+        }
+      }
+    }
+
+    await mergeStore('products',cloud.products);
+    await mergeStore('sales',cloud.sales);
+    await mergeStore('customers',cloud.customers);
+    await mergeStore('staff',cloud.staff);
+    await mergeStore('promotions',cloud.promotions);
+
+    if(cloud.settings){
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate'];
+      for(const key of syncableKeys){
+        if(cloud.settings[key]!==undefined){
+          const local=await dbGet('settings',key);
+          if(!local||local.value===undefined||local.value===DEFAULT_SETTINGS[key]){
+            await dbPut('settings',{key,value:cloud.settings[key]});changed=true;
+          }
+        }
+      }
+    }
+
+    const allSales=await dbAll('sales');
+    let maxSaleNum=0;
+    allSales.forEach(s=>{const m=s.saleNumber?.match(/SOL-(\d+)/);if(m)maxSaleNum=Math.max(maxSaleNum,parseInt(m[1]))});
+    if(maxSaleNum>=(settings.nextSaleNumber||1)){
+      await dbPut('settings',{key:'nextSaleNumber',value:maxSaleNum+1});
+      settings.nextSaleNumber=maxSaleNum+1;
+    }
+
+    if(changed){
+      allProducts=await dbAll('products');
+      settings=await loadSettings();
+      applyTheme();
+      if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
+      if(currentScreen==='checkout')renderProductGrid();
+    }
+  }catch(e){console.error('Sync from cloud error:',e)}
+}
+
+async function autoSetupSync(email){
+  try{
+    if(!navigator.onLine)return;
+    const resp=await fetch(`https://api.solis-os.com/api/pos/lookup-sync/${encodeURIComponent(email)}`);
+    if(resp.ok){
+      const data=await resp.json();
+      if(data.syncCode){
+        await dbPut('settings',{key:'syncCode',value:data.syncCode});
+        settings.syncCode=data.syncCode;
+        showToast('Syncing your data from cloud...');
+        await syncFromCloud();
+        await syncToCloud(true);
+        return;
+      }
+    }
+    if(!settings.syncCode){
+      const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+      await dbPut('settings',{key:'syncCode',value:code});
+      settings.syncCode=code;
+    }
+    await fetch('https://api.solis-os.com/api/pos/register-sync',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,syncCode:settings.syncCode})
+    });
+    await syncToCloud(true);
+  }catch(e){console.error('Auto sync setup error:',e)}
+}
+
+async function fullSync(){
+  if(!settings.syncCode||!navigator.onLine)return;
+  await syncToCloud(true);
+  await syncFromCloud();
 }
 
 async function pullRemoteCommands(){
@@ -2184,9 +2301,11 @@ async function saveCustomer(id){
     data.totalSpent=existing.totalSpent||0;data.visits=existing.visits||0;
     data.lastVisit=existing.lastVisit||null;data.createdAt=existing.createdAt;
     data.barcode=existing.barcode||await getNextCustomerBarcode();
+    data.syncId=existing.syncId||uuid();data.updatedAt=new Date().toISOString();
   } else {
     data.points=0;data.totalSpent=0;data.visits=0;data.lastVisit=null;data.createdAt=new Date().toISOString();
     data.barcode=await getNextCustomerBarcode();
+    data.syncId=uuid();data.updatedAt=new Date().toISOString();
   }
   await dbPut('customers',data);
   closeModal();showToast(id?'Customer updated':'Customer added');
@@ -2462,10 +2581,11 @@ async function savePromotion(id){
   if(type==='percent')discountValue=parseFloat($('prf-discval').value)||10;
   if(type==='bxgy'){buyQty=parseInt($('prf-buyqty').value)||2;freeQty=parseInt($('prf-freeqty').value)||1}
   if(type==='bundle'){minQty=parseInt($('prf-minqty').value)||2;discountValue=parseFloat($('prf-bundledisc').value)||10}
+  const now=new Date().toISOString();
   const data={name,type,targetType,targetName,targetId,discountValue,buyQty,freeQty,minQty,
     startDate:$('prf-start').value||null,endDate:$('prf-end').value||null,
-    active:$('prf-active').checked,createdAt:new Date().toISOString()};
-  if(id)data.id=id;
+    active:$('prf-active').checked,createdAt:now,syncId:uuid(),updatedAt:now};
+  if(id){data.id=id;const ex=allPromotions.find(x=>x.id===id);if(ex){if(ex.syncId)data.syncId=ex.syncId;if(ex.createdAt)data.createdAt=ex.createdAt}}
   await dbPut('promotions',data);
   allPromotions=await dbAll('promotions');
   closeModal();showToast(id?'Promotion updated':'Promotion created');renderPromotionsScreen();
@@ -2560,18 +2680,19 @@ function closeModal(){
   try{
     await openDB();
     await seedData();
+    await migrateAddSyncIds();
     settings=await loadSettings();
     allProducts=await dbAll('products');
     await checkExistingAccount();
     setInterval(updateClock,1000);updateClock();
     showPhoneTip();
-    if(settings.syncCode){syncToCloud().catch(()=>{})};
+    if(settings.syncCode){fullSync().catch(()=>{})};
 
     window.addEventListener('online',()=>{
-      if(settings.syncCode){showToast('Internet restored - syncing...');syncToCloud().catch(()=>{})}
+      if(settings.syncCode){showToast('Internet restored - syncing...');fullSync().catch(()=>{})}
     });
     setInterval(()=>{
-      if(navigator.onLine&&settings.syncCode){syncToCloud().catch(()=>{})}
+      if(navigator.onLine&&settings.syncCode){fullSync().catch(()=>{})}
     },5*60*1000);
 
     document.addEventListener('keydown',e=>{
