@@ -1287,7 +1287,7 @@ async function completeSale(){
   cart=[];$('discount-input').value=0;selectedCustomer=null;redeemingPoints=false;appliedPromos=[];
   updateCustomerBar();updateCartUI();renderProductGrid();
   showToast('Sale completed!');
-  syncToCloud();
+  if(navigator.onLine&&settings.syncCode){syncToCloud().catch(()=>{})}
 }
 
 function showReceipt(sale){
@@ -2546,6 +2546,13 @@ function closeModal(){
     setInterval(updateClock,1000);updateClock();
     showPhoneTip();
     if(settings.syncCode){syncToCloud().catch(()=>{})};
+
+    window.addEventListener('online',()=>{
+      if(settings.syncCode){showToast('Internet restored - syncing...');syncToCloud().catch(()=>{})}
+    });
+    setInterval(()=>{
+      if(navigator.onLine&&settings.syncCode){syncToCloud().catch(()=>{})}
+    },5*60*1000);
 
     document.addEventListener('keydown',e=>{
       if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
