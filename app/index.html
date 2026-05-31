@@ -404,19 +404,14 @@ tbody tr:last-child td{border-bottom:none}
       <button class="auth-btn" onclick="backToLoginFromConfirm()">Go to Sign In</button>
     </div>
     <form class="auth-form hidden" id="forgot-form" onsubmit="handleForgotPassword(event)">
-      <p style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:16px;text-align:center">Enter your email and sync code to verify your identity, then set a new password.</p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:16px;text-align:center">Enter your email and a new password to reset your account.</p>
       <div class="form-group" id="forgot-email-group">
         <label>Email</label>
         <input type="email" id="forgot-email" placeholder="you@example.com" required>
       </div>
-      <div class="form-group" id="forgot-sync-group">
-        <label>Sync Code</label>
-        <input type="text" id="forgot-sync" placeholder="e.g. ABC123" maxlength="6" style="text-transform:uppercase;letter-spacing:2px;font-weight:700">
-        <p style="font-size:11px;color:var(--text3);margin-top:4px">Find this in POS Settings > Cloud Sync on any logged-in device</p>
-      </div>
-      <div class="form-group hidden" id="forgot-newpass-group">
+      <div class="form-group" id="forgot-newpass-group">
         <label>New Password</label>
-        <input type="password" id="forgot-newpass" placeholder="Min 6 characters" minlength="6">
+        <input type="password" id="forgot-newpass" placeholder="Min 6 characters" minlength="6" required>
       </div>
       <div class="hidden" id="forgot-success" style="text-align:center;padding:16px 0">
         <div style="width:56px;height:56px;border-radius:50%;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;color:#10b981">&#10003;</div>
@@ -832,15 +827,12 @@ function showForgotPassword(){
   $('auth-switch').classList.add('hidden');
   $('auth-error').textContent='';
   $('forgot-email-group').classList.remove('hidden');
-  $('forgot-sync-group').classList.remove('hidden');
-  $('forgot-newpass-group').classList.add('hidden');
+  $('forgot-newpass-group').classList.remove('hidden');
   $('forgot-success').classList.add('hidden');
   $('forgot-btn').classList.remove('hidden');
-  $('forgot-btn').textContent='Verify & Continue';
+  $('forgot-btn').textContent='Reset Password';
   $('forgot-btn').disabled=false;
-  $('forgot-email').value='';$('forgot-sync').value='';
-  $('forgot-email').disabled=false;$('forgot-sync').disabled=false;
-  forgotStep='verify';
+  $('forgot-email').value='';$('forgot-newpass').value='';
 }
 function backToLogin(){
   $('forgot-form').classList.add('hidden');
@@ -848,48 +840,34 @@ function backToLogin(){
   $('auth-sub').textContent='Welcome back! Sign in to continue';
   $('auth-switch').classList.remove('hidden');
   $('auth-error').textContent='';
-  forgotStep='verify';
 }
-let forgotStep='verify';
 async function handleForgotPassword(e){
   e.preventDefault();
   const email=$('forgot-email').value.trim().toLowerCase();
-  const syncCode=$('forgot-sync').value.trim().toUpperCase();
-  if(forgotStep==='newpass'){
-    const newPass=$('forgot-newpass').value;
-    if(!newPass||newPass.length<6){$('auth-error').textContent='Password must be at least 6 characters.';return}
-    $('auth-error').textContent='';
-    $('forgot-btn').textContent='Resetting...';$('forgot-btn').disabled=true;
-    try{
-      const r=await fetch('https://api.solis-os.com/api/pos/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,syncCode,newPassword:newPass})});
-      const d=await r.json();
-      if(r.ok&&d.success){
-        const accounts=await dbAll('accounts');
-        const localAcc=accounts.find(a=>a.email===email);
-        if(localAcc){localAcc.password=newPass;await dbPut('accounts',localAcc)}
-        $('forgot-email-group').classList.add('hidden');
-        $('forgot-sync-group').classList.add('hidden');
-        $('forgot-newpass-group').classList.add('hidden');
-        $('forgot-success').classList.remove('hidden');
-        $('forgot-btn').classList.add('hidden');
-        forgotStep='verify';
-      }else{
-        $('auth-error').textContent=d.error||'Reset failed. Please try again.';
-        $('forgot-btn').textContent='Reset Password';$('forgot-btn').disabled=false;
-      }
-    }catch(err){
-      $('auth-error').textContent='Connection error. Please check your internet.';
+  const newPass=$('forgot-newpass').value;
+  if(!email||!email.includes('@')){$('auth-error').textContent='Please enter a valid email.';return}
+  if(!newPass||newPass.length<6){$('auth-error').textContent='Password must be at least 6 characters.';return}
+  $('auth-error').textContent='';
+  $('forgot-btn').textContent='Resetting...';$('forgot-btn').disabled=true;
+  try{
+    const r=await fetch('https://api.solis-os.com/api/pos/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,newPassword:newPass})});
+    const d=await r.json();
+    if(r.ok&&d.success){
+      const accounts=await dbAll('accounts');
+      const localAcc=accounts.find(a=>a.email===email);
+      if(localAcc){localAcc.password=newPass;await dbPut('accounts',localAcc)}
+      $('forgot-email-group').classList.add('hidden');
+      $('forgot-newpass-group').classList.add('hidden');
+      $('forgot-success').classList.remove('hidden');
+      $('forgot-btn').classList.add('hidden');
+    }else{
+      $('auth-error').textContent=d.error||'Reset failed. Please try again.';
       $('forgot-btn').textContent='Reset Password';$('forgot-btn').disabled=false;
     }
-    return;
+  }catch(err){
+    $('auth-error').textContent='Connection error. Please check your internet.';
+    $('forgot-btn').textContent='Reset Password';$('forgot-btn').disabled=false;
   }
-  if(!email){$('auth-error').textContent='Please enter your email.';return}
-  if(!syncCode||syncCode.length<4){$('auth-error').textContent='Please enter your sync code (found in POS Settings > Cloud Sync).';return}
-  $('auth-error').textContent='';
-  forgotStep='newpass';
-  $('forgot-newpass-group').classList.remove('hidden');
-  $('forgot-btn').textContent='Reset Password';
-  $('forgot-email').disabled=true;$('forgot-sync').disabled=true;
 }
 async function checkExistingAccount(){
   const accounts=await dbAll('accounts');
@@ -3023,11 +3001,17 @@ if('serviceWorker' in navigator){
     r.addEventListener('updatefound',()=>{
       const w=r.installing;
       if(w)w.addEventListener('statechange',()=>{
-        if(w.state==='activated'&&navigator.serviceWorker.controller)
-          console.log('POS updated - new version cached');
+        if(w.state==='activated'&&navigator.serviceWorker.controller){
+          console.log('POS updated - reloading');
+          window.location.reload();
+        }
       });
     });
+    r.update();
   }).catch(e=>console.log('SW registration failed:',e));
+  navigator.serviceWorker.addEventListener('message',e=>{
+    if(e.data&&e.data.type==='SW_UPDATED')window.location.reload();
+  });
 }
 </script>
 </body>

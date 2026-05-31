@@ -1,4 +1,4 @@
-const CACHE_NAME = 'solis-pos-v1.6.0';
+const CACHE_NAME = 'solis-pos-v1.7.0';
 const ASSETS = [
   '/app/',
   '/app/index.html',
@@ -52,7 +52,11 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
       );
-    }).then(() => self.clients.claim())
+    }).then(() => self.clients.claim()).then(() => {
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => client.postMessage({ type: 'SW_UPDATED' }));
+      });
+    })
   );
 });
 
