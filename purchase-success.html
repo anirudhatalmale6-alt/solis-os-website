@@ -292,10 +292,17 @@ img{max-width:100%;display:block}
 </footer>
 
 <script>
+const API='https://api.solis-os.com';
 const params = new URLSearchParams(window.location.search);
 const email = params.get('email');
+
 if (email) {
-  document.getElementById('email-line').innerHTML = 'A confirmation has been sent to <strong>' + email.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</strong>';
+  const safe=email.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  document.getElementById('email-line').innerHTML = 'Your subscription is active for <strong>' + safe + '</strong>';
+  fetch(API+'/api/pos/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})})
+    .then(r=>r.json())
+    .then(d=>{if(d.success)console.log('Account activated successfully')})
+    .catch(()=>{});
 }
 
 const observer = new IntersectionObserver((entries) => {

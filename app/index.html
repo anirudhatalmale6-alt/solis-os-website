@@ -937,10 +937,11 @@ async function checkExistingAccount(){
 const TRIAL_DAYS=10;
 const OWNER_EMAILS=['power.media1984@gmail.com','joseph.geagea31@gmail.com'];
 function isOwner(){return currentUser&&OWNER_EMAILS.includes(currentUser.email?.toLowerCase())}
+function isPurchased(){return !!settings.purchased}
 function showTrialBanner(){
   const banner=$('trial-banner');
   if(!banner)return;
-  if(isOwner()){banner.classList.add('hidden');removeTrialLockout();return}
+  if(isOwner()||isPurchased()){banner.classList.add('hidden');removeTrialLockout();return}
   const accounts=[];
   const tx=db.transaction('accounts','readonly');
   const store=tx.objectStore('accounts');
@@ -969,6 +970,7 @@ function showTrialBanner(){
 }
 
 function showTrialLockout(){
+  if(isPurchased()||isOwner())return;
   if($('trial-lockout'))return;
   const overlay=document.createElement('div');
   overlay.id='trial-lockout';
@@ -978,8 +980,8 @@ function showTrialLockout(){
       <svg viewBox="0 0 24 24" style="width:32px;height:32px;stroke:#d97706;fill:none;stroke-width:2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
     </div>
     <h2 style="font-size:22px;font-weight:700;color:#1a1d2e;margin:0 0 8px;font-family:var(--font-display)">Free Trial Ended</h2>
-    <p style="font-size:14px;color:#6b7280;line-height:1.6;margin:0 0 24px">Your 10-day free trial has expired. Purchase Solis OS POS to continue using all features with your data intact.</p>
-    <a href="https://solis-os.com/pos.html#pricing" target="_blank" style="display:block;width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:16px;font-weight:700;font-family:var(--font-display);text-decoration:none;border:none;cursor:pointer;margin-bottom:12px;text-align:center">Purchase Now</a>
+    <p style="font-size:14px;color:#6b7280;line-height:1.6;margin:0 0 24px">Your 10-day free trial has expired. Subscribe to Solis OS POS to continue using all features with your data intact.</p>
+    <a href="https://solis-os.com/pos.html#pricing" target="_blank" style="display:block;width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:16px;font-weight:700;font-family:var(--font-display);text-decoration:none;border:none;cursor:pointer;margin-bottom:12px;text-align:center">Subscribe Now — $239 AUD/year</a>
     <button onclick="logOut()" style="width:100%;padding:12px;border-radius:10px;background:none;border:1px solid #e5e7eb;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer">Log Out</button>
     <p style="font-size:11px;color:#9ca3af;margin:16px 0 0">Your data is safe and will be available after purchase.</p>
   </div>`;
@@ -2260,7 +2262,7 @@ async function syncToCloud(silent){
     const allStaff=await dbAll('staff');
 
     const syncSettings={};
-    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt'];
+    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail'];
     syncableKeys.forEach(k=>{if(settings[k]!==undefined)syncSettings[k]=settings[k]});
 
     await fetch('https://api.solis-os.com/api/pos/sync',{
@@ -2316,7 +2318,7 @@ async function syncFromCloud(forceOverwrite){
     await mergeStore('promotions',cloud.promotions);
 
     if(cloud.settings){
-      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt'];
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail'];
       for(const key of syncableKeys){
         if(cloud.settings[key]!==undefined){
           if(forceOverwrite){
@@ -2362,6 +2364,7 @@ async function autoSetupSync(email){
         await syncFromCloud(true);
         await syncToCloud(true);
         startAutoSync();
+        checkPurchaseStatus(email);
         return;
       }
     }
@@ -2377,7 +2380,16 @@ async function autoSetupSync(email){
     });
     await syncToCloud(true);
     startAutoSync();
+    checkPurchaseStatus(email);
   }catch(e){console.error('Auto sync setup error:',e)}
+}
+
+async function checkPurchaseStatus(email){
+  if(settings.purchased)return;
+  try{
+    const r=await fetch(`https://api.solis-os.com/api/pos/purchase-status/${encodeURIComponent(email)}`);
+    if(r.ok){const d=await r.json();if(d.purchased){settings.purchased=true;settings.purchasedAt=d.purchasedAt;await dbPut('settings',{key:'purchased',value:true});await dbPut('settings',{key:'purchasedAt',value:d.purchasedAt});showTrialBanner();syncToCloud(true).catch(()=>{})}}
+  }catch(e){}
 }
 
 let autoSyncTimer=null;
