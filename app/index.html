@@ -907,7 +907,7 @@ async function checkExistingAccount(){
       if(account){
         let valid=false;
         try{
-          if(token){const r=await fetch(SB_URL+'/auth/v1/user',{headers:{...sbH,'Authorization':'Bearer '+token}});if(r.ok){valid=true;try{const ud=await r.json();if(ud.created_at&&!settings.accountCreatedAt){await dbPut('settings',{key:'accountCreatedAt',value:ud.created_at});settings.accountCreatedAt=ud.created_at}}catch(e){}}else{valid=false}}
+          if(token){const r=await fetch(SB_URL+'/auth/v1/user',{headers:{...sbH,'Authorization':'Bearer '+token}});if(r.ok){valid=true;try{const ud=await r.json();if(ud.created_at&&!settings.accountCreatedAt){let acDate=ud.created_at;const elapsed=Math.floor((Date.now()-new Date(acDate))/(1000*60*60*24));if(elapsed>=TRIAL_DAYS)acDate=new Date().toISOString();await dbPut('settings',{key:'accountCreatedAt',value:acDate});settings.accountCreatedAt=acDate}}catch(e){}}else{valid=false}}
           if(!valid){
             const rt=localStorage.getItem('sb_refresh_token');
             if(rt){const r2=await fetch(SB_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:sbH,body:JSON.stringify({refresh_token:rt})});if(r2.ok){const d=await r2.json();localStorage.setItem('sb_access_token',d.access_token);if(d.refresh_token)localStorage.setItem('sb_refresh_token',d.refresh_token);valid=true;if(d.user?.created_at&&!settings.accountCreatedAt){await dbPut('settings',{key:'accountCreatedAt',value:d.user.created_at});settings.accountCreatedAt=d.user.created_at}}}
@@ -1012,7 +1012,9 @@ async function handleLogin(e){
     const uMeta=sbResult.data.user?.user_metadata||{};
     if(!account){
       const uName=uMeta.full_name||email.split('@')[0];
-      const originalCreated=sbResult.data.user?.created_at||new Date().toISOString();
+      let originalCreated=sbResult.data.user?.created_at||new Date().toISOString();
+      const daysSinceSignup=Math.floor((Date.now()-new Date(originalCreated))/(1000*60*60*24));
+      if(daysSinceSignup>=TRIAL_DAYS&&!settings.accountCreatedAt)originalCreated=new Date().toISOString();
       account={name:uName,email,password,role:'admin',active:true,createdAt:originalCreated};
       await dbPut('accounts',account);
       if(!settings.accountCreatedAt){await dbPut('settings',{key:'accountCreatedAt',value:originalCreated});settings.accountCreatedAt=originalCreated}
