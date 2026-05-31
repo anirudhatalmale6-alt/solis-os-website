@@ -2346,7 +2346,14 @@ async function syncFromCloud(forceOverwrite){
       settings=await loadSettings();
       applyTheme();
       if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
+      const sLogo=document.querySelector('.sidebar-logo');
+      if(sLogo){sLogo.innerHTML=settings.businessLogo?`<img src="${settings.businessLogo}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">`:'S'}
+      showTrialBanner();
       if(currentScreen==='checkout')renderProductGrid();
+      else if(currentScreen==='products')renderProductsScreen();
+      else if(currentScreen==='sales')renderSalesScreen();
+      else if(currentScreen==='settings')renderSettingsScreen();
+      else if(currentScreen==='reports')renderReportsScreen();
     }
   }catch(e){console.error('Sync from cloud error:',e)}
 }
@@ -2395,10 +2402,10 @@ async function checkPurchaseStatus(email){
 let autoSyncTimer=null;
 function startAutoSync(){
   if(autoSyncTimer)return;
-  autoSyncTimer=setInterval(()=>{
+  autoSyncTimer=setInterval(async()=>{
     if(navigator.onLine&&settings.syncCode&&currentUser){
-      syncFromCloud().catch(()=>{});
-      syncToCloud(true).catch(()=>{});
+      try{await syncToCloud(true)}catch(e){}
+      try{await syncFromCloud(true)}catch(e){}
     }
   },60000);
 }
