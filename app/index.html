@@ -1988,7 +1988,7 @@ async function syncToCloud(silent){
     const allStaff=await dbAll('staff');
 
     const syncSettings={};
-    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate'];
+    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo'];
     syncableKeys.forEach(k=>{if(settings[k]!==undefined)syncSettings[k]=settings[k]});
 
     await fetch('https://api.solis-os.com/api/pos/sync',{
@@ -2044,7 +2044,7 @@ async function syncFromCloud(){
     await mergeStore('promotions',cloud.promotions);
 
     if(cloud.settings){
-      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate'];
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo'];
       for(const key of syncableKeys){
         if(cloud.settings[key]!==undefined){
           const local=await dbGet('settings',key);
@@ -2691,6 +2691,13 @@ function closeModal(){
     window.addEventListener('online',()=>{
       if(settings.syncCode){showToast('Internet restored - syncing...');fullSync().catch(()=>{})}
     });
+
+    if('wakeLock' in navigator){
+      let wl=null;
+      const reqWake=async()=>{try{wl=await navigator.wakeLock.request('screen')}catch{}};
+      reqWake();
+      document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')reqWake()});
+    }
     setInterval(()=>{
       if(navigator.onLine&&settings.syncCode){fullSync().catch(()=>{})}
     },5*60*1000);
