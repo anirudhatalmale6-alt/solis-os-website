@@ -1901,6 +1901,7 @@ async function saveSettings(){
   $('tax-label').textContent=`${settings.taxName||'Tax'} (${settings.taxRate||0}%)`;
   try{if(currentUser?.email){const token=localStorage.getItem('sb_access_token');if(token)await fetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{...sbH,'Authorization':'Bearer '+token},body:JSON.stringify({data:{business_name:pairs.businessName,business_address:pairs.businessAddress,business_phone:pairs.businessPhone}})})}}catch(e){}
   showToast('Settings saved');
+  if(settings.syncCode&&navigator.onLine)syncToCloud(true).catch(()=>{});
 }
 function generateSyncCode(){
   const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
