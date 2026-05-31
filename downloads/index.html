@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Download Solis OS POS</title>
+<meta name="description" content="Install Solis OS POS on any device. Works on Windows, Mac, iPad, Android tablets, and any browser.">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F8FC;--bg2:#FFFFFF;--bg3:#F0F1F5;
+  --border:#E8E9EF;--border2:#D1D5DB;
+  --text:#1A1D2E;--text2:#6B7280;--text3:#9CA3AF;
+  --gold:#d97706;--gold2:#f59e0b;
+  --green:#16a34a;--green-light:#dcfce7;
+  --font-display:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif;
+  --radius:16px;--radius-sm:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.nav{position:fixed;top:0;left:0;width:100%;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--text)}
+.nav-logo img{width:32px;height:32px}
+.nav-link{font-size:14px;font-weight:500;color:var(--text2);transition:color 0.2s}
+.nav-link:hover{color:var(--gold)}
+
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+.hero{padding:120px 0 48px;text-align:center}
+.hero h1{font-family:var(--font-display);font-size:36px;font-weight:800;color:var(--text);margin-bottom:12px}
+.hero p{font-size:16px;color:var(--text2);max-width:520px;margin:0 auto}
+
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-bottom:48px}
+@media(max-width:640px){.cards{grid-template-columns:1fr}}
+
+.card{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:36px 28px;text-align:center;transition:box-shadow 0.3s}
+.card:hover{box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+.card-icon{width:56px;height:56px;border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.card h3{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:6px}
+.card p{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6}
+.card .steps{text-align:left;margin-bottom:20px}
+.card .steps li{font-size:13px;color:var(--text2);padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.card .steps li:last-child{border-bottom:none}
+.card .steps li span{font-family:var(--font-display);font-weight:700;color:var(--gold);font-size:14px;flex-shrink:0;width:20px}
+.btn-primary{display:inline-block;padding:14px 32px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;font-family:var(--font-display);font-weight:700;font-size:15px;border:none;cursor:pointer;transition:all 0.3s;text-decoration:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,158,11,0.3)}
+
+.web-section{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:36px 28px;text-align:center;margin-bottom:48px}
+.web-section h3{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:6px}
+.web-section p{font-size:13px;color:var(--text2);margin-bottom:20px}
+
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:12px;font-weight:600;margin-bottom:16px}
+.badge-green{background:var(--green-light);color:var(--green)}
+
+.footer{text-align:center;padding:32px 0;border-top:1px solid var(--border);margin-top:24px}
+.footer p{font-size:12px;color:var(--text3)}
+.footer a{color:var(--text2);margin:0 8px}
+.footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="../assets/logo.png" alt="Solis OS">Solis OS</a>
+    <a href="/pos.html" class="nav-link">Back to POS</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1>Install Solis OS POS</h1>
+    <p>Set up Solis POS on iPads, Android tablets, Windows PCs, and Macs. Works on up to 8 devices at once. All data syncs automatically.</p>
+  </div>
+</section>
+
+<div class="container">
+
+  <div class="web-section">
+    <div class="badge badge-green">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Recommended
+    </div>
+    <h3>Use Instantly in Your Browser</h3>
+    <p>No download needed. Open the POS directly in your browser on any device. Works offline after first load.</p>
+    <a href="/app/" class="btn-primary">Open Solis POS</a>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe)">
+        <svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:#2563eb;stroke-width:1.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <h3>Windows PC</h3>
+      <p>Install as a desktop app from Chrome for the best experience.</p>
+      <ol class="steps">
+        <li><span>1.</span> Open <strong>Google Chrome</strong> and go to <strong>solis-os.com/app/</strong></li>
+        <li><span>2.</span> Click the <strong>install icon</strong> in the address bar (or the 3-dot menu > "Install Solis POS")</li>
+        <li><span>3.</span> Click <strong>"Install"</strong> in the popup</li>
+        <li><span>4.</span> Solis POS appears on your desktop and taskbar. Works offline.</li>
+      </ol>
+      <a href="/app/" class="btn-primary">Open in Chrome</a>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background:linear-gradient(135deg,#f3e8ff,#e9d5ff)">
+        <svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:#7c3aed;stroke-width:1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M15.5 8.5c0 1.38-1.12 2.5-2.5 2.5S10.5 9.88 10.5 8.5 11.62 6 13 6s2.5 1.12 2.5 2.5z"/><path d="M8.5 15.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5"/></svg>
+      </div>
+      <h3>MacBook / iMac</h3>
+      <p>Install as a desktop app from Chrome or Safari.</p>
+      <ol class="steps">
+        <li><span>1.</span> Open <strong>Google Chrome</strong> and go to <strong>solis-os.com/app/</strong></li>
+        <li><span>2.</span> Click the <strong>install icon</strong> in the address bar (or 3-dot menu > "Install Solis POS")</li>
+        <li><span>3.</span> Click <strong>"Install"</strong></li>
+        <li><span>4.</span> Find Solis POS in your Applications. Works offline.</li>
+      </ol>
+      <a href="/app/" class="btn-primary">Open in Chrome</a>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">
+        <svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:#d97706;stroke-width:1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      </div>
+      <h3>iPad / Tablet</h3>
+      <p>Add to your home screen for a full-screen app experience.</p>
+      <ol class="steps">
+        <li><span>1.</span> Open <strong>Safari</strong> (iPad) or <strong>Chrome</strong> (Android) and go to <strong>solis-os.com/app/</strong></li>
+        <li><span>2.</span> Tap the <strong>Share button</strong> (iPad: square with arrow) or <strong>3-dot menu</strong> (Android)</li>
+        <li><span>3.</span> Tap <strong>"Add to Home Screen"</strong></li>
+        <li><span>4.</span> Solis POS appears as an app icon. Tap to open full-screen. Works offline.</li>
+      </ol>
+      <a href="/app/" class="btn-primary">Open on Tablet</a>
+    </div>
+
+    <div class="card">
+      <div class="card-icon" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0)">
+        <svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:none;stroke:#16a34a;stroke-width:1.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      </div>
+      <h3>Phone (Remote Dashboard)</h3>
+      <p>Monitor sales and manage products from your phone while your staff uses the POS.</p>
+      <ol class="steps">
+        <li><span>1.</span> Open the POS on any device and go to <strong>Remote Access</strong></li>
+        <li><span>2.</span> Scan the <strong>QR code</strong> with your phone camera</li>
+        <li><span>3.</span> Your remote dashboard opens. Tap <strong>"Add to Home Screen"</strong></li>
+        <li><span>4.</span> Monitor sales, add products, and track inventory from anywhere.</li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <p>&copy; 2026 Solis OS. All rights reserved.
+    <a href="/terms.html">Terms</a>
+    <a href="/privacy-policy.html">Privacy</a>
+    <a href="/refund-policy.html">Refund Policy</a>
+  </p>
+</footer>
+
+</body>
+</html>
