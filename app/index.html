@@ -3004,7 +3004,17 @@ function closeModal(){
     await migrateAddSyncIds();
     settings=await loadSettings();
     allProducts=await dbAll('products');
-    await checkExistingAccount();
+    const urlParams=new URLSearchParams(window.location.search);
+    const resetEmail=urlParams.get('reset');
+    if(resetEmail){
+      history.replaceState(null,'',window.location.pathname);
+      showForgotPassword();
+      $('forgot-email').value=decodeURIComponent(resetEmail);
+      $('forgot-step1').classList.add('hidden');
+      $('forgot-step2').classList.remove('hidden');
+    }else{
+      await checkExistingAccount();
+    }
     setInterval(updateClock,1000);updateClock();
     showPhoneTip();
     if(settings.syncCode){fullSync().catch(()=>{})};
