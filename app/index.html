@@ -404,21 +404,32 @@ tbody tr:last-child td{border-bottom:none}
       <button class="auth-btn" onclick="backToLoginFromConfirm()">Go to Sign In</button>
     </div>
     <form class="auth-form hidden" id="forgot-form" onsubmit="handleForgotPassword(event)">
-      <p style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:16px;text-align:center">Enter your email and a new password to reset your account.</p>
-      <div class="form-group" id="forgot-email-group">
-        <label>Email</label>
-        <input type="email" id="forgot-email" placeholder="you@example.com" required>
+      <div id="forgot-step1">
+        <p style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:16px;text-align:center">We'll send a verification code to your email to confirm your identity.</p>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="forgot-email" placeholder="you@example.com" required>
+        </div>
+        <button type="button" class="auth-btn" id="forgot-send-btn" onclick="sendResetCode()">Send Verification Code</button>
       </div>
-      <div class="form-group" id="forgot-newpass-group">
-        <label>New Password</label>
-        <input type="password" id="forgot-newpass" placeholder="Min 6 characters" minlength="6" required>
+      <div id="forgot-step2" class="hidden">
+        <p style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:16px;text-align:center">Enter the code we sent to your email and choose a new password.</p>
+        <div class="form-group">
+          <label>Verification Code</label>
+          <input type="text" id="forgot-code" placeholder="Enter code from email" required inputmode="numeric" autocomplete="one-time-code" style="letter-spacing:4px;font-size:18px;text-align:center;font-weight:700">
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" id="forgot-newpass" placeholder="Min 6 characters" minlength="6" required>
+        </div>
+        <button type="submit" class="auth-btn" id="forgot-btn">Reset Password</button>
+        <p style="font-size:12px;color:var(--text3);text-align:center;margin-top:8px">Didn't get the code? Check your spam folder or <a onclick="sendResetCode()" style="color:var(--gold);cursor:pointer;font-weight:600">resend</a></p>
       </div>
       <div class="hidden" id="forgot-success" style="text-align:center;padding:16px 0">
         <div style="width:56px;height:56px;border-radius:50%;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;color:#10b981">&#10003;</div>
         <p style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px">Password Reset!</p>
         <p style="font-size:13px;color:var(--text2);line-height:1.5">Your password has been changed. Go back and sign in with your new password.</p>
       </div>
-      <button type="submit" class="auth-btn" id="forgot-btn">Reset Password</button>
       <a onclick="backToLogin()" style="display:block;text-align:center;margin-top:12px;font-size:13px;color:var(--gold);font-weight:600;cursor:pointer">Back to Sign In</a>
     </form>
     <div class="auth-switch" id="auth-switch">Already have an account? <a onclick="toggleAuthMode()">Sign in</a></div>
@@ -826,13 +837,16 @@ function showForgotPassword(){
   $('auth-sub').textContent='Reset your password';
   $('auth-switch').classList.add('hidden');
   $('auth-error').textContent='';
-  $('forgot-email-group').classList.remove('hidden');
-  $('forgot-newpass-group').classList.remove('hidden');
+  $('forgot-step1').classList.remove('hidden');
+  $('forgot-step2').classList.add('hidden');
   $('forgot-success').classList.add('hidden');
   $('forgot-btn').classList.remove('hidden');
   $('forgot-btn').textContent='Reset Password';
   $('forgot-btn').disabled=false;
+  $('forgot-send-btn').textContent='Send Verification Code';
+  $('forgot-send-btn').disabled=false;
   $('forgot-email').value='';$('forgot-newpass').value='';
+  const codeEl=$('forgot-code');if(codeEl)codeEl.value='';
 }
 function backToLogin(){
   $('forgot-form').classList.add('hidden');
@@ -841,23 +855,44 @@ function backToLogin(){
   $('auth-switch').classList.remove('hidden');
   $('auth-error').textContent='';
 }
+async function sendResetCode(){
+  const email=$('forgot-email').value.trim().toLowerCase();
+  if(!email||!email.includes('@')){$('auth-error').textContent='Please enter a valid email.';return}
+  $('auth-error').textContent='';
+  const btn=$('forgot-send-btn');
+  btn.textContent='Sending...';btn.disabled=true;
+  try{
+    const r=await fetch('https://api.solis-os.com/api/pos/send-reset-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d=await r.json();
+    if(r.ok&&d.success){
+      $('forgot-step1').classList.add('hidden');
+      $('forgot-step2').classList.remove('hidden');
+    }else{
+      $('auth-error').textContent=d.error||'Failed to send code. Please try again.';
+      btn.textContent='Send Verification Code';btn.disabled=false;
+    }
+  }catch(err){
+    $('auth-error').textContent='Connection error. Please check your internet.';
+    btn.textContent='Send Verification Code';btn.disabled=false;
+  }
+}
 async function handleForgotPassword(e){
   e.preventDefault();
   const email=$('forgot-email').value.trim().toLowerCase();
+  const code=$('forgot-code').value.trim();
   const newPass=$('forgot-newpass').value;
-  if(!email||!email.includes('@')){$('auth-error').textContent='Please enter a valid email.';return}
+  if(!code){$('auth-error').textContent='Please enter the verification code.';return}
   if(!newPass||newPass.length<6){$('auth-error').textContent='Password must be at least 6 characters.';return}
   $('auth-error').textContent='';
-  $('forgot-btn').textContent='Resetting...';$('forgot-btn').disabled=true;
+  $('forgot-btn').textContent='Verifying...';$('forgot-btn').disabled=true;
   try{
-    const r=await fetch('https://api.solis-os.com/api/pos/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,newPassword:newPass})});
+    const r=await fetch('https://api.solis-os.com/api/pos/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,code,newPassword:newPass})});
     const d=await r.json();
     if(r.ok&&d.success){
       const accounts=await dbAll('accounts');
       const localAcc=accounts.find(a=>a.email===email);
       if(localAcc){localAcc.password=newPass;await dbPut('accounts',localAcc)}
-      $('forgot-email-group').classList.add('hidden');
-      $('forgot-newpass-group').classList.add('hidden');
+      $('forgot-step2').classList.add('hidden');
       $('forgot-success').classList.remove('hidden');
       $('forgot-btn').classList.add('hidden');
     }else{
