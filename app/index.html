@@ -468,6 +468,10 @@ tbody tr:last-child td{border-bottom:none}
         <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
         <span>Remote</span>
       </a>
+      <a href="#" class="nav-item" data-screen="devices" onclick="navigate('devices',event)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span>Devices</span>
+      </a>
       <a href="#" class="nav-item" data-screen="settings" onclick="navigate('settings',event)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         <span>Settings</span>
@@ -561,6 +565,7 @@ tbody tr:last-child td{border-bottom:none}
     <div id="screen-staff" class="screen"></div>
     <div id="screen-loyalty" class="screen"></div>
     <div id="screen-remote" class="screen"></div>
+    <div id="screen-devices" class="screen"></div>
     <div id="screen-settings" class="screen"></div>
   </main>
 </div>
@@ -782,7 +787,7 @@ function navigate(screen,e){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.screen===screen));
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $('screen-'+screen).classList.add('active');
-  const titles={checkout:'Checkout',products:'Products',sales:'Sales History',reports:'Reports',promotions:'Promotions',staff:'Staff',loyalty:'Loyalty Program',remote:'Remote Access',settings:'Settings'};
+  const titles={checkout:'Checkout',products:'Products',sales:'Sales History',reports:'Reports',promotions:'Promotions',staff:'Staff',loyalty:'Loyalty Program',remote:'Remote Access',devices:'Devices',settings:'Settings'};
   $('screen-title').textContent=titles[screen]||screen;
   if(screen==='products')renderProductsScreen();
   if(screen==='sales')renderSalesScreen();
@@ -791,6 +796,7 @@ function navigate(screen,e){
   if(screen==='staff')renderStaffScreen();
   if(screen==='loyalty')renderLoyaltyScreen();
   if(screen==='remote')renderRemoteScreen();
+  if(screen==='devices')renderDevicesScreen();
   if(screen==='settings')renderSettingsScreen();
 }
 
@@ -1331,8 +1337,9 @@ function showReceipt(sale){
   <div class="r-line"></div>
   <div class="r-center">Payment: ${sale.paymentMethod.charAt(0).toUpperCase()+sale.paymentMethod.slice(1)}</div>`;
   if(s.receiptFooter)html+=`<div class="r-line"></div><div class="r-center">${s.receiptFooter}</div>`;
-  html+=`</div></div><div class="modal-footer"><button class="btn-outline" onclick="closeModal()">Close</button><button class="btn-primary" onclick="printReceipt()">Print Receipt</button></div>`;
+  html+=`</div></div><div class="modal-footer"><button class="btn-outline" onclick="closeModal()">Close</button><button class="btn-primary" onclick="printReceipt()">Print Receipt</button>${serialPort?'<button class="btn-outline" onclick="openCashDrawer()" style="margin-left:8px">Open Drawer</button>':''}</div>`;
   openModal(html,'modal-sm');
+  if(settings.autoPrint&&serialPort){thermalPrintReceipt(sale).catch(()=>{})}
 }
 
 function printReceipt(){
@@ -1683,6 +1690,228 @@ async function deleteStaff(id){
 }
 
 // ═══════════════════════════════════════════
+// DEVICES SCREEN
+// ═══════════════════════════════════════════
+let serialPort=null,serialWriter=null;
+
+async function connectPrinter(){
+  if(!('serial' in navigator)){showToast('Your browser does not support direct printer connection. Use Chrome on desktop or Android.');return}
+  try{
+    const port=await navigator.serial.requestPort();
+    await port.open({baudRate:9600});
+    serialPort=port;
+    serialWriter=port.writable.getWriter();
+    await dbPut('settings',{key:'printerConnected',value:true});
+    settings.printerConnected=true;
+    showToast('Printer connected!');
+    renderDevicesScreen();
+  }catch(e){
+    if(e.name!=='NotFoundError')showToast('Failed to connect printer');
+  }
+}
+
+async function disconnectPrinter(){
+  try{
+    if(serialWriter){serialWriter.releaseLock();serialWriter=null}
+    if(serialPort){await serialPort.close();serialPort=null}
+    await dbPut('settings',{key:'printerConnected',value:false});
+    settings.printerConnected=false;
+    showToast('Printer disconnected');
+    renderDevicesScreen();
+  }catch(e){showToast('Error disconnecting')}
+}
+
+function escEncode(text){return new TextEncoder().encode(text)}
+function escCmd(...bytes){return new Uint8Array(bytes)}
+
+async function sendToThermal(data){
+  if(!serialWriter)return false;
+  try{
+    if(typeof data==='string')await serialWriter.write(escEncode(data));
+    else await serialWriter.write(data);
+    return true;
+  }catch(e){console.error('Print error:',e);return false}
+}
+
+async function thermalPrintReceipt(sale){
+  if(!serialWriter)return false;
+  const s=settings;
+  const ESC=0x1B,GS=0x1D,LF=0x0A;
+  const init=escCmd(ESC,0x40);
+  const center=escCmd(ESC,0x61,1);
+  const left=escCmd(ESC,0x61,0);
+  const boldOn=escCmd(ESC,0x45,1);
+  const boldOff=escCmd(ESC,0x45,0);
+  const bigOn=escCmd(GS,0x21,0x11);
+  const bigOff=escCmd(GS,0x21,0x00);
+  const cut=escCmd(GS,0x56,0x41,3);
+  const feed=escCmd(LF);
+  const W=32;
+  function pad(l,r){const sp=W-l.length-r.length;return l+(sp>0?' '.repeat(sp):' ')+r}
+  function line(){return '-'.repeat(W)}
+
+  await sendToThermal(init);
+  await sendToThermal(center);
+  if(s.receiptShowName&&s.businessName){await sendToThermal(boldOn);await sendToThermal(bigOn);await sendToThermal(s.businessName+'\n');await sendToThermal(bigOff);await sendToThermal(boldOff)}
+  if(s.receiptShowAddress&&s.businessAddress)await sendToThermal(s.businessAddress+'\n');
+  if(s.receiptShowPhone&&s.businessPhone)await sendToThermal(s.businessPhone+'\n');
+  await sendToThermal(feed);
+  await sendToThermal(left);
+  await sendToThermal(line()+'\n');
+  await sendToThermal(pad('Date: '+fmtDate(sale.createdAt),fmtTime(sale.createdAt))+'\n');
+  await sendToThermal('Sale #: '+sale.saleNumber+'\n');
+  await sendToThermal('Cashier: '+(sale.staffName||'')+'\n');
+  await sendToThermal(line()+'\n');
+  for(const it of sale.items){
+    await sendToThermal(pad(it.name+' x'+it.qty,fmt(it.total))+'\n');
+  }
+  await sendToThermal(line()+'\n');
+  await sendToThermal(pad('Subtotal',fmt(sale.subtotal))+'\n');
+  if(sale.appliedPromos)for(const p of sale.appliedPromos){await sendToThermal(pad(p.name,'-'+fmt(p.saved))+'\n')}
+  await sendToThermal(pad((s.taxName||'Tax')+' ('+( s.taxRate||0)+'%)',fmt(sale.tax))+'\n');
+  if(sale.discount>0)await sendToThermal(pad('Discount','-'+fmt(sale.discount))+'\n');
+  if(sale.loyaltyDiscount>0)await sendToThermal(pad('Loyalty Points','-'+fmt(sale.loyaltyDiscount))+'\n');
+  await sendToThermal(line()+'\n');
+  await sendToThermal(boldOn);await sendToThermal(bigOn);
+  await sendToThermal(center);
+  await sendToThermal(pad('TOTAL',fmt(sale.total))+'\n');
+  await sendToThermal(bigOff);await sendToThermal(boldOff);
+  await sendToThermal(left);
+  await sendToThermal(line()+'\n');
+  await sendToThermal(center);
+  await sendToThermal('Payment: '+sale.paymentMethod.charAt(0).toUpperCase()+sale.paymentMethod.slice(1)+'\n');
+  if(sale.customerName)await sendToThermal('Customer: '+sale.customerName+'\n');
+  if(s.receiptFooter){await sendToThermal(feed);await sendToThermal(s.receiptFooter+'\n')}
+  await sendToThermal(feed);await sendToThermal(feed);await sendToThermal(feed);
+  await sendToThermal(cut);
+  if(settings.autoCashDrawer)await openCashDrawer();
+  return true;
+}
+
+async function openCashDrawer(){
+  if(!serialWriter){showToast('Connect a printer first (cash drawer connects through printer)');return}
+  try{
+    await sendToThermal(escCmd(0x1B,0x70,0x00,0x19,0xFA));
+    showToast('Cash drawer opened');
+  }catch(e){showToast('Failed to open drawer')}
+}
+
+async function testPrint(){
+  if(!serialWriter){showToast('Connect a printer first');return}
+  const ESC=0x1B,GS=0x1D;
+  await sendToThermal(escCmd(ESC,0x40));
+  await sendToThermal(escCmd(ESC,0x61,1));
+  await sendToThermal(escCmd(ESC,0x45,1));
+  await sendToThermal(escCmd(GS,0x21,0x11));
+  await sendToThermal('Solis OS POS\n');
+  await sendToThermal(escCmd(GS,0x21,0x00));
+  await sendToThermal(escCmd(ESC,0x45,0));
+  await sendToThermal('\nTest Print Successful\n');
+  await sendToThermal(new Date().toLocaleString()+'\n');
+  await sendToThermal('\nPrinter is ready!\n\n\n');
+  await sendToThermal(escCmd(GS,0x56,0x41,3));
+  showToast('Test print sent!');
+}
+
+async function toggleAutoPrint(){
+  settings.autoPrint=!settings.autoPrint;
+  await dbPut('settings',{key:'autoPrint',value:settings.autoPrint});
+  renderDevicesScreen();
+}
+
+async function toggleAutoCashDrawer(){
+  settings.autoCashDrawer=!settings.autoCashDrawer;
+  await dbPut('settings',{key:'autoCashDrawer',value:settings.autoCashDrawer});
+  renderDevicesScreen();
+}
+
+function renderDevicesScreen(){
+  const printerOk=!!serialPort;
+  const serialSupported='serial' in navigator;
+  $('screen-devices').innerHTML=`
+    <div class="settings-grid">
+      <div class="settings-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:44px;height:44px;border-radius:12px;background:${printerOk?'var(--green-bg,#dcfce7)':'var(--bg)'};display:flex;align-items:center;justify-content:center;border:1px solid ${printerOk?'var(--green,#22c55e)':'var(--border)'}">
+            <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:${printerOk?'var(--green,#22c55e)':'var(--text3)'};fill:none;stroke-width:1.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          </div>
+          <div>
+            <h3 style="margin:0;font-size:16px">Receipt Printer</h3>
+            <p style="font-size:12px;color:${printerOk?'var(--green,#22c55e)':'var(--text3)'};margin:2px 0 0;font-weight:500">${printerOk?'Connected':'Not Connected'}</p>
+          </div>
+        </div>
+        ${serialSupported?`
+          ${printerOk?`
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn-primary" onclick="testPrint()" style="font-size:13px;padding:10px 16px">Test Print</button>
+              <button class="btn-outline" onclick="disconnectPrinter()" style="font-size:13px;padding:10px 16px;color:var(--red)">Disconnect</button>
+            </div>
+          `:`
+            <button class="btn-primary" onclick="connectPrinter()" style="font-size:13px;padding:10px 18px;width:100%">Connect Printer</button>
+          `}
+          <div style="margin-top:16px;padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+            <div class="toggle-row" style="margin-bottom:12px"><span style="font-size:13px">Auto-print receipt after each sale</span><label class="toggle"><input type="checkbox" ${settings.autoPrint?'checked':''} onchange="toggleAutoPrint()"><span class="slider"></span></label></div>
+            <div class="toggle-row"><span style="font-size:13px">Open cash drawer after print</span><label class="toggle"><input type="checkbox" ${settings.autoCashDrawer?'checked':''} onchange="toggleAutoCashDrawer()"><span class="slider"></span></label></div>
+          </div>
+          <p style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.5">Works with ESC/POS thermal printers (Epson, Star, MUNBYN, etc.) via USB or Serial connection.</p>
+        `:`
+          <div style="padding:16px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+            <p style="font-size:13px;color:var(--text2);line-height:1.5;margin:0">Direct printer connection requires <strong>Google Chrome</strong> on desktop or Android. You can still print using the browser print button on the receipt.</p>
+          </div>
+        `}
+      </div>
+      <div class="settings-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--green-bg,#dcfce7);display:flex;align-items:center;justify-content:center;border:1px solid var(--green,#22c55e)">
+            <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--green,#22c55e);fill:none;stroke-width:1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="7" y1="8" x2="7" y2="8.01"/><line x1="12" y1="8" x2="12" y2="8.01"/><line x1="17" y1="8" x2="17" y2="8.01"/><line x1="7" y1="12" x2="7" y2="12.01"/><line x1="12" y1="12" x2="12" y2="12.01"/><line x1="17" y1="12" x2="17" y2="12.01"/><rect x="4" y="16" width="16" height="2"/></svg>
+          </div>
+          <div>
+            <h3 style="margin:0;font-size:16px">Barcode Scanner</h3>
+            <p style="font-size:12px;color:var(--green,#22c55e);margin:2px 0 0;font-weight:500">Ready</p>
+          </div>
+        </div>
+        <div style="padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">Plug in any <strong>USB</strong> or <strong>Bluetooth</strong> barcode scanner. It works instantly - scan a product barcode at checkout and it will be found automatically.</p>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:10px 0 0">You can also use your device <strong>camera</strong> to scan barcodes by tapping the camera icon in the search bar.</p>
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.5">Compatible with all HID barcode scanners. No setup needed.</p>
+      </div>
+      <div class="settings-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:44px;height:44px;border-radius:12px;background:${printerOk?'var(--green-bg,#dcfce7)':'var(--bg)'};display:flex;align-items:center;justify-content:center;border:1px solid ${printerOk?'var(--green,#22c55e)':'var(--border)'}">
+            <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:${printerOk?'var(--green,#22c55e)':'var(--text3)'};fill:none;stroke-width:1.5"><rect x="2" y="6" width="20" height="4" rx="1"/><path d="M4 10v8a1 1 0 001 1h14a1 1 0 001-1v-8"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
+          </div>
+          <div>
+            <h3 style="margin:0;font-size:16px">Cash Drawer</h3>
+            <p style="font-size:12px;color:${printerOk?'var(--green,#22c55e)':'var(--text3)'};margin:2px 0 0;font-weight:500">${printerOk?'Connected via Printer':'Connect printer first'}</p>
+          </div>
+        </div>
+        ${printerOk?`
+          <button class="btn-outline" onclick="openCashDrawer()" style="font-size:13px;padding:10px 18px;width:100%">Open Cash Drawer</button>
+        `:''}
+        <div style="padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border);margin-top:${printerOk?'12':'0'}px">
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">The cash drawer connects to your receipt printer via the <strong>RJ-12 cable</strong> (included with most cash drawers). When a receipt prints, the drawer opens automatically.</p>
+        </div>
+      </div>
+      <div class="settings-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;border:1px solid var(--border)">
+            <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--text3);fill:none;stroke-width:1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </div>
+          <div>
+            <h3 style="margin:0;font-size:16px">Card Terminal (EFTPOS)</h3>
+            <p style="font-size:12px;color:var(--text3);margin:2px 0 0;font-weight:500">Standalone Device</p>
+          </div>
+        </div>
+        <div style="padding:14px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">Use your existing card terminal from your bank or payment provider (Square, Tyro, Stripe, etc.). Select "Card" as the payment method in checkout and enter the amount on your terminal.</p>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:10px 0 0">The POS records card transactions for your sales reports. The actual card processing is handled by your terminal.</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
 // SETTINGS SCREEN
 // ═══════════════════════════════════════════
 async function renderRemoteScreen(){
@@ -1986,7 +2215,7 @@ async function syncToCloud(silent){
     const allStaff=await dbAll('staff');
 
     const syncSettings={};
-    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo'];
+    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer'];
     syncableKeys.forEach(k=>{if(settings[k]!==undefined)syncSettings[k]=settings[k]});
 
     await fetch('https://api.solis-os.com/api/pos/sync',{
@@ -2042,7 +2271,7 @@ async function syncFromCloud(forceOverwrite){
     await mergeStore('promotions',cloud.promotions);
 
     if(cloud.settings){
-      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo'];
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer'];
       for(const key of syncableKeys){
         if(cloud.settings[key]!==undefined){
           if(forceOverwrite){
