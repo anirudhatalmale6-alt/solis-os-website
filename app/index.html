@@ -2401,14 +2401,20 @@ async function checkPurchaseStatus(email){
 
 let autoSyncTimer=null;
 function startAutoSync(){
-  if(autoSyncTimer)return;
-  autoSyncTimer=setInterval(async()=>{
-    if(navigator.onLine&&settings.syncCode&&currentUser){
-      try{await syncToCloud(true)}catch(e){}
-      try{await syncFromCloud(true)}catch(e){}
-    }
-  },60000);
+  if(autoSyncTimer)clearInterval(autoSyncTimer);
+  autoSyncTimer=setInterval(autoSyncNow,60000);
 }
+async function autoSyncNow(){
+  if(!navigator.onLine||!settings.syncCode||!currentUser)return;
+  try{await syncToCloud(true)}catch(e){}
+  try{await syncFromCloud(true)}catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&settings.syncCode&&currentUser){
+    autoSyncNow();
+    startAutoSync();
+  }
+});
 
 async function fullSync(){
   if(!settings.syncCode||!navigator.onLine)return;
