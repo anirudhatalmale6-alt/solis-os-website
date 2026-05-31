@@ -935,9 +935,12 @@ async function checkExistingAccount(){
 }
 
 const TRIAL_DAYS=10;
+const OWNER_EMAILS=['power.media1984@gmail.com','joseph.geagea31@gmail.com'];
+function isOwner(){return currentUser&&OWNER_EMAILS.includes(currentUser.email?.toLowerCase())}
 function showTrialBanner(){
   const banner=$('trial-banner');
   if(!banner)return;
+  if(isOwner()){banner.classList.add('hidden');removeTrialLockout();return}
   const accounts=[];
   const tx=db.transaction('accounts','readonly');
   const store=tx.objectStore('accounts');
