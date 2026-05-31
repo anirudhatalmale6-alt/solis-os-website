@@ -907,10 +907,10 @@ async function checkExistingAccount(){
       if(account){
         let valid=false;
         try{
-          if(token){const r=await fetch(SB_URL+'/auth/v1/user',{headers:{...sbH,'Authorization':'Bearer '+token}});valid=r.ok}
+          if(token){const r=await fetch(SB_URL+'/auth/v1/user',{headers:{...sbH,'Authorization':'Bearer '+token}});if(r.ok){valid=true;try{const ud=await r.json();if(ud.created_at&&!settings.accountCreatedAt){await dbPut('settings',{key:'accountCreatedAt',value:ud.created_at});settings.accountCreatedAt=ud.created_at}}catch(e){}}else{valid=false}}
           if(!valid){
             const rt=localStorage.getItem('sb_refresh_token');
-            if(rt){const r2=await fetch(SB_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:sbH,body:JSON.stringify({refresh_token:rt})});if(r2.ok){const d=await r2.json();localStorage.setItem('sb_access_token',d.access_token);if(d.refresh_token)localStorage.setItem('sb_refresh_token',d.refresh_token);valid=true}}
+            if(rt){const r2=await fetch(SB_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:sbH,body:JSON.stringify({refresh_token:rt})});if(r2.ok){const d=await r2.json();localStorage.setItem('sb_access_token',d.access_token);if(d.refresh_token)localStorage.setItem('sb_refresh_token',d.refresh_token);valid=true;if(d.user?.created_at&&!settings.accountCreatedAt){await dbPut('settings',{key:'accountCreatedAt',value:d.user.created_at});settings.accountCreatedAt=d.user.created_at}}}
           }
         }catch(e){valid=true}
         if(valid){
@@ -946,7 +946,7 @@ function showTrialBanner(){
     const accs=req.result||[];
     const account=currentUser?accs.find(a=>a.email===currentUser.email):accs[0];
     if(!account||!account.createdAt){banner.classList.add('hidden');return}
-    const created=new Date(account.createdAt);
+    const created=new Date(settings.accountCreatedAt||account.createdAt);
     const now=new Date();
     const elapsed=Math.floor((now-created)/(1000*60*60*24));
     const daysLeft=Math.max(0,TRIAL_DAYS-elapsed);
@@ -1012,8 +1012,10 @@ async function handleLogin(e){
     const uMeta=sbResult.data.user?.user_metadata||{};
     if(!account){
       const uName=uMeta.full_name||email.split('@')[0];
-      account={name:uName,email,password,role:'admin',active:true,createdAt:new Date().toISOString()};
+      const originalCreated=sbResult.data.user?.created_at||new Date().toISOString();
+      account={name:uName,email,password,role:'admin',active:true,createdAt:originalCreated};
       await dbPut('accounts',account);
+      if(!settings.accountCreatedAt){await dbPut('settings',{key:'accountCreatedAt',value:originalCreated});settings.accountCreatedAt=originalCreated}
       await dbPut('staff',{name:uName,role:'admin',pin:'0000',active:true,createdAt:new Date().toISOString(),syncId:uuid(),updatedAt:new Date().toISOString()});
       if(pendingSignup&&pendingSignup.email===email){
         await dbPut('settings',{key:'businessName',value:pendingSignup.business});
@@ -2228,7 +2230,7 @@ async function syncToCloud(silent){
     const allStaff=await dbAll('staff');
 
     const syncSettings={};
-    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer'];
+    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt'];
     syncableKeys.forEach(k=>{if(settings[k]!==undefined)syncSettings[k]=settings[k]});
 
     await fetch('https://api.solis-os.com/api/pos/sync',{
@@ -2284,7 +2286,7 @@ async function syncFromCloud(forceOverwrite){
     await mergeStore('promotions',cloud.promotions);
 
     if(cloud.settings){
-      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer'];
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt'];
       for(const key of syncableKeys){
         if(cloud.settings[key]!==undefined){
           if(forceOverwrite){
@@ -2353,9 +2355,10 @@ function startAutoSync(){
   if(autoSyncTimer)return;
   autoSyncTimer=setInterval(()=>{
     if(navigator.onLine&&settings.syncCode&&currentUser){
+      syncFromCloud().catch(()=>{});
       syncToCloud(true).catch(()=>{});
     }
-  },30000);
+  },60000);
 }
 
 async function fullSync(){
