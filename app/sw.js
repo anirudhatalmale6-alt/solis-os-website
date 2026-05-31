@@ -1,4 +1,4 @@
-const CACHE_NAME = 'solis-pos-v2.0.0';
+const CACHE_NAME = 'solis-pos-v2.1.0';
 const ASSETS = [
   '/app/',
   '/app/index.html',

@@ -1310,7 +1310,34 @@ function showPayment(){
 }
 function calcChange(total){const t=parseFloat($('pay-tendered').value)||0;const c=Math.max(0,t-total);const el=$('pay-change-amount');if(el){el.textContent=fmt(c);el.style.color=t>=total?'var(--green,#22c55e)':'var(--red,#ef4444)'}}
 function setTendered(val,total){$('pay-tendered').value=val;calcChange(total)}
-function processCardPayment(){const btn=$('btn-confirm-pay');btn.disabled=true;btn.textContent='Processing...';const w=$('pay-waiting');if(w)w.innerHTML='<div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--green);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite"></div><div style="font-size:15px;font-weight:600;color:var(--green)">Payment approved!</div>';setTimeout(()=>{closeModal();completeSale()},1200)}
+async function processCardPayment(){
+  const btn=$('btn-confirm-pay');btn.disabled=true;btn.textContent='Processing...';
+  const w=$('pay-waiting');
+  if(settings.terminalProvider){
+    if(w)w.innerHTML='<div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--blue);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite"></div><div style="font-size:15px;font-weight:600;color:var(--text2)">Sending to terminal...</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Customer should tap, insert, or swipe card</div>';
+    const subtotal=cart.reduce((s,c)=>s+c.total,0);
+    const promoDiscount=appliedPromos.reduce((s,p)=>s+p.saved,0);
+    const afterPromo=Math.max(0,subtotal-promoDiscount);
+    const tax=+(afterPromo*(settings.taxRate||0)/100).toFixed(2);
+    const manualDiscount=parseFloat($('discount-input').value)||0;
+    const total=+Math.max(0,afterPromo+tax-manualDiscount).toFixed(2);
+    const currMap={'$':'usd','€':'eur','£':'gbp','A$':'aud','C$':'cad','¥':'jpy','S$':'sgd','NZ$':'nzd','د.إ':'aed','﷼':'sar','ر.ق':'qar','₪':'ils'};
+    const curr=currMap[settings.currencySymbol||'$']||'usd';
+    const result=await processTerminalPayment(total,curr);
+    if(result.success){
+      if(w)w.innerHTML='<div style="font-size:48px;margin-bottom:12px">&#10003;</div><div style="font-size:15px;font-weight:600;color:var(--green)">Payment approved!</div>';
+      setTimeout(()=>{closeModal();completeSale()},1200);
+    }else{
+      if(w)w.innerHTML='<div style="font-size:48px;margin-bottom:12px">&#10007;</div><div style="font-size:15px;font-weight:600;color:var(--red)">Payment failed</div><div style="font-size:13px;color:var(--text3);margin-top:4px">'+(result.error||'Unknown error')+'</div>';
+      btn.disabled=false;btn.textContent='Retry Payment';
+      const manualBtn=document.createElement('button');manualBtn.className='btn-outline';manualBtn.style.cssText='margin-top:12px;font-size:13px';manualBtn.textContent='Record as Manual Payment';manualBtn.onclick=()=>{closeModal();completeSale()};
+      if(w)w.appendChild(manualBtn);
+    }
+  }else{
+    if(w)w.innerHTML='<div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--green);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite"></div><div style="font-size:15px;font-weight:600;color:var(--green)">Payment approved!</div>';
+    setTimeout(()=>{closeModal();completeSale()},1200);
+  }
+}
 async function completeSale(){
   if(cart.length===0)return;
   const subtotal=cart.reduce((s,c)=>s+c.total,0);
@@ -2084,6 +2111,22 @@ ${[
         <div class="toggle-row"><span>Accept Mobile</span><label class="toggle"><input type="checkbox" id="set-pmobile" ${s.paymentMobile!==false?'checked':''}><span class="slider"></span></label></div>
       </div>
       <div class="settings-card full">
+        <h3>Payment Terminal (EFTPOS)</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Connect a card reader to automatically push payment amounts during checkout. No manual entry needed.</p>
+        <div class="form-group"><label>Terminal Provider</label>
+          <select id="set-terminal-provider" onchange="showTerminalFields()" style="max-width:300px;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+            <option value=""${!s.terminalProvider?' selected':''}>None (Manual)</option>
+            <option value="stripe"${s.terminalProvider==='stripe'?' selected':''}>Stripe Terminal</option>
+            <option value="square"${s.terminalProvider==='square'?' selected':''}>Square Terminal</option>
+            <option value="sumup"${s.terminalProvider==='sumup'?' selected':''}>SumUp</option>
+            <option value="tyro"${s.terminalProvider==='tyro'?' selected':''}>Tyro</option>
+            <option value="zettle"${s.terminalProvider==='zettle'?' selected':''}>Zettle (PayPal)</option>
+          </select>
+        </div>
+        <div id="terminal-fields"></div>
+        <div id="terminal-status" style="margin-top:12px"></div>
+      </div>
+      <div class="settings-card full">
         <h3>Cloud Sync & Remote Dashboard</h3>
         <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Your data syncs automatically across all devices when you sign in with the same account. No setup needed.</p>
         <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg);border-radius:10px;border:1px solid var(--border);margin-bottom:16px">
@@ -2128,6 +2171,7 @@ ${[
         </div>
       </div>
     </div>`;
+  setTimeout(()=>{if($('set-terminal-provider'))showTerminalFields()},50);
 }
 
 function handleLogoUpload(input){
@@ -2182,8 +2226,15 @@ async function saveSettings(){
     receiptShowName:$('set-rname').checked,receiptShowAddress:$('set-raddr').checked,
     receiptShowPhone:$('set-rphone').checked,receiptFooter:$('set-rfooter').value,
     paymentCash:$('set-pcash').checked,paymentCard:$('set-pcard').checked,paymentMobile:$('set-pmobile').checked,
-    syncCode:$('set-synccode').value.toUpperCase(),cloudSync:$('set-cloudsync').checked
+    syncCode:$('set-synccode').value.toUpperCase(),cloudSync:$('set-cloudsync').checked,
+    terminalProvider:$('set-terminal-provider')?$('set-terminal-provider').value:''
   };
+  const tp=pairs.terminalProvider;
+  if(tp==='stripe'){pairs.terminalStripeKey=$('set-stripe-pk')?$('set-stripe-pk').value:'';pairs.terminalStripeSecret=$('set-stripe-sk')?$('set-stripe-sk').value:''}
+  if(tp==='square'){pairs.terminalSquareToken=$('set-square-token')?$('set-square-token').value:'';pairs.terminalSquareLocation=$('set-square-location')?$('set-square-location').value:'';pairs.terminalSquareDevice=$('set-square-device')?$('set-square-device').value:''}
+  if(tp==='sumup'){pairs.terminalSumupKey=$('set-sumup-key')?$('set-sumup-key').value:'';pairs.terminalSumupMerchant=$('set-sumup-merchant')?$('set-sumup-merchant').value:''}
+  if(tp==='tyro'){pairs.terminalTyroMerchant=$('set-tyro-merchant')?$('set-tyro-merchant').value:'';pairs.terminalTyroTerminal=$('set-tyro-terminal')?$('set-tyro-terminal').value:'';pairs.terminalTyroKey=$('set-tyro-key')?$('set-tyro-key').value:''}
+  if(tp==='zettle'){pairs.terminalZettleClientId=$('set-zettle-clientid')?$('set-zettle-clientid').value:'';pairs.terminalZettleSecret=$('set-zettle-secret')?$('set-zettle-secret').value:''}
   for(const[k,v]of Object.entries(pairs))await dbPut('settings',{key:k,value:v});
   settings=await loadSettings();
   applyTheme();
@@ -2192,6 +2243,103 @@ async function saveSettings(){
   try{if(currentUser?.email){const token=localStorage.getItem('sb_access_token');if(token)await fetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{...sbH,'Authorization':'Bearer '+token},body:JSON.stringify({data:{business_name:pairs.businessName,business_address:pairs.businessAddress,business_phone:pairs.businessPhone}})})}}catch(e){}
   showToast('Settings saved');
   if(settings.syncCode&&navigator.onLine)syncToCloud(true).catch(()=>{});
+}
+function showTerminalFields(){
+  const p=$('set-terminal-provider').value;
+  const s=settings;
+  const el=$('terminal-fields');
+  if(!p){el.innerHTML='';$('terminal-status').innerHTML='';return}
+  const fields={
+    stripe:`<div class="form-group"><label>Stripe Publishable Key</label><input id="set-stripe-pk" placeholder="pk_live_..." value="${s.terminalStripeKey||''}"></div>
+      <div class="form-group"><label>Stripe Secret Key</label><input id="set-stripe-sk" type="password" placeholder="sk_live_..." value="${s.terminalStripeSecret||''}"></div>
+      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get your keys from <strong>dashboard.stripe.com/apikeys</strong>. Works with Stripe Reader M2, BBPOS WisePOS E, and Verifone P400.</p>`,
+    square:`<div class="form-group"><label>Square Access Token</label><input id="set-square-token" type="password" placeholder="EAAAl..." value="${s.terminalSquareToken||''}"></div>
+      <div class="form-group"><label>Location ID</label><input id="set-square-location" placeholder="L..." value="${s.terminalSquareLocation||''}"></div>
+      <div class="form-group"><label>Device ID (Terminal)</label><input id="set-square-device" placeholder="Device ID" value="${s.terminalSquareDevice||''}"></div>
+      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get credentials from <strong>developer.squareup.com</strong>. Works with Square Terminal and Square Reader.</p>`,
+    sumup:`<div class="form-group"><label>SumUp API Key</label><input id="set-sumup-key" type="password" placeholder="sup_sk_..." value="${s.terminalSumupKey||''}"></div>
+      <div class="form-group"><label>Merchant Code</label><input id="set-sumup-merchant" placeholder="M..." value="${s.terminalSumupMerchant||''}"></div>
+      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get your API key from <strong>developer.sumup.com</strong>. Works with SumUp Air and SumUp Solo readers.</p>`,
+    tyro:`<div class="form-group"><label>Merchant ID</label><input id="set-tyro-merchant" placeholder="Merchant ID" value="${s.terminalTyroMerchant||''}"></div>
+      <div class="form-group"><label>Terminal ID</label><input id="set-tyro-terminal" placeholder="Terminal ID" value="${s.terminalTyroTerminal||''}"></div>
+      <div class="form-group"><label>Integration Key</label><input id="set-tyro-key" type="password" placeholder="Integration Key" value="${s.terminalTyroKey||''}"></div>
+      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get credentials from <strong>tyro.com/portal</strong>. Available for Australian businesses.</p>`,
+    zettle:`<div class="form-group"><label>Client ID</label><input id="set-zettle-clientid" placeholder="Client ID" value="${s.terminalZettleClientId||''}"></div>
+      <div class="form-group"><label>Client Secret</label><input id="set-zettle-secret" type="password" placeholder="Client Secret" value="${s.terminalZettleSecret||''}"></div>
+      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get credentials from <strong>developer.zettle.com</strong>. Works with Zettle Reader 2 and Zettle Terminal.</p>`
+  };
+  el.innerHTML=(fields[p]||'')+'<div style="margin-top:16px;display:flex;gap:8px"><button class="btn-primary" onclick="saveSettings();showToast(\'Terminal settings saved\')" style="font-size:13px;padding:8px 16px">Save Terminal Settings</button><button class="btn-outline" onclick="testTerminalConnection()" style="font-size:13px;padding:8px 16px">Test Connection</button></div>';
+}
+async function testTerminalConnection(){
+  const p=settings.terminalProvider||$('set-terminal-provider').value;
+  if(!p){showToast('Select a provider first');return}
+  const st=$('terminal-status');
+  st.innerHTML='<div style="padding:12px;border-radius:8px;background:var(--bg);border:1px solid var(--border);font-size:13px;color:var(--text2)"><span style="animation:spin 1s linear infinite;display:inline-block;margin-right:8px">&#x21bb;</span>Testing connection...</div>';
+  try{
+    await saveSettings();
+    const creds=getTerminalCreds(p);
+    const resp=await fetch('https://api.solis-os.com/api/pos/terminal/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:p,...creds})});
+    const data=await resp.json();
+    if(data.success)st.innerHTML='<div style="padding:12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;font-size:13px;color:#166534">Connected successfully! '+(data.details||'')+'</div>';
+    else st.innerHTML='<div style="padding:12px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;font-size:13px;color:#991b1b">Connection failed: '+(data.error||'Unknown error')+'</div>';
+  }catch(e){st.innerHTML='<div style="padding:12px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;font-size:13px;color:#991b1b">Connection failed: '+e.message+'</div>'}
+}
+function getTerminalCreds(p){
+  const s=settings;
+  if(p==='stripe')return{publishableKey:s.terminalStripeKey,secretKey:s.terminalStripeSecret};
+  if(p==='square')return{accessToken:s.terminalSquareToken,locationId:s.terminalSquareLocation,deviceId:s.terminalSquareDevice};
+  if(p==='sumup')return{apiKey:s.terminalSumupKey,merchantCode:s.terminalSumupMerchant};
+  if(p==='tyro')return{merchantId:s.terminalTyroMerchant,terminalId:s.terminalTyroTerminal,integrationKey:s.terminalTyroKey};
+  if(p==='zettle')return{clientId:s.terminalZettleClientId,clientSecret:s.terminalZettleSecret};
+  return{};
+}
+let stripeTerminal=null;let connectedReader=null;
+async function loadStripeTerminalSDK(){
+  if(window.StripeTerminal)return;
+  return new Promise((r,j)=>{const s=document.createElement('script');s.src='https://js.stripe.com/terminal/v1/';s.onload=r;s.onerror=()=>j(new Error('Failed to load Stripe Terminal SDK'));document.head.appendChild(s)});
+}
+async function initStripeTerminal(){
+  await loadStripeTerminalSDK();
+  stripeTerminal=StripeTerminal.create({
+    onFetchConnectionToken:async()=>{const r=await fetch('https://api.solis-os.com/api/pos/terminal/stripe/connection-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secretKey:settings.terminalStripeSecret})});const d=await r.json();if(!d.secret)throw new Error(d.error||'Failed to get token');return d.secret},
+    onUnexpectedReaderDisconnect:()=>{connectedReader=null;showToast('Card reader disconnected')}
+  });
+}
+async function discoverAndConnectReader(){
+  if(!stripeTerminal)await initStripeTerminal();
+  const result=await stripeTerminal.discoverReaders();
+  if(result.error){showToast('No readers found: '+result.error.message);return null}
+  if(result.discoveredReaders.length===0){showToast('No readers found on your network');return null}
+  const connectResult=await stripeTerminal.connectReader(result.discoveredReaders[0]);
+  if(connectResult.error){showToast('Failed to connect: '+connectResult.error.message);return null}
+  connectedReader=connectResult.reader;
+  showToast('Connected to '+connectedReader.label);
+  return connectedReader;
+}
+async function processTerminalPayment(total,currency){
+  const p=settings.terminalProvider;
+  if(!p)return{success:false,error:'No terminal configured'};
+  const creds=getTerminalCreds(p);
+  if(p==='stripe'){
+    try{
+      if(!stripeTerminal||!connectedReader)await discoverAndConnectReader();
+      if(!connectedReader)return{success:false,error:'No reader connected'};
+      const piResp=await fetch('https://api.solis-os.com/api/pos/terminal/stripe/payment-intent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secretKey:settings.terminalStripeSecret,amount:Math.round(total*100),currency:currency||'usd'})});
+      const piData=await piResp.json();
+      if(!piData.client_secret)return{success:false,error:piData.error||'Failed to create payment'};
+      const collectResult=await stripeTerminal.collectPaymentMethod(piData.client_secret);
+      if(collectResult.error)return{success:false,error:collectResult.error.message};
+      const processResult=await stripeTerminal.processPayment(collectResult.paymentIntent);
+      if(processResult.error)return{success:false,error:processResult.error.message};
+      if(processResult.paymentIntent.status==='succeeded')return{success:true,id:processResult.paymentIntent.id};
+      return{success:true,id:processResult.paymentIntent.id};
+    }catch(e){return{success:false,error:e.message}}
+  }
+  try{
+    const resp=await fetch('https://api.solis-os.com/api/pos/terminal/process',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:p,...creds,amount:total,currency:currency||'usd'})});
+    const data=await resp.json();
+    return data;
+  }catch(e){return{success:false,error:e.message}}
 }
 function generateSyncCode(){
   const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -2277,7 +2425,7 @@ async function syncToCloud(silent){
     const allStaff=await dbAll('staff');
 
     const syncSettings={};
-    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail'];
+    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret'];
     syncableKeys.forEach(k=>{if(settings[k]!==undefined)syncSettings[k]=settings[k]});
 
     await fetch('https://api.solis-os.com/api/pos/sync',{
@@ -2333,7 +2481,7 @@ async function syncFromCloud(forceOverwrite){
     await mergeStore('promotions',cloud.promotions);
 
     if(cloud.settings){
-      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail'];
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret'];
       for(const key of syncableKeys){
         if(cloud.settings[key]!==undefined){
           if(forceOverwrite){
