@@ -1118,7 +1118,7 @@ function logOut(){
 // CHECKOUT
 // ═══════════════════════════════════════════
 async function loadCheckout(){
-  allProducts=await dbAll('products');
+  allProducts=(await dbAll('products')).filter(p=>!p.deleted);
   settings=await loadSettings();
   allPromotions=await dbAll('promotions');
   renderCategoryTabs();renderProductGrid();updateCartUI();
@@ -1425,7 +1425,7 @@ $('product-search').addEventListener('input',function(){renderProductGrid()});
 // PRODUCTS SCREEN
 // ═══════════════════════════════════════════
 async function renderProductsScreen(){
-  allProducts=await dbAll('products');
+  allProducts=(await dbAll('products')).filter(p=>!p.deleted);
   const totalValue=allProducts.reduce((s,p)=>s+p.price*p.stock,0);
   const lowStock=allProducts.filter(p=>p.stock<=p.lowStock&&p.stock>0).length;
   const outOfStock=allProducts.filter(p=>p.stock<=0).length;
@@ -1525,13 +1525,20 @@ async function saveProduct(id){
   if(id){data.id=id;const ex=allProducts.find(x=>x.id===id);if(ex){if(ex.syncId)data.syncId=ex.syncId;if(ex.createdAt)data.createdAt=ex.createdAt}}
   await dbPut('products',data);
   closeModal();showToast(id?'Product updated':'Product added');
-  allProducts=await dbAll('products');renderProductsScreen();
+  allProducts=(await dbAll('products')).filter(p=>!p.deleted);renderProductsScreen();
 }
 
 async function deleteProduct(id){
   if(!confirm('Delete this product?'))return;
-  await dbDel('products',id);showToast('Product deleted');
-  allProducts=await dbAll('products');renderProductsScreen();
+  const all=await dbAll('products');
+  const p=all.find(x=>x.id===id);
+  if(p&&p.syncId){
+    p.deleted=true;p.updatedAt=new Date().toISOString();
+    await dbPut('products',p);
+  }else{await dbDel('products',id)}
+  showToast('Product deleted');
+  allProducts=(await dbAll('products')).filter(p=>!p.deleted);renderProductsScreen();
+  if(navigator.onLine&&settings.syncCode){syncToCloud(true).catch(()=>{})}
 }
 
 function showStockAdjust(id){
@@ -1558,7 +1565,7 @@ async function saveStockAdjust(id){
   p.updatedAt=new Date().toISOString();
   await dbPut('products',p);
   closeModal();showToast('Stock updated');
-  allProducts=await dbAll('products');renderProductsScreen();
+  allProducts=(await dbAll('products')).filter(p=>!p.deleted);renderProductsScreen();
 }
 
 // ═══════════════════════════════════════════
@@ -2245,7 +2252,8 @@ async function syncToCloud(silent){
     const dailyRevenue={};
     sales.slice(-500).forEach(s=>{const d=s.createdAt?.slice(0,10);if(d){dailyRevenue[d]=(dailyRevenue[d]||0)+s.total}});
 
-    const lowStock=products.filter(p=>p.stock<=p.lowStock).map(p=>({name:p.name,stock:p.stock,lowStock:p.lowStock}));
+    const activeProducts=products.filter(p=>!p.deleted);
+    const lowStock=activeProducts.filter(p=>p.stock<=p.lowStock).map(p=>({name:p.name,stock:p.stock,lowStock:p.lowStock}));
 
     const data={
       summary:{
@@ -2257,7 +2265,7 @@ async function syncToCloud(silent){
         monthTransactions:monthSales.length,
         totalRevenue:sales.reduce((a,s)=>a+s.total,0),
         totalTransactions:sales.length,
-        totalProducts:products.length,
+        totalProducts:activeProducts.length,
         totalCustomers:customers.length,
         averageOrder:sales.length?sales.reduce((a,s)=>a+s.total,0)/sales.length:0
       },
@@ -2277,7 +2285,7 @@ async function syncToCloud(silent){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({syncCode:settings.syncCode,businessName:settings.businessName||'My Business',data,
         email:currentUser?.email||'',
-        products:products.map(p=>({syncId:p.syncId||'',name:p.name,sku:p.sku||'',price:p.price,cost:p.cost||0,stock:p.stock,lowStock:p.lowStock||0,category:p.category||'',barcode:p.barcode||'',color:p.color||'',createdAt:p.createdAt||'',updatedAt:p.updatedAt||p.createdAt||''})),
+        products:products.map(p=>({syncId:p.syncId||'',name:p.name,sku:p.sku||'',price:p.price,cost:p.cost||0,stock:p.stock,lowStock:p.lowStock||0,category:p.category||'',barcode:p.barcode||'',color:p.color||'',deleted:p.deleted||false,createdAt:p.createdAt||'',updatedAt:p.updatedAt||p.createdAt||''})),
         promotions:allPromos.map(p=>({syncId:p.syncId||'',name:p.name,type:p.type,targetType:p.targetType||'',targetName:p.targetName||'',discountValue:p.discountValue||0,buyQty:p.buyQty||0,freeQty:p.freeQty||0,minQty:p.minQty||0,startDate:p.startDate||null,endDate:p.endDate||null,active:p.active!==false,createdAt:p.createdAt||'',updatedAt:p.updatedAt||p.createdAt||''})),
         staff:allStaff.map(s=>({syncId:s.syncId||'',name:s.name,pin:s.pin,role:s.role||'cashier',active:s.active!==false,createdAt:s.createdAt||'',updatedAt:s.updatedAt||s.createdAt||''})),
         customers:customers.map(c=>({syncId:c.syncId||'',name:c.name,phone:c.phone||'',email:c.email||'',points:c.points||0,totalSpent:c.totalSpent||0,visits:c.visits||0,lastVisit:c.lastVisit||null,barcode:c.barcode||'',createdAt:c.createdAt||'',updatedAt:c.updatedAt||c.createdAt||''})),
@@ -2349,7 +2357,7 @@ async function syncFromCloud(forceOverwrite){
     }
 
     if(changed){
-      allProducts=await dbAll('products');
+      allProducts=(await dbAll('products')).filter(p=>!p.deleted);
       settings=await loadSettings();
       applyTheme();
       if(settings.businessName)$('sidebar-name').textContent=settings.businessName;
@@ -2440,7 +2448,7 @@ async function pullRemoteCommands(){
       try{await applyRemoteCommand(cmd)}catch(e){console.error('Remote cmd error:',cmd,e)}
     }
     await fetch(`https://api.solis-os.com/api/pos/remote/${settings.syncCode}`,{method:'DELETE'});
-    allProducts=await dbAll('products');
+    allProducts=(await dbAll('products')).filter(p=>!p.deleted);
     renderProductGrid();
   }catch(e){console.error('Pull remote error:',e)}
 }
@@ -2509,7 +2517,7 @@ async function importData(input){
     if(data.settings){await dbClear('settings');for(const s of data.settings)await dbPut('settings',s)}
     if(data.customers){await dbClear('customers');for(const c of data.customers)await dbPut('customers',c)}
     if(data.promotions){await dbClear('promotions');for(const p of data.promotions)await dbPut('promotions',p)}
-    allProducts=await dbAll('products');settings=await loadSettings();
+    allProducts=(await dbAll('products')).filter(p=>!p.deleted);settings=await loadSettings();
     showToast('Data imported successfully');renderSettingsScreen();
   }catch(e){showToast('Invalid file format')}
   input.value='';
@@ -2520,7 +2528,7 @@ async function clearAllData(){
   if(!confirm('This cannot be undone. Last chance to cancel.'))return;
   await dbClear('products');await dbClear('sales');await dbClear('staff');await dbClear('settings');await dbClear('customers');await dbClear('promotions');
   await seedData();
-  allProducts=await dbAll('products');settings=await loadSettings();
+  allProducts=(await dbAll('products')).filter(p=>!p.deleted);settings=await loadSettings();
   showToast('Data cleared and reset to defaults');renderSettingsScreen();
 }
 
@@ -3003,7 +3011,7 @@ function closeModal(){
     await seedData();
     await migrateAddSyncIds();
     settings=await loadSettings();
-    allProducts=await dbAll('products');
+    allProducts=(await dbAll('products')).filter(p=>!p.deleted);
     const urlParams=new URLSearchParams(window.location.search);
     const resetEmail=urlParams.get('reset');
     if(resetEmail){
