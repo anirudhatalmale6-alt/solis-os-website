@@ -2261,24 +2261,60 @@ function showTerminalFields(){
   const s=settings;
   const el=$('terminal-fields');
   if(!p){el.innerHTML='';$('terminal-status').innerHTML='';return}
+  const guideStyle='style="font-size:12px;color:var(--text2);margin:12px 0;padding:14px;background:var(--bg);border-radius:8px;border:1px solid var(--border);line-height:1.8"';
+  const stepStyle='style="display:block;margin-bottom:4px"';
   const fields={
     stripe:`<div class="form-group"><label>Stripe Publishable Key</label><input id="set-stripe-pk" placeholder="pk_live_..." value="${s.terminalStripeKey||''}"></div>
       <div class="form-group"><label>Stripe Secret Key</label><input id="set-stripe-sk" type="password" placeholder="sk_live_..." value="${s.terminalStripeSecret||''}"></div>
-      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get your keys from <strong>dashboard.stripe.com/apikeys</strong>. Works with Stripe Reader M2, BBPOS WisePOS E, and Verifone P400.</p>`,
+      <div ${guideStyle}><strong style="font-size:13px;display:block;margin-bottom:8px">Setup Guide - Stripe Terminal</strong>
+      <span ${stepStyle}>1. Go to <strong>stripe.com</strong> and create a free account</span>
+      <span ${stepStyle}>2. Complete identity verification (takes 1-2 minutes)</span>
+      <span ${stepStyle}>3. Go to <strong>Developers > API Keys</strong> in your Stripe dashboard</span>
+      <span ${stepStyle}>4. Copy your <strong>Publishable key</strong> (starts with pk_live_) and <strong>Secret key</strong> (starts with sk_live_)</span>
+      <span ${stepStyle}>5. Paste both keys above and click Save</span>
+      <span ${stepStyle}>6. Order a card reader from <strong>stripe.com/terminal</strong> (Stripe Reader M2 ~$49, WisePOS E ~$249)</span>
+      <span ${stepStyle}>7. Connect the reader to your WiFi network - it will appear automatically during checkout</span>
+      <span style="display:block;margin-top:8px;color:var(--text3)">Available in: USA, Canada, UK, Ireland, France, Australia, Singapore, UAE, and 40+ countries</span></div>`,
     square:`<div class="form-group"><label>Square Access Token</label><input id="set-square-token" type="password" placeholder="EAAAl..." value="${s.terminalSquareToken||''}"></div>
       <div class="form-group"><label>Location ID</label><input id="set-square-location" placeholder="L..." value="${s.terminalSquareLocation||''}"></div>
       <div class="form-group"><label>Device ID (Terminal)</label><input id="set-square-device" placeholder="Device ID" value="${s.terminalSquareDevice||''}"></div>
-      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get credentials from <strong>developer.squareup.com</strong>. Works with Square Terminal and Square Reader.</p>`,
+      <div ${guideStyle}><strong style="font-size:13px;display:block;margin-bottom:8px">Setup Guide - Square Terminal</strong>
+      <span ${stepStyle}>1. Go to <strong>squareup.com</strong> and create a free account</span>
+      <span ${stepStyle}>2. Go to <strong>developer.squareup.com</strong> and create an application</span>
+      <span ${stepStyle}>3. Copy your <strong>Access Token</strong> from the Credentials page</span>
+      <span ${stepStyle}>4. Find your <strong>Location ID</strong> in Square Dashboard > Locations</span>
+      <span ${stepStyle}>5. Get your <strong>Device ID</strong> from your Square Terminal device settings</span>
+      <span ${stepStyle}>6. Paste all three above and click Save</span>
+      <span ${stepStyle}>7. Your Square Terminal or Square Reader will receive payment amounts automatically</span>
+      <span style="display:block;margin-top:8px;color:var(--text3)">Available in: USA, Canada, UK, Ireland, France, Australia</span></div>`,
     sumup:`<div class="form-group"><label>SumUp API Key</label><input id="set-sumup-key" type="password" placeholder="sup_sk_..." value="${s.terminalSumupKey||''}"></div>
       <div class="form-group"><label>Merchant Code</label><input id="set-sumup-merchant" placeholder="M..." value="${s.terminalSumupMerchant||''}"></div>
-      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get your API key from <strong>developer.sumup.com</strong>. Works with SumUp Air and SumUp Solo readers.</p>`,
+      <div ${guideStyle}><strong style="font-size:13px;display:block;margin-bottom:8px">Setup Guide - SumUp</strong>
+      <span ${stepStyle}>1. Go to <strong>sumup.com</strong> and create a merchant account</span>
+      <span ${stepStyle}>2. Go to <strong>developer.sumup.com</strong> and create an API key</span>
+      <span ${stepStyle}>3. Copy your <strong>API Key</strong> and <strong>Merchant Code</strong> (found in your SumUp profile)</span>
+      <span ${stepStyle}>4. Paste both above and click Save</span>
+      <span ${stepStyle}>5. Your SumUp Air or SumUp Solo reader will receive payments automatically</span>
+      <span style="display:block;margin-top:8px;color:var(--text3)">Available in: UK, Ireland, France, and 30+ European countries</span></div>`,
     tyro:`<div class="form-group"><label>Merchant ID</label><input id="set-tyro-merchant" placeholder="Merchant ID" value="${s.terminalTyroMerchant||''}"></div>
       <div class="form-group"><label>Terminal ID</label><input id="set-tyro-terminal" placeholder="Terminal ID" value="${s.terminalTyroTerminal||''}"></div>
       <div class="form-group"><label>Integration Key</label><input id="set-tyro-key" type="password" placeholder="Integration Key" value="${s.terminalTyroKey||''}"></div>
-      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get credentials from <strong>tyro.com/portal</strong>. Available for Australian businesses.</p>`,
+      <div ${guideStyle}><strong style="font-size:13px;display:block;margin-bottom:8px">Setup Guide - Tyro</strong>
+      <span ${stepStyle}>1. Sign up for a Tyro EFTPOS account at <strong>tyro.com</strong></span>
+      <span ${stepStyle}>2. Log into <strong>Tyro Portal</strong> and go to integrations</span>
+      <span ${stepStyle}>3. Copy your <strong>Merchant ID</strong>, <strong>Terminal ID</strong>, and <strong>Integration Key</strong></span>
+      <span ${stepStyle}>4. Paste all three above and click Save</span>
+      <span ${stepStyle}>5. Your Tyro terminal will receive payment amounts automatically during checkout</span>
+      <span style="display:block;margin-top:8px;color:var(--text3)">Available in: Australia</span></div>`,
     zettle:`<div class="form-group"><label>Client ID</label><input id="set-zettle-clientid" placeholder="Client ID" value="${s.terminalZettleClientId||''}"></div>
       <div class="form-group"><label>Client Secret</label><input id="set-zettle-secret" type="password" placeholder="Client Secret" value="${s.terminalZettleSecret||''}"></div>
-      <p style="font-size:12px;color:var(--text3);margin:8px 0">Get credentials from <strong>developer.zettle.com</strong>. Works with Zettle Reader 2 and Zettle Terminal.</p>`
+      <div ${guideStyle}><strong style="font-size:13px;display:block;margin-bottom:8px">Setup Guide - Zettle (PayPal)</strong>
+      <span ${stepStyle}>1. Go to <strong>zettle.com</strong> and create a merchant account</span>
+      <span ${stepStyle}>2. Go to <strong>developer.zettle.com</strong> and register an application</span>
+      <span ${stepStyle}>3. Copy your <strong>Client ID</strong> and <strong>Client Secret</strong></span>
+      <span ${stepStyle}>4. Paste both above and click Save</span>
+      <span ${stepStyle}>5. Your Zettle Reader 2 or Zettle Terminal will receive payments automatically</span>
+      <span style="display:block;margin-top:8px;color:var(--text3)">Available in: UK, Ireland, France, USA, and Nordic countries</span></div>`
   };
   el.innerHTML=(fields[p]||'')+'<div style="margin-top:16px;display:flex;gap:8px"><button class="btn-primary" onclick="saveSettings();showToast(\'Terminal settings saved\')" style="font-size:13px;padding:8px 16px">Save Terminal Settings</button><button class="btn-outline" onclick="testTerminalConnection()" style="font-size:13px;padding:8px 16px">Test Connection</button></div>';
 }
