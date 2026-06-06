@@ -826,7 +826,7 @@ function toggleAuthMode(){
 const SB_URL='https://joeklgpncbrhnujzdzsp.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvZWtsZ3BuY2JyaG51anpkenNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTA1ODksImV4cCI6MjA5MzkyNjU4OX0.p4hS6hpKaweZRDIZbeuWb6-c0NL7irtTJ_HXOZmdTmY';
 const sbH={'apikey':SB_KEY,'Content-Type':'application/json'};
-async function sbSignUp(email,password,fullName,businessName){try{const r=await fetch(SB_URL+'/auth/v1/signup',{method:'POST',headers:sbH,body:JSON.stringify({email,password,data:{full_name:fullName,business_name:businessName||''}})});const d=await r.json();if(!r.ok)return{error:d.msg||d.error_description||d.message||'Signup failed'};return{data:d}}catch(e){return{error:'offline'}}}
+async function sbSignUp(email,password,fullName,businessName){try{const r=await fetch('https://api.solis-os.com/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,fullName:fullName||'',businessName:businessName||''})});const d=await r.json();if(!r.ok)return{error:d.error||'Signup failed'};return{data:d}}catch(e){return{error:'offline'}}}
 async function sbSignIn(email,password){try{const r=await fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:sbH,body:JSON.stringify({email,password})});const d=await r.json();if(!r.ok)return{error:d.msg||d.error_description||d.message||'Invalid credentials'};return{data:d}}catch(e){return{error:'offline'}}}
 async function sbResetPassword(email){try{const r=await fetch(SB_URL+'/auth/v1/recover',{method:'POST',headers:sbH,body:JSON.stringify({email})});if(!r.ok){const d=await r.json();return{error:d.msg||d.message||'Reset failed'}}return{success:true}}catch(e){return{error:'offline'}}}
 
@@ -1018,9 +1018,25 @@ async function handleSignup(e){
   if(sbResult.error==='offline'){
     $('auth-error').textContent='Internet connection required to create an account.';return;
   }
-  // Store signup details for after confirmation
+  // Auto sign in after signup (account is auto-confirmed by server)
+  const signInResult=await sbSignIn(email,password);
+  if(signInResult.data&&signInResult.data.access_token){
+    localStorage.setItem('sb_access_token',signInResult.data.access_token);
+    localStorage.setItem('sb_user_email',email);
+    if(signInResult.data.refresh_token)localStorage.setItem('sb_refresh_token',signInResult.data.refresh_token);
+    const newAccount={email,password,businessName:business,fullName:name,createdAt:new Date().toISOString()};
+    await dbPut('accounts',newAccount);
+    await dbPut('settings',{key:'currentAccount',value:email});
+    await dbPut('settings',{key:'accountCreatedAt',value:newAccount.createdAt});
+    settings.currentAccount=email;settings.accountCreatedAt=newAccount.createdAt;
+    $('auth-screen').classList.add('hidden');
+    $('pos-app').classList.remove('hidden');
+    showToast('Account created! Welcome to Solis OS POS','success');
+    initializePOS();
+    return;
+  }
+  // Fallback: show confirmation screen if auto-login fails
   pendingSignup={business,name,email,password};
-  // Show confirmation screen
   $('signup-form').classList.add('hidden');
   $('auth-error').textContent='';
   $('auth-switch').classList.add('hidden');
