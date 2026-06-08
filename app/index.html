@@ -2630,6 +2630,7 @@ async function autoSetupSync(email){
         await syncFromCloud(true);
         await syncToCloud(true);
         startAutoSync();
+        showTrialBanner();
         checkPurchaseStatus(email);
         return;
       }
@@ -2646,6 +2647,7 @@ async function autoSetupSync(email){
     });
     await syncToCloud(true);
     startAutoSync();
+    showTrialBanner();
     checkPurchaseStatus(email);
   }catch(e){console.error('Auto sync setup error:',e)}
 }
@@ -2666,7 +2668,7 @@ function startAutoSync(){
 async function autoSyncNow(){
   if(!navigator.onLine||!settings.syncCode||!currentUser)return;
   try{await syncToCloud(true)}catch(e){}
-  try{await syncFromCloud(true)}catch(e){}
+  try{await syncFromCloud(true);showTrialBanner()}catch(e){}
 }
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&settings.syncCode&&currentUser){
