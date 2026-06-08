@@ -944,37 +944,42 @@ async function checkExistingAccount(){
 }
 
 const TRIAL_DAYS=10;
-const OWNER_EMAILS=['power.media1984@gmail.com','joseph.geagea31@gmail.com'];
+const OWNER_EMAILS=['bbay.net@gmail.com'];
 function isOwner(){return currentUser&&OWNER_EMAILS.includes(currentUser.email?.toLowerCase())}
-function isPurchased(){return !!settings.purchased}
+function isPurchased(){return !!settings.purchased&&!settings.cancelled}
 function showTrialBanner(){
   const banner=$('trial-banner');
   if(!banner)return;
   if(isOwner()||isPurchased()){banner.classList.add('hidden');removeTrialLockout();return}
-  const accounts=[];
-  const tx=db.transaction('accounts','readonly');
-  const store=tx.objectStore('accounts');
-  const req=store.getAll();
+  const email=currentUser?.email||settings.currentAccount||'';
+  if(email){
+    fetch('https://api.solis-os.com/api/pos/trial-status/'+encodeURIComponent(email)).then(r=>r.json()).then(data=>{
+      if(data.subscribed){banner.classList.add('hidden');removeTrialLockout();return}
+      if(data.daysLeft<=0){banner.classList.add('hidden');showTrialLockout();return}
+      renderTrialBanner(banner,data.daysLeft);
+    }).catch(()=>{renderTrialBannerLocal(banner)});
+  }else{renderTrialBannerLocal(banner)}
+}
+function renderTrialBanner(banner,daysLeft){
+  let cls='trial-green',icon='&#9201;';
+  if(daysLeft<=3)cls='trial-red';
+  else if(daysLeft<=5)cls='trial-amber';
+  banner.className='trial-banner '+cls;
+  if(daysLeft>0){
+    banner.innerHTML=icon+' '+daysLeft+' day'+(daysLeft!==1?'s':'')+' left on your free trial'+(daysLeft<=5?'<a href="https://solis-os.com/pos.html#pricing" target="_blank" class="trial-upgrade">'+(daysLeft<=3?'Buy Now':'Upgrade')+'</a>':'');
+    banner.classList.remove('hidden');removeTrialLockout();
+  }else{banner.classList.add('hidden');showTrialLockout()}
+}
+function renderTrialBannerLocal(banner){
+  const tx=db.transaction('accounts','readonly');const store=tx.objectStore('accounts');const req=store.getAll();
   req.onsuccess=()=>{
     const accs=req.result||[];
     const account=currentUser?accs.find(a=>a.email===currentUser.email):accs[0];
     if(!account||!account.createdAt){banner.classList.add('hidden');return}
     const created=new Date(settings.accountCreatedAt||account.createdAt);
-    const now=new Date();
-    const elapsed=Math.floor((now-created)/(1000*60*60*24));
+    const elapsed=Math.floor((Date.now()-created)/(1000*60*60*24));
     const daysLeft=Math.max(0,TRIAL_DAYS-elapsed);
-    let cls='trial-green',icon='&#9201;';
-    if(daysLeft<=3)cls='trial-red';
-    else if(daysLeft<=5)cls='trial-amber';
-    banner.className='trial-banner '+cls;
-    if(daysLeft>0){
-      banner.innerHTML=icon+' '+daysLeft+' day'+(daysLeft!==1?'s':'')+' left on your free trial'+(daysLeft<=5?'<a href="https://solis-os.com/pos.html#pricing" target="_blank" class="trial-upgrade">'+(daysLeft<=3?'Buy Now':'Upgrade')+'</a>':'');
-      banner.classList.remove('hidden');
-      removeTrialLockout();
-    }else{
-      banner.classList.add('hidden');
-      showTrialLockout();
-    }
+    renderTrialBanner(banner,daysLeft);
   };
 }
 
