@@ -2740,6 +2740,14 @@ async function applyRemoteCommand(cmd){
       sp.stock=Number(d.stock);
       await dbPut('products',sp);break;
     }
+    case 'settings_update':{
+      for(const[k,v]of Object.entries(d)){
+        await dbPut('settings',{key:k,value:v});
+        settings[k]=v;
+      }
+      if(d.businessName&&$('sidebar-name'))$('sidebar-name').textContent=d.businessName;
+      break;
+    }
   }
 }
 
