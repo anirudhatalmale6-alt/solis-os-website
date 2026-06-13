@@ -1390,7 +1390,7 @@ async function completeSale(){
     appliedPromos:appliedPromos.map(p=>({name:p.name,saved:p.saved})),
     customerId:selectedCustomer?selectedCustomer.id:null,
     customerName:selectedCustomer?selectedCustomer.name:null,
-    total,paymentMethod:selectedPayment,staffId:currentUser.id,staffName:currentUser.name,
+    total,paymentMethod:selectedPayment,staffId:currentUser.id,staffName:settings.cashierName||currentUser.name,
     createdAt:new Date().toISOString(),syncId:uuid()
   };
   await dbPut('sales',sale);
@@ -2131,6 +2131,7 @@ async function renderSettingsScreen(){
       </div>
       <div class="settings-card">
         <h3>Receipt Settings</h3>
+        <div class="form-group"><label>Cashier Name</label><input id="set-cashier" value="${s.cashierName||''}" placeholder="Leave blank to use account name"></div>
         <div class="toggle-row"><span>Show business name</span><label class="toggle"><input type="checkbox" id="set-rname" ${s.receiptShowName?'checked':''}><span class="slider"></span></label></div>
         <div class="toggle-row"><span>Show address</span><label class="toggle"><input type="checkbox" id="set-raddr" ${s.receiptShowAddress?'checked':''}><span class="slider"></span></label></div>
         <div class="toggle-row"><span>Show phone</span><label class="toggle"><input type="checkbox" id="set-rphone" ${s.receiptShowPhone?'checked':''}><span class="slider"></span></label></div>
@@ -2285,6 +2286,7 @@ async function saveSettings(){
     businessPhone:$('set-phone').value,businessEmail:$('set-email').value,
     taxName:$('set-taxname').value,taxRate:parseFloat($('set-taxrate').value)||0,
     taxInclusive:$('set-taxinc').checked,currencySymbol:$('set-currency').value,
+    cashierName:$('set-cashier').value.trim(),
     receiptShowName:$('set-rname').checked,receiptShowAddress:$('set-raddr').checked,
     receiptShowPhone:$('set-rphone').checked,receiptFooter:$('set-rfooter').value,
     paymentCash:$('set-pcash').checked,paymentCard:$('set-pcard').checked,paymentMobile:$('set-pmobile').checked,
@@ -2523,7 +2525,7 @@ async function syncToCloud(silent){
     const allStaff=await dbAll('staff');
 
     const syncSettings={};
-    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret'];
+    const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','cashierName','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret'];
     syncableKeys.forEach(k=>{if(settings[k]!==undefined)syncSettings[k]=settings[k]});
 
     await fetch('https://api.solis-os.com/api/pos/sync',{
@@ -2579,7 +2581,7 @@ async function syncFromCloud(forceOverwrite){
     await mergeStore('promotions',cloud.promotions);
 
     if(cloud.settings){
-      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret'];
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','cashierName','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret'];
       for(const key of syncableKeys){
         if(cloud.settings[key]!==undefined){
           if(forceOverwrite){
