@@ -1576,6 +1576,7 @@ async function saveProduct(id){
   await dbPut('products',data);
   closeModal();showToast(id?'Product updated':'Product added');
   allProducts=(await dbAll('products')).filter(p=>!p.deleted);renderProductsScreen();
+  if(navigator.onLine&&settings.syncCode){syncToCloud(true).catch(()=>{})}
 }
 
 async function deleteProduct(id){
@@ -1616,6 +1617,7 @@ async function saveStockAdjust(id){
   await dbPut('products',p);
   closeModal();showToast('Stock updated');
   allProducts=(await dbAll('products')).filter(p=>!p.deleted);renderProductsScreen();
+  if(navigator.onLine&&settings.syncCode){syncToCloud(true).catch(()=>{})}
 }
 
 // ═══════════════════════════════════════════
@@ -2627,7 +2629,10 @@ async function autoSetupSync(email){
         await dbPut('settings',{key:'syncCode',value:data.syncCode});
         settings.syncCode=data.syncCode;
         showToast('Loading your data...');
+        await dbClear('products');await dbClear('sales');await dbClear('customers');await dbClear('staff');await dbClear('promotions');
         await syncFromCloud(true);
+        allProducts=(await dbAll('products')).filter(p=>!p.deleted);
+        settings=await loadSettings();
         await syncToCloud(true);
         startAutoSync();
         showTrialBanner();
