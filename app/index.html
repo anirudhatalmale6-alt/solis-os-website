@@ -950,7 +950,7 @@ function isPurchased(){return !!settings.purchased&&!settings.cancelled}
 function showTrialBanner(){
   const banner=$('trial-banner');
   if(!banner)return;
-  if(isOwner()||isPurchased()){banner.classList.add('hidden');removeTrialLockout();return}
+  if(isOwner()){banner.classList.add('hidden');removeTrialLockout();return}
   const email=currentUser?.email||settings.currentAccount||'';
   if(email){
     fetch('https://api.solis-os.com/api/pos/trial-status/'+encodeURIComponent(email)).then(r=>r.json()).then(data=>{
