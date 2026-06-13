@@ -2642,12 +2642,11 @@ async function autoSetupSync(email){
         return;
       }
     }
-    if(!settings.syncCode){
-      const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
-      await dbPut('settings',{key:'syncCode',value:code});
-      settings.syncCode=code;
-    }
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code='';for(let i=0;i<6;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+    await dbClear('products');await dbClear('sales');await dbClear('customers');await dbClear('staff');await dbClear('promotions');
+    await dbPut('settings',{key:'syncCode',value:code});
+    settings.syncCode=code;
     await fetch('https://api.solis-os.com/api/pos/register-sync',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({email,syncCode:settings.syncCode})
