@@ -984,7 +984,7 @@ function renderTrialBannerLocal(banner){
 }
 
 function showTrialLockout(){
-  if(isPurchased()||isOwner())return;
+  if(isOwner())return;
   if($('trial-lockout'))return;
   const overlay=document.createElement('div');
   overlay.id='trial-lockout';
