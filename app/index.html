@@ -944,7 +944,7 @@ async function checkExistingAccount(){
 }
 
 const TRIAL_DAYS=10;
-const OWNER_EMAILS=['bbay.net@gmail.com','power.media1984@gmail.com','joseph.geagea31@gmail.com'];
+const OWNER_EMAILS=['bbay.net@gmail.com','joseph.geagea31@gmail.com'];
 function isOwner(){return currentUser&&OWNER_EMAILS.includes(currentUser.email?.toLowerCase())}
 function isPurchased(){return !!settings.purchased&&!settings.cancelled}
 function showTrialBanner(){
@@ -1004,13 +1004,15 @@ function showTrialLockout(){
 }
 async function recheckPurchase(){
   const btn=$('recheck-btn');if(btn)btn.textContent='Checking...';
-  const email=currentUser?.email||settings.currentAccount||'';
+  let email=currentUser?.email||settings.currentAccount||'';
+  if(!email){try{const tx=db.transaction('accounts','readonly');const store=tx.objectStore('accounts');const req=store.getAll();await new Promise((res,rej)=>{req.onsuccess=()=>{const accs=req.result||[];if(accs.length)email=accs[accs.length-1].email||'';res()};req.onerror=rej})}catch(e){}}
+  if(!email){const el=$('login-email');if(el)email=el.value.trim().toLowerCase()}
   if(!email){if(btn)btn.textContent='Please log in first';return}
   try{
     const r=await fetch('https://api.solis-os.com/api/pos/trial-status/'+encodeURIComponent(email));
     const data=await r.json();
     if(data.subscribed){removeTrialLockout();showTrialBanner();if(btn)btn.textContent='Unlocked!';}
-    else{if(btn)btn.textContent='Not found. Try again after purchase.';}
+    else{if(btn)btn.textContent='Not found for '+email+'. Try again after purchase.';}
   }catch(e){if(btn)btn.textContent='Connection error. Try again.';}
 }
 
