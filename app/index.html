@@ -955,14 +955,14 @@ function isPurchased(){return !!settings.purchased&&!settings.cancelled}
 function showTrialBanner(){
   const banner=$('trial-banner');
   if(!banner)return;
-  if(isOwner()){banner.classList.add('hidden');removeTrialLockout();return}
+  if(isOwner()||isPurchased()){banner.classList.add('hidden');removeTrialLockout();return}
   const email=currentUser?.email||settings.currentAccount||'';
   if(email){
     fetch('https://api.solis-os.com/api/pos/trial-status/'+encodeURIComponent(email)).then(r=>r.json()).then(data=>{
-      if(data.subscribed){banner.classList.add('hidden');removeTrialLockout();return}
+      if(data.subscribed){settings.purchased=true;dbPut('settings',{key:'purchased',value:true}).catch(()=>{});banner.classList.add('hidden');removeTrialLockout();return}
       if(data.daysLeft<=0){banner.classList.add('hidden');showTrialLockout();return}
       renderTrialBanner(banner,data.daysLeft);
-    }).catch(()=>{renderTrialBannerLocal(banner)});
+    }).catch(()=>{if(isPurchased()){banner.classList.add('hidden');removeTrialLockout()}else{renderTrialBannerLocal(banner)}});
   }else{renderTrialBannerLocal(banner)}
 }
 function renderTrialBanner(banner,daysLeft){
@@ -2584,27 +2584,35 @@ async function syncFromCloud(forceOverwrite){
     const cloud=await resp.json();
     let changed=false;
 
-    async function mergeStore(storeName,cloudRecords){
+    async function replaceStore(storeName,cloudRecords){
+      if(!cloudRecords)return;
+      await dbClear(storeName);
+      for(const cr of cloudRecords){
+        if(!cr.syncId)continue;
+        const rec={...cr};delete rec.id;
+        await dbPut(storeName,rec);
+      }
+      changed=true;
+    }
+
+    async function mergeSales(cloudRecords){
       if(!cloudRecords||cloudRecords.length===0)return;
-      const local=await dbAll(storeName);
+      const local=await dbAll('sales');
       const localMap={};local.forEach(r=>{if(r.syncId)localMap[r.syncId]=r});
       for(const cr of cloudRecords){
         if(!cr.syncId)continue;
-        const lr=localMap[cr.syncId];
-        if(!lr){
+        if(!localMap[cr.syncId]){
           const rec={...cr};delete rec.id;
-          await dbPut(storeName,rec);changed=true;
-        }else if(storeName!=='sales'&&cr.updatedAt&&(!lr.updatedAt||cr.updatedAt>lr.updatedAt)){
-          await dbPut(storeName,{...cr,id:lr.id});changed=true;
+          await dbPut('sales',rec);changed=true;
         }
       }
     }
 
-    await mergeStore('products',cloud.products);
-    await mergeStore('sales',cloud.sales);
-    await mergeStore('customers',cloud.customers);
-    await mergeStore('staff',cloud.staff);
-    await mergeStore('promotions',cloud.promotions);
+    await replaceStore('products',cloud.products);
+    await mergeSales(cloud.sales);
+    await replaceStore('customers',cloud.customers);
+    await replaceStore('staff',cloud.staff);
+    await replaceStore('promotions',cloud.promotions);
 
     if(cloud.settings){
       const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','cashierName','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret','settingsUpdatedAt'];
@@ -2708,8 +2716,8 @@ function startAutoSync(){
 }
 async function autoSyncNow(){
   if(!navigator.onLine||!settings.syncCode||!currentUser)return;
+  try{await syncToCloud(true)}catch(e){return}
   try{await syncFromCloud();showTrialBanner()}catch(e){}
-  try{await syncToCloud(true)}catch(e){}
 }
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&settings.syncCode&&currentUser){
@@ -2720,8 +2728,8 @@ document.addEventListener('visibilitychange',()=>{
 
 async function fullSync(){
   if(!settings.syncCode||!navigator.onLine)return;
-  await syncFromCloud();
   await syncToCloud(true);
+  await syncFromCloud();
 }
 
 async function pullRemoteCommands(){
