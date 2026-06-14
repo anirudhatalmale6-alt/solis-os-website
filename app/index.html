@@ -681,19 +681,24 @@ async function migrateAddSyncIds(){
   }
 }
 
-async function seedData(){
-  const prods=await dbAll('products');
-  if(prods.length===0){for(const p of SAMPLE_PRODUCTS)await dbPut('products',{...p,createdAt:new Date().toISOString()})}
+async function seedData(fullSeed){
   const sett=await dbAll('settings');
-  if(sett.length===0){for(const[k,v]of Object.entries(DEFAULT_SETTINGS))await dbPut('settings',{key:k,value:v})}
-  // Seed loyalty defaults if missing
+  if(sett.length===0){
+    const FUNCTIONAL={taxName:'Sales Tax',taxRate:8.5,taxInclusive:false,currencySymbol:'$',receiptShowName:true,receiptShowAddress:true,receiptShowPhone:true,receiptFooter:'Thank you for your visit!',paymentCash:true,paymentCard:true,paymentMobile:true,nextSaleNumber:1};
+    if(fullSeed){for(const[k,v]of Object.entries(DEFAULT_SETTINGS))await dbPut('settings',{key:k,value:v})}
+    else{for(const[k,v]of Object.entries(FUNCTIONAL))await dbPut('settings',{key:k,value:v})}
+  }
+  if(fullSeed){
+    const prods=await dbAll('products');
+    if(prods.length===0){for(const p of SAMPLE_PRODUCTS)await dbPut('products',{...p,createdAt:new Date().toISOString(),syncId:uuid(),updatedAt:new Date().toISOString()})}
+    const sales=await dbAll('sales');
+    if(sales.length===0)await seedSampleSales();
+  }
   const settMap={};(await dbAll('settings')).forEach(s=>settMap[s.key]=s.value);
   if(settMap.loyaltyEnabled===undefined)await dbPut('settings',{key:'loyaltyEnabled',value:true});
   if(settMap.loyaltyPointsPerDollar===undefined)await dbPut('settings',{key:'loyaltyPointsPerDollar',value:1});
   if(settMap.loyaltyRedemptionThreshold===undefined)await dbPut('settings',{key:'loyaltyRedemptionThreshold',value:100});
   if(settMap.loyaltyRedemptionRate===undefined)await dbPut('settings',{key:'loyaltyRedemptionRate',value:5});
-  const sales=await dbAll('sales');
-  if(sales.length===0)await seedSampleSales();
 }
 
 async function seedSampleSales(){
@@ -2319,6 +2324,7 @@ async function saveSettings(){
   if(tp==='sumup'){pairs.terminalSumupKey=$('set-sumup-key')?$('set-sumup-key').value:'';pairs.terminalSumupMerchant=$('set-sumup-merchant')?$('set-sumup-merchant').value:''}
   if(tp==='tyro'){pairs.terminalTyroMerchant=$('set-tyro-merchant')?$('set-tyro-merchant').value:'';pairs.terminalTyroTerminal=$('set-tyro-terminal')?$('set-tyro-terminal').value:'';pairs.terminalTyroKey=$('set-tyro-key')?$('set-tyro-key').value:''}
   if(tp==='zettle'){pairs.terminalZettleClientId=$('set-zettle-clientid')?$('set-zettle-clientid').value:'';pairs.terminalZettleSecret=$('set-zettle-secret')?$('set-zettle-secret').value:''}
+  pairs.settingsUpdatedAt=new Date().toISOString();
   for(const[k,v]of Object.entries(pairs))await dbPut('settings',{key:k,value:v});
   settings=await loadSettings();
   applyTheme();
@@ -2601,10 +2607,15 @@ async function syncFromCloud(forceOverwrite){
     await mergeStore('promotions',cloud.promotions);
 
     if(cloud.settings){
-      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','cashierName','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret'];
+      const syncableKeys=['businessName','businessAddress','businessPhone','businessEmail','taxName','taxRate','taxInclusive','currencySymbol','cashierName','receiptShowName','receiptShowAddress','receiptShowPhone','receiptFooter','paymentCash','paymentCard','paymentMobile','themeColor','themeColor2','loyaltyEnabled','loyaltyPointsPerDollar','loyaltyRedemptionThreshold','loyaltyRedemptionRate','businessLogo','autoPrint','autoCashDrawer','accountCreatedAt','purchased','purchasedAt','purchasedEmail','terminalProvider','terminalStripeKey','terminalStripeSecret','terminalSquareToken','terminalSquareLocation','terminalSquareDevice','terminalSumupKey','terminalSumupMerchant','terminalTyroMerchant','terminalTyroTerminal','terminalTyroKey','terminalZettleClientId','terminalZettleSecret','settingsUpdatedAt'];
+      const cloudTs=cloud.settings.settingsUpdatedAt||'';
+      const localTs=settings.settingsUpdatedAt||'';
+      const cloudIsNewer=!localTs||cloudTs>=localTs;
       for(const key of syncableKeys){
         if(cloud.settings[key]!==undefined){
           if(forceOverwrite){
+            await dbPut('settings',{key,value:cloud.settings[key]});changed=true;
+          }else if(cloudIsNewer){
             await dbPut('settings',{key,value:cloud.settings[key]});changed=true;
           }else{
             const local=await dbGet('settings',key);
@@ -2664,7 +2675,7 @@ async function autoSetupSync(email){
     }
     const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     await dbClear('products');await dbClear('sales');await dbClear('customers');await dbClear('staff');await dbClear('promotions');
-    await seedData();
+    await seedData(true);
     allProducts=(await dbAll('products')).filter(p=>!p.deleted);
     settings=await loadSettings();
     for(let attempt=0;attempt<5;attempt++){
@@ -2697,8 +2708,8 @@ function startAutoSync(){
 }
 async function autoSyncNow(){
   if(!navigator.onLine||!settings.syncCode||!currentUser)return;
-  try{await syncToCloud(true)}catch(e){}
   try{await syncFromCloud();showTrialBanner()}catch(e){}
+  try{await syncToCloud(true)}catch(e){}
 }
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&settings.syncCode&&currentUser){
@@ -2709,8 +2720,8 @@ document.addEventListener('visibilitychange',()=>{
 
 async function fullSync(){
   if(!settings.syncCode||!navigator.onLine)return;
-  await syncToCloud(true);
   await syncFromCloud();
+  await syncToCloud(true);
 }
 
 async function pullRemoteCommands(){
@@ -2811,7 +2822,7 @@ async function clearAllData(){
   if(!confirm('Are you sure? This will delete ALL products, sales, staff, and settings.'))return;
   if(!confirm('This cannot be undone. Last chance to cancel.'))return;
   await dbClear('products');await dbClear('sales');await dbClear('staff');await dbClear('settings');await dbClear('customers');await dbClear('promotions');
-  await seedData();
+  await seedData(true);
   allProducts=(await dbAll('products')).filter(p=>!p.deleted);settings=await loadSettings();
   showToast('Data cleared and reset to defaults');renderSettingsScreen();
 }
@@ -3292,7 +3303,7 @@ function closeModal(){
 (async function init(){
   try{
     await openDB();
-    await seedData();
+    await seedData(false);
     await migrateAddSyncIds();
     settings=await loadSettings();
     allProducts=(await dbAll('products')).filter(p=>!p.deleted);
