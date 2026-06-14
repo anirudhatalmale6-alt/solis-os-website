@@ -944,7 +944,7 @@ async function checkExistingAccount(){
 }
 
 const TRIAL_DAYS=10;
-const OWNER_EMAILS=['bbay.net@gmail.com','joseph.geagea31@gmail.com'];
+const OWNER_EMAILS=['bbay.net@gmail.com'];
 function isOwner(){return currentUser&&OWNER_EMAILS.includes(currentUser.email?.toLowerCase())}
 function isPurchased(){return !!settings.purchased&&!settings.cancelled}
 function showTrialBanner(){
