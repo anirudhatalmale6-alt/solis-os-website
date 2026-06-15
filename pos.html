@@ -157,6 +157,32 @@ img{max-width:100%;display:block}
 .step-title{font-family:var(--font-display);font-weight:700;font-size:18px;margin-bottom:8px;color:var(--text)}
 .step-desc{font-size:14px;color:var(--text2);line-height:1.7;max-width:300px;margin:0 auto}
 
+/* ── DEVICE GUIDE ── */
+.devices{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.device-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.device-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;transition:all 0.3s;position:relative}
+.device-card:hover{box-shadow:0 8px 32px rgba(15,23,42,0.08);transform:translateY(-4px);border-color:rgba(245,158,11,0.2)}
+.device-card-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.device-card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(245,158,11,0.08);color:var(--gold);flex-shrink:0}
+.device-card-icon svg{width:26px;height:26px}
+.device-card-name{font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--text)}
+.device-card-sub{font-size:12px;color:var(--text3);font-weight:500}
+.device-steps{display:flex;flex-direction:column;gap:10px}
+.device-step{display:flex;gap:12px;align-items:flex-start}
+.device-step-num{width:24px;height:24px;border-radius:8px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:12px;flex-shrink:0;margin-top:1px}
+.device-step-text{font-size:13px;color:var(--text2);line-height:1.6}
+.device-step-text strong{color:var(--text);font-weight:600}
+.device-note{text-align:center;margin-top:32px;padding:20px 28px;background:linear-gradient(135deg,rgba(22,163,74,0.06),rgba(22,163,74,0.02));border:1px solid rgba(22,163,74,0.15);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.device-note svg{width:20px;height:20px;color:var(--green);flex-shrink:0}
+.device-note span{font-size:14px;color:var(--text2);font-weight:500}
+.device-note strong{color:var(--text)}
+@media(max-width:1024px){
+  .device-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .device-grid{grid-template-columns:1fr}
+}
+
 /* ── PRICING ── */
 .pricing{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 .price-card{max-width:480px;margin:0 auto;background:var(--bg2);border:2px solid var(--gold2);border-radius:20px;padding:44px 36px;text-align:center;position:relative;box-shadow:0 12px 40px rgba(245,158,11,0.1)}
@@ -270,6 +296,7 @@ img{max-width:100%;display:block}
     <div class="nav-mid">
       <a href="#features">Features</a>
       <a href="#compare">Compare</a>
+      <a href="#devices">Devices</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
     </div>
@@ -579,6 +606,104 @@ img{max-width:100%;display:block}
         <div class="step-title">Install on Your Devices</div>
         <div class="step-desc">Set up on iPads, Android tablets, Windows, or Mac. Up to 8 devices. All data syncs automatically.</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEVICE GUIDE -->
+<section class="section devices" id="devices">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Works Everywhere</div>
+      <h2 class="section-title">Get Solis POS on Any Device</h2>
+      <p class="section-desc">Solis POS works on every device with a browser. Install it in under a minute and it works just like a native app &mdash; even offline.</p>
+    </div>
+    <div class="device-grid">
+
+      <div class="device-card reveal">
+        <div class="device-card-header">
+          <div class="device-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3" ry="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+          <div>
+            <div class="device-card-name">iPad / iPhone</div>
+            <div class="device-card-sub">Safari browser</div>
+          </div>
+        </div>
+        <div class="device-steps">
+          <div class="device-step"><div class="device-step-num">1</div><div class="device-step-text">Open <strong>solis-os.com/app</strong> in Safari</div></div>
+          <div class="device-step"><div class="device-step-num">2</div><div class="device-step-text">Tap the <strong>Share</strong> button (square with arrow)</div></div>
+          <div class="device-step"><div class="device-step-num">3</div><div class="device-step-text">Scroll down and tap <strong>"Add to Home Screen"</strong></div></div>
+          <div class="device-step"><div class="device-step-num">4</div><div class="device-step-text">Tap <strong>Add</strong> &mdash; Solis POS icon appears on your home screen</div></div>
+        </div>
+      </div>
+
+      <div class="device-card reveal reveal-delay-1">
+        <div class="device-card-header">
+          <div class="device-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3" ry="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+          <div>
+            <div class="device-card-name">Android Phone / Tablet</div>
+            <div class="device-card-sub">Chrome browser</div>
+          </div>
+        </div>
+        <div class="device-steps">
+          <div class="device-step"><div class="device-step-num">1</div><div class="device-step-text">Open <strong>solis-os.com/app</strong> in Chrome</div></div>
+          <div class="device-step"><div class="device-step-num">2</div><div class="device-step-text">Tap the <strong>three-dot menu</strong> (top right)</div></div>
+          <div class="device-step"><div class="device-step-num">3</div><div class="device-step-text">Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong></div></div>
+          <div class="device-step"><div class="device-step-num">4</div><div class="device-step-text">Tap <strong>Install</strong> &mdash; opens like a real app, works offline</div></div>
+        </div>
+      </div>
+
+      <div class="device-card reveal reveal-delay-2">
+        <div class="device-card-header">
+          <div class="device-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+          <div>
+            <div class="device-card-name">Windows PC / Laptop</div>
+            <div class="device-card-sub">Chrome or Edge browser</div>
+          </div>
+        </div>
+        <div class="device-steps">
+          <div class="device-step"><div class="device-step-num">1</div><div class="device-step-text">Open <strong>solis-os.com/app</strong> in Chrome or Edge</div></div>
+          <div class="device-step"><div class="device-step-num">2</div><div class="device-step-text">Click the <strong>install icon</strong> in the address bar (or menu &rarr; Install)</div></div>
+          <div class="device-step"><div class="device-step-num">3</div><div class="device-step-text">Click <strong>"Install"</strong> &mdash; adds a desktop shortcut</div></div>
+          <div class="device-step"><div class="device-step-num">4</div><div class="device-step-text">Launch from desktop &mdash; <strong>works offline</strong>, no browser needed</div></div>
+        </div>
+      </div>
+
+      <div class="device-card reveal reveal-delay-3">
+        <div class="device-card-header">
+          <div class="device-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+          <div>
+            <div class="device-card-name">MacBook / iMac</div>
+            <div class="device-card-sub">Chrome or Edge browser</div>
+          </div>
+        </div>
+        <div class="device-steps">
+          <div class="device-step"><div class="device-step-num">1</div><div class="device-step-text">Open <strong>solis-os.com/app</strong> in Chrome or Edge</div></div>
+          <div class="device-step"><div class="device-step-num">2</div><div class="device-step-text">Click the <strong>install icon</strong> in the address bar</div></div>
+          <div class="device-step"><div class="device-step-num">3</div><div class="device-step-text">Click <strong>"Install"</strong> &mdash; appears in your Applications folder</div></div>
+          <div class="device-step"><div class="device-step-num">4</div><div class="device-step-text">Open from <strong>Launchpad or Dock</strong> &mdash; runs like a native Mac app</div></div>
+        </div>
+      </div>
+
+      <div class="device-card reveal reveal-delay-4">
+        <div class="device-card-header">
+          <div class="device-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3" ry="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+          <div>
+            <div class="device-card-name">Any Device with a Browser</div>
+            <div class="device-card-sub">No install needed</div>
+          </div>
+        </div>
+        <div class="device-steps">
+          <div class="device-step"><div class="device-step-num">1</div><div class="device-step-text">Open <strong>solis-os.com/app</strong> in any modern browser</div></div>
+          <div class="device-step"><div class="device-step-num">2</div><div class="device-step-text">Sign up or log in &mdash; <strong>start using it immediately</strong></div></div>
+          <div class="device-step"><div class="device-step-num">3</div><div class="device-step-text">No download needed &mdash; the full POS runs in your browser</div></div>
+          <div class="device-step"><div class="device-step-num">4</div><div class="device-step-text">For offline mode, install it using the steps for your device above</div></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="device-note reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>No app store needed.</strong> Solis POS installs directly from your browser. Works on up to 8 devices. All data syncs automatically.</span>
     </div>
   </div>
 </section>
